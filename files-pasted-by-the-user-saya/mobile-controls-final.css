@@ -1,5 +1,8 @@
-/* Final mobile controls — single source of truth for header + floating VIP. */
-@media(max-width:800px){
+/* Final mobile floating VIP + header controls */
+
+@media (max-width:800px){
+
+  /* HEADER */
   .nav{
     display:flex!important;
     align-items:center!important;
@@ -23,7 +26,9 @@
     object-position:left center!important;
   }
 
-  .nav-links{display:none!important}
+  .nav-links{
+    display:none!important;
+  }
 
   .login-link{
     order:2!important;
@@ -41,7 +46,9 @@
     line-height:1!important;
   }
 
-  .login-link span{display:none!important}
+  .login-link span{
+    display:none!important;
+  }
 
   .menu-button{
     order:3!important;
@@ -56,29 +63,50 @@
     justify-content:center!important;
   }
 
+
+  /* FLOATING VIP */
   .vip-float{
     position:fixed!important;
+
     top:auto!important;
-    right:14px!important;
+    left:auto!important;
+    right:16px!important;
     bottom:max(18px,env(safe-area-inset-bottom))!important;
-    width:52px!important;
-    min-width:52px!important;
-    height:52px!important;
-    padding:0!important;
+
+    width:54px!important;
+    min-width:54px!important;
+    height:54px!important;
+
     margin:0!important;
+    padding:0!important;
+
     border-radius:50%!important;
+
     display:flex!important;
     align-items:center!important;
     justify-content:center!important;
-    flex-direction:row!important;
-    background:linear-gradient(145deg,#bf8d29,#f6dc86)!important;
-    box-shadow:0 10px 24px rgba(0,0,0,.5),0 0 0 1px rgba(255,245,205,.72)!important;
+
+    background:linear-gradient(
+      145deg,
+      #bf8d29,
+      #f6dc86
+    )!important;
+
+    box-shadow:
+      0 10px 24px rgba(0,0,0,.5),
+      0 0 0 1px rgba(255,245,205,.72)!important;
+
     font-size:0!important;
+
     z-index:9999!important;
+
     transform:none!important;
   }
 
-  .vip-float span,.vip-float b{display:none!important}
+  .vip-float span,
+  .vip-float b{
+    display:none!important;
+  }
 
   .vip-float:after{
     content:'VIP'!important;
@@ -100,9 +128,34 @@
   }
 }
 
+
 @media(max-width:370px){
-  .official-brand{width:108px!important;max-width:108px!important;flex-basis:108px!important}
-  .login-link{flex-basis:78px!important;width:78px!important;min-width:78px!important;font-size:9px!important}
-  .menu-button{flex-basis:39px!important;width:39px!important;min-width:39px!important;height:39px!important}
-  .vip-float{width:50px!important;min-width:50px!important;height:50px!important;right:12px!important}
+
+  .official-brand{
+    width:108px!important;
+    max-width:108px!important;
+    flex-basis:108px!important;
+  }
+
+  .login-link{
+    flex-basis:78px!important;
+    width:78px!important;
+    min-width:78px!important;
+    font-size:9px!important;
+  }
+
+  .menu-button{
+    flex-basis:39px!important;
+    width:39px!important;
+    min-width:39px!important;
+    height:39px!important;
+  }
+
+  .vip-float{
+    width:50px!important;
+    min-width:50px!important;
+    height:50px!important;
+    left:auto!important;
+    right:12px!important;
+  }
 }
