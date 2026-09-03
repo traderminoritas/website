@@ -1,4 +1,238 @@
-/* Editorial clean-up requested after mobile review. */
-em{font-family:Manrope,Arial,sans-serif!important;font-style:normal!important;font-weight:inherit!important}.hero h1{line-height:1.06!important}.feature-grid .icon{display:none}.feature-grid article{padding-top:27px}.feature-no{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:1px solid rgba(227,190,98,.45);border-radius:50%;font:10px 'DM Mono';color:var(--vip-gold)}.feature-grid h3{margin-top:62px}.feature-grid article:after{content:'';position:absolute;left:28px;right:28px;top:82px;border-top:1px solid rgba(227,190,98,.14)}.asset-grid figcaption{display:none!important}.asset-benefits{align-items:start}.asset-benefits article{background:transparent!important;border:0!important;padding:0!important}.asset-benefits img{display:block;width:100%!important;height:auto!important;object-fit:initial!important;aspect-ratio:auto!important;border:1px solid rgba(232,220,187,.15)}.asset-benefits h3{font-size:14px!important;margin:15px 0 4px!important}.asset-benefits p{font-size:11px!important;margin:0!important;max-width:270px}
-@media(max-width:800px){.hero h1{line-height:1.08!important;letter-spacing:-4px!important}.feature-grid article{min-height:235px!important;padding:21px 22px!important}.feature-grid article:after{left:22px;right:22px;top:75px}.feature-grid h3{margin-top:55px!important;font-size:21px!important}.feature-grid p{font-size:13px!important;max-width:285px}.asset-benefits{display:grid;grid-template-columns:1fr!important;gap:31px!important}.asset-benefits img{border-radius:3px}.asset-benefits h3{font-size:17px!important;margin-top:13px!important}.asset-benefits p{font-size:13px!important;line-height:1.75!important;max-width:none}}
-@media(max-width:390px){.hero h1{font-size:48px!important;letter-spacing:-3.6px!important}}
+/* =========================================================
+   TRADER MINORITAS — DARK EDITORIAL THEME
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   GENERAL DARK SECTIONS
+   --------------------------------------------------------- */
+
+.statement{
+  background:#10100f!important;
+  color:#f1eee7!important;
+}
+
+.statement h2{
+  color:#f1eee7!important;
+}
+
+.statement p:not(.eyebrow){
+  color:#aaa69b!important;
+}
+
+.statement .eyebrow{
+  color:#d7b25c!important;
+}
+
+.statement .underlink{
+  color:#f1eee7!important;
+  border-bottom-color:#35342f!important;
+}
+
+
+/* ---------------------------------------------------------
+   PARTNERS
+   --------------------------------------------------------- */
+
+.partners{
+  background:#151513!important;
+  color:#f1eee7!important;
+}
+
+.partners .section-head h2{
+  color:#f1eee7!important;
+}
+
+.partners .section-head>p:last-child{
+  color:#aaa69b!important;
+}
+
+.partner-list{
+  border-top-color:#35342f!important;
+}
+
+.partner-list article{
+  border-bottom-color:#35342f!important;
+}
+
+.partner-list h3{
+  color:#f1eee7!important;
+}
+
+.partner-list p{
+  color:#8f8b82!important;
+}
+
+.partner-list a{
+  color:#f1eee7!important;
+}
+
+.partner-alert{
+  color:#8f8b82!important;
+}
+
+.partner-alert a{
+  color:#d7b25c!important;
+}
+
+
+/* ---------------------------------------------------------
+   PRESERVE EDITORIAL FEATURES
+   --------------------------------------------------------- */
+
+em{
+  font-family:Manrope,Arial,sans-serif!important;
+  font-style:normal!important;
+  font-weight:inherit!important;
+}
+
+.hero h1{
+  line-height:1.06!important;
+}
+
+.feature-grid .icon{
+  display:none;
+}
+
+.feature-grid article{
+  padding-top:27px;
+}
+
+.feature-no{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:34px;
+  height:34px;
+  border:1px solid rgba(227,190,98,.45);
+  border-radius:50%;
+  font:10px 'DM Mono';
+  color:var(--vip-gold);
+}
+
+.feature-grid h3{
+  margin-top:62px;
+}
+
+.feature-grid article:after{
+  content:'';
+  position:absolute;
+  left:28px;
+  right:28px;
+  top:82px;
+  border-top:1px solid rgba(227,190,98,.14);
+}
+
+.asset-grid figcaption{
+  display:none!important;
+}
+
+.asset-benefits{
+  align-items:start;
+}
+
+.asset-benefits article{
+  background:transparent!important;
+  border:0!important;
+  padding:0!important;
+}
+
+.asset-benefits img{
+  display:block;
+  width:100%!important;
+  height:auto!important;
+  object-fit:initial!important;
+  aspect-ratio:auto!important;
+  border:1px solid rgba(232,220,187,.15);
+}
+
+.asset-benefits h3{
+  font-size:14px!important;
+  margin:15px 0 4px!important;
+}
+
+.asset-benefits p{
+  font-size:11px!important;
+  margin:0!important;
+  max-width:270px;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media(max-width:800px){
+
+  .hero h1{
+    line-height:1.08!important;
+    letter-spacing:-4px!important;
+  }
+
+  .feature-grid article{
+    min-height:235px!important;
+    padding:21px 22px!important;
+  }
+
+  .feature-grid article:after{
+    left:22px;
+    right:22px;
+    top:75px;
+  }
+
+  .feature-grid h3{
+    margin-top:55px!important;
+    font-size:21px!important;
+  }
+
+  .feature-grid p{
+    font-size:13px!important;
+    max-width:285px;
+  }
+
+  .asset-benefits{
+    display:grid;
+    grid-template-columns:1fr!important;
+    gap:31px!important;
+  }
+
+  .asset-benefits img{
+    border-radius:3px;
+  }
+
+  .asset-benefits h3{
+    font-size:17px!important;
+    margin-top:13px!important;
+  }
+
+  .asset-benefits p{
+    font-size:13px!important;
+    line-height:1.75!important;
+    max-width:none;
+  }
+
+
+  /* DARK STATEMENT MOBILE */
+
+  .statement{
+    background:#10100f!important;
+  }
+
+  /* DARK PARTNER MOBILE */
+
+  .partners{
+    background:#151513!important;
+  }
+}
+
+
+/* ---------------------------------------------------------
+   VERY SMALL PHONES
+   --------------------------------------------------------- */
+
+@media(max-width:390px){
+
+  .hero h1{
+    font-size:48px!important;
+    letter-spacing:-3.6px!important;
+  }
+}
