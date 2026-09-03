@@ -1,8 +1,14 @@
-/* Final mobile floating VIP + header controls */
+/* =========================================================
+   FINAL MOBILE CONTROLS
+   Header + Floating VIP Button
+   ========================================================= */
 
 @media (max-width:800px){
 
-  /* HEADER */
+  /* =======================================================
+     HEADER
+     ======================================================= */
+
   .nav{
     display:flex!important;
     align-items:center!important;
@@ -38,9 +44,11 @@
     height:43px!important;
     margin:0!important;
     padding:0 8px!important;
+
     display:inline-flex!important;
     align-items:center!important;
     justify-content:center!important;
+
     white-space:nowrap!important;
     font-size:10px!important;
     line-height:1!important;
@@ -56,35 +64,41 @@
     width:43px!important;
     min-width:43px!important;
     height:43px!important;
+
     margin:0!important;
     padding:0!important;
+
     display:flex!important;
     align-items:center!important;
     justify-content:center!important;
   }
 
 
-  /* FLOATING VIP */
+  /* =======================================================
+     FLOATING VIP BUTTON — MOBILE
+     ======================================================= */
+
   .vip-float{
     position:fixed!important;
 
     top:auto!important;
     left:auto!important;
-    right:16px!important;
+    right:14px!important;
     bottom:max(18px,env(safe-area-inset-bottom))!important;
 
-    width:54px!important;
-    min-width:54px!important;
-    height:54px!important;
+    width:auto!important;
+    min-width:0!important;
+    height:48px!important;
 
     margin:0!important;
-    padding:0!important;
+    padding:0 17px!important;
 
-    border-radius:50%!important;
+    border-radius:999px!important;
 
     display:flex!important;
     align-items:center!important;
     justify-content:center!important;
+    gap:9px!important;
 
     background:linear-gradient(
       145deg,
@@ -96,26 +110,49 @@
       0 10px 24px rgba(0,0,0,.5),
       0 0 0 1px rgba(255,245,205,.72)!important;
 
-    font-size:0!important;
+    color:#19130a!important;
+
+    font-family:Manrope,Arial,sans-serif!important;
+    font-size:11px!important;
+    font-weight:800!important;
+    line-height:1!important;
 
     z-index:9999!important;
 
     transform:none!important;
   }
 
-  .vip-float span,
+
+  /* BINTANG */
+  .vip-float span{
+    display:inline!important;
+    position:static!important;
+
+    font-size:13px!important;
+    line-height:1!important;
+  }
+
+
+  /* PANAH */
   .vip-float b{
+    display:inline!important;
+    position:static!important;
+
+    margin-left:2px!important;
+
+    font-size:15px!important;
+    line-height:1!important;
+  }
+
+
+  /* HAPUS VERSI "VIP" LAMA */
+  .vip-float:after{
+    content:none!important;
     display:none!important;
   }
 
-  .vip-float:after{
-    content:'VIP'!important;
-    display:block!important;
-    color:#19130a!important;
-    font:800 9px/1 Manrope,Arial,sans-serif!important;
-    letter-spacing:1px!important;
-  }
 
+  /* ANIMASI SAAT HERO TERLIHAT / TERSEMBUNYI */
   .vip-float.is-hidden{
     opacity:0!important;
     pointer-events:none!important;
@@ -124,10 +161,15 @@
 
   .vip-float:not(.is-hidden){
     opacity:1!important;
+    pointer-events:auto!important;
     transform:none!important;
   }
 }
 
+
+/* =========================================================
+   HP SANGAT KECIL
+   ========================================================= */
 
 @media(max-width:370px){
 
@@ -141,6 +183,7 @@
     flex-basis:78px!important;
     width:78px!important;
     min-width:78px!important;
+
     font-size:9px!important;
   }
 
@@ -151,11 +194,28 @@
     height:39px!important;
   }
 
+
+  /* VIP MOBILE KECIL */
   .vip-float{
-    width:50px!important;
-    min-width:50px!important;
-    height:50px!important;
     left:auto!important;
     right:12px!important;
+
+    bottom:max(15px,env(safe-area-inset-bottom))!important;
+
+    height:45px!important;
+
+    padding:0 14px!important;
+
+    gap:7px!important;
+
+    font-size:10px!important;
+  }
+
+  .vip-float span{
+    font-size:12px!important;
+  }
+
+  .vip-float b{
+    font-size:14px!important;
   }
 }
