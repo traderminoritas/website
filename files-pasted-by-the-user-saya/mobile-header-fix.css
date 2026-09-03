@@ -1,4 +1,136 @@
-/* Prevent the header controls from wrapping on small screens. */
-.hero-logo{display:none}.vip-float.is-hidden{opacity:0;pointer-events:none;transform:translateY(22px)}
-@media(max-width:800px){.nav{gap:5px}.official-brand{width:132px;height:60px;flex:0 1 132px;margin-right:auto!important}.official-brand img{object-position:left center}.login-link{display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 auto!important;width:auto!important;min-width:88px!important;height:43px!important;padding:0 11px!important;white-space:nowrap!important;font-size:10px!important;line-height:1!important;letter-spacing:.2px!important;order:2}.login-link span{display:none!important}.menu-button{flex:0 0 43px!important;width:43px!important;height:43px!important;order:3!important;margin-left:0!important}.menu-button:after{inset:10px!important}.vip-float{transition:opacity .25s,transform .25s!important}}
-@media(max-width:370px){.official-brand{width:108px;flex-basis:108px}.login-link{min-width:78px!important;padding:0 8px!important;font-size:9px!important}.menu-button{flex-basis:39px!important;width:39px!important;height:39px!important}}
+/* =========================================================
+   MOBILE HEADER + HERO LOGO
+   ========================================================= */
+
+.hero-logo{
+  display:block!important;
+  width:210px!important;
+  max-width:58%!important;
+  height:auto!important;
+  margin:0 auto 28px!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  filter:drop-shadow(0 8px 22px rgba(0,0,0,.38))!important;
+}
+
+.vip-float.is-hidden{
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(22px);
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:800px){
+
+  /* HEADER */
+  .nav{
+    gap:9px;
+  }
+
+  .official-brand{
+    width:132px;
+    height:60px;
+    flex:0 1 132px;
+  }
+
+  .official-brand img{
+    object-position:left center;
+  }
+
+  .login-link{
+    display:inline-flex!important;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 auto!important;
+    width:auto!important;
+    min-width:88px!important;
+    height:43px!important;
+    padding:0 11px!important;
+    white-space:nowrap!important;
+    font-size:10px!important;
+    line-height:1!important;
+    letter-spacing:.2px!important;
+    order:2;
+  }
+
+  .login-link span{
+    display:none!important;
+  }
+
+  .menu-button{
+    flex:0 0 43px!important;
+    width:43px!important;
+    height:43px!important;
+    margin-left:0!important;
+    order:3;
+  }
+
+  .menu-button:after{
+    inset:10px!important;
+  }
+
+
+  /* =======================================================
+     HERO LOGO
+     ======================================================= */
+
+  .hero-logo{
+    display:block!important;
+    width:210px!important;
+    max-width:62vw!important;
+    height:auto!important;
+    margin:0 auto 30px!important;
+    object-fit:contain!important;
+    object-position:center!important;
+
+    filter:
+      drop-shadow(0 8px 22px rgba(0,0,0,.45))
+      drop-shadow(0 0 12px rgba(212,173,83,.10))!important;
+  }
+
+
+  /* =======================================================
+     FLOATING VIP
+     ======================================================= */
+
+  .vip-float{
+    transition:
+      opacity .25s,
+      transform .25s!important;
+  }
+}
+
+
+/* =========================================================
+   HP SANGAT KECIL
+   ========================================================= */
+
+@media(max-width:370px){
+
+  .official-brand{
+    width:108px;
+    flex-basis:108px;
+  }
+
+  .login-link{
+    min-width:78px!important;
+    padding:0 8px!important;
+    font-size:9px!important;
+  }
+
+  .menu-button{
+    flex-basis:39px!important;
+    width:39px!important;
+    height:39px!important;
+  }
+
+  .hero-logo{
+    width:175px!important;
+    max-width:60vw!important;
+    margin-bottom:25px!important;
+  }
+}

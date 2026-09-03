@@ -1,13 +1,10 @@
 /* =========================================================
    FINAL MOBILE CONTROLS
-   Header + Floating VIP Button
    ========================================================= */
 
-@media (max-width:800px){
+@media(max-width:800px){
 
-  /* =======================================================
-     HEADER
-     ======================================================= */
+  /* HEADER */
 
   .nav{
     display:flex!important;
@@ -18,64 +15,22 @@
 
   .official-brand{
     order:1!important;
-    width:132px!important;
-    max-width:132px!important;
-    height:60px!important;
-    flex:0 1 132px!important;
     margin-right:auto!important;
-  }
-
-  .official-brand img{
-    width:100%!important;
-    height:100%!important;
-    object-fit:contain!important;
-    object-position:left center!important;
-  }
-
-  .nav-links{
-    display:none!important;
   }
 
   .login-link{
     order:2!important;
-    flex:0 0 88px!important;
-    width:88px!important;
-    min-width:88px!important;
-    height:43px!important;
     margin:0!important;
-    padding:0 8px!important;
-
-    display:inline-flex!important;
-    align-items:center!important;
-    justify-content:center!important;
-
-    white-space:nowrap!important;
-    font-size:10px!important;
-    line-height:1!important;
-  }
-
-  .login-link span{
-    display:none!important;
   }
 
   .menu-button{
     order:3!important;
-    flex:0 0 43px!important;
-    width:43px!important;
-    min-width:43px!important;
-    height:43px!important;
-
     margin:0!important;
-    padding:0!important;
-
-    display:flex!important;
-    align-items:center!important;
-    justify-content:center!important;
   }
 
 
   /* =======================================================
-     FLOATING VIP BUTTON — MOBILE
+     FLOATING VIP BUTTON
      ======================================================= */
 
   .vip-float{
@@ -124,35 +79,36 @@
 
 
   /* BINTANG */
+
   .vip-float span{
     display:inline!important;
     position:static!important;
-
     font-size:13px!important;
     line-height:1!important;
   }
 
 
   /* PANAH */
+
   .vip-float b{
     display:inline!important;
     position:static!important;
-
     margin-left:2px!important;
-
     font-size:15px!important;
     line-height:1!important;
   }
 
 
-  /* HAPUS VERSI "VIP" LAMA */
+  /* MATIKAN "VIP" PALSU */
+
   .vip-float:after{
     content:none!important;
     display:none!important;
   }
 
 
-  /* ANIMASI SAAT HERO TERLIHAT / TERSEMBUNYI */
+  /* ANIMASI */
+
   .vip-float.is-hidden{
     opacity:0!important;
     pointer-events:none!important;
@@ -168,42 +124,17 @@
 
 
 /* =========================================================
-   HP SANGAT KECIL
+   HP KECIL
    ========================================================= */
 
 @media(max-width:370px){
 
-  .official-brand{
-    width:108px!important;
-    max-width:108px!important;
-    flex-basis:108px!important;
-  }
-
-  .login-link{
-    flex-basis:78px!important;
-    width:78px!important;
-    min-width:78px!important;
-
-    font-size:9px!important;
-  }
-
-  .menu-button{
-    flex-basis:39px!important;
-    width:39px!important;
-    min-width:39px!important;
-    height:39px!important;
-  }
-
-
-  /* VIP MOBILE KECIL */
   .vip-float{
     left:auto!important;
     right:12px!important;
-
     bottom:max(15px,env(safe-area-inset-bottom))!important;
 
     height:45px!important;
-
     padding:0 14px!important;
 
     gap:7px!important;
