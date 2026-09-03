@@ -1,2 +1,108 @@
-/* Final compact controls for phone screens. */
-@media(max-width:800px){.nav{justify-content:flex-start!important}.official-brand{margin-right:auto!important}.login-link{margin-left:0!important;margin-right:0!important}.menu-button{margin-left:9px!important}.vip-float{top:auto!important;right:16px!important;bottom:max(22px,env(safe-area-inset-bottom))!important;width:58px!important;min-width:58px!important;height:58px!important;padding:0!important;border-radius:50%!important;display:flex!important;align-items:center!important;justify-content:center!important;background:linear-gradient(145deg,#bf8d29,#f6dc86)!important;box-shadow:0 11px 27px rgba(0,0,0,.52),0 0 0 1px rgba(255,245,205,.7)!important;font-size:0!important}.vip-float span,.vip-float b{display:none!important}.vip-float:after{content:'VIP';color:#19130a;font:800 10px/1 Manrope,Arial;letter-spacing:.9px}.vip-float.is-hidden{opacity:0!important;transform:translateY(84px)!important}.vip-float:not(.is-hidden){opacity:1!important;transform:none!important}}
+/* Final mobile controls — single source of truth for header + floating VIP. */
+@media(max-width:800px){
+  .nav{
+    display:flex!important;
+    align-items:center!important;
+    gap:5px!important;
+    justify-content:flex-start!important;
+  }
+
+  .official-brand{
+    order:1!important;
+    width:132px!important;
+    max-width:132px!important;
+    height:60px!important;
+    flex:0 1 132px!important;
+    margin-right:auto!important;
+  }
+
+  .official-brand img{
+    width:100%!important;
+    height:100%!important;
+    object-fit:contain!important;
+    object-position:left center!important;
+  }
+
+  .nav-links{display:none!important}
+
+  .login-link{
+    order:2!important;
+    flex:0 0 88px!important;
+    width:88px!important;
+    min-width:88px!important;
+    height:43px!important;
+    margin:0!important;
+    padding:0 8px!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    white-space:nowrap!important;
+    font-size:10px!important;
+    line-height:1!important;
+  }
+
+  .login-link span{display:none!important}
+
+  .menu-button{
+    order:3!important;
+    flex:0 0 43px!important;
+    width:43px!important;
+    min-width:43px!important;
+    height:43px!important;
+    margin:0!important;
+    padding:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+
+  .vip-float{
+    position:fixed!important;
+    top:auto!important;
+    right:14px!important;
+    bottom:max(18px,env(safe-area-inset-bottom))!important;
+    width:52px!important;
+    min-width:52px!important;
+    height:52px!important;
+    padding:0!important;
+    margin:0!important;
+    border-radius:50%!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    flex-direction:row!important;
+    background:linear-gradient(145deg,#bf8d29,#f6dc86)!important;
+    box-shadow:0 10px 24px rgba(0,0,0,.5),0 0 0 1px rgba(255,245,205,.72)!important;
+    font-size:0!important;
+    z-index:9999!important;
+    transform:none!important;
+  }
+
+  .vip-float span,.vip-float b{display:none!important}
+
+  .vip-float:after{
+    content:'VIP'!important;
+    display:block!important;
+    color:#19130a!important;
+    font:800 9px/1 Manrope,Arial,sans-serif!important;
+    letter-spacing:1px!important;
+  }
+
+  .vip-float.is-hidden{
+    opacity:0!important;
+    pointer-events:none!important;
+    transform:translateY(70px)!important;
+  }
+
+  .vip-float:not(.is-hidden){
+    opacity:1!important;
+    transform:none!important;
+  }
+}
+
+@media(max-width:370px){
+  .official-brand{width:108px!important;max-width:108px!important;flex-basis:108px!important}
+  .login-link{flex-basis:78px!important;width:78px!important;min-width:78px!important;font-size:9px!important}
+  .menu-button{flex-basis:39px!important;width:39px!important;min-width:39px!important;height:39px!important}
+  .vip-float{width:50px!important;min-width:50px!important;height:50px!important;right:12px!important}
+}
