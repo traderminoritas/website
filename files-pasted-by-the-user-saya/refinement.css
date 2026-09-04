@@ -1,14 +1,24 @@
 /* =========================================================
-   TRADER MINORITAS — DARK EDITORIAL THEME + MOBILE REFINEMENT
+   TRADER MINORITAS — MOBILE REFINEMENT FINAL
    ========================================================= */
 
-.statement{background:#10100f!important;color:#f1eee7!important}
+/* Dark editorial sections */
+.statement{
+  background:#10100f!important;
+  color:#f1eee7!important;
+}
 .statement h2{color:#f1eee7!important}
 .statement p:not(.eyebrow){color:#aaa69b!important}
 .statement .eyebrow{color:#d7b25c!important}
-.statement .underlink{color:#f1eee7!important;border-bottom-color:#35342f!important}
+.statement .underlink{
+  color:#f1eee7!important;
+  border-bottom-color:#35342f!important;
+}
 
-.partners{background:#151513!important;color:#f1eee7!important}
+.partners{
+  background:#151513!important;
+  color:#f1eee7!important;
+}
 .partners .section-head h2{color:#f1eee7!important}
 .partners .section-head>p:last-child{color:#aaa69b!important}
 .partner-list{border-top-color:#35342f!important}
@@ -19,35 +29,125 @@
 .partner-alert{color:#8f8b82!important}
 .partner-alert a{color:#d7b25c!important}
 
-em{font-family:Manrope,Arial,sans-serif!important;font-style:normal!important;font-weight:inherit!important}
+/* Editorial typography */
+em{
+  font-family:Manrope,Arial,sans-serif!important;
+  font-style:normal!important;
+  font-weight:inherit!important;
+}
 .hero h1{line-height:1.06!important}
+
 .feature-grid .icon{display:none}
 .feature-grid article{padding-top:27px}
-.feature-no{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:1px solid rgba(227,190,98,.45);border-radius:50%;font:10px 'DM Mono';color:var(--vip-gold)}
+.feature-no{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:34px;
+  height:34px;
+  border:1px solid rgba(227,190,98,.45);
+  border-radius:50%;
+  font:10px 'DM Mono';
+  color:var(--vip-gold);
+}
 .feature-grid h3{margin-top:62px}
-.feature-grid article:after{content:'';position:absolute;left:28px;right:28px;top:82px;border-top:1px solid rgba(227,190,98,.14)}
+.feature-grid article:after{
+  content:'';
+  position:absolute;
+  left:28px;
+  right:28px;
+  top:82px;
+  border-top:1px solid rgba(227,190,98,.14);
+}
+
 .asset-grid figcaption{display:none!important}
 .asset-benefits{align-items:start}
-.asset-benefits article{background:transparent!important;border:0!important;padding:0!important}
-.asset-benefits img{display:block;width:100%!important;height:auto!important;object-fit:initial!important;aspect-ratio:auto!important;border:1px solid rgba(232,220,187,.15)}
-.asset-benefits h3{font-size:14px!important;margin:15px 0 4px!important}
-.asset-benefits p{font-size:11px!important;margin:0!important;max-width:270px}
+.asset-benefits article{
+  background:transparent!important;
+  border:0!important;
+  padding:0!important;
+}
+.asset-benefits img{
+  display:block;
+  width:100%!important;
+  height:auto!important;
+  object-fit:initial!important;
+  aspect-ratio:auto!important;
+  border:1px solid rgba(232,220,187,.15);
+}
+.asset-benefits h3{
+  font-size:14px!important;
+  margin:15px 0 4px!important;
+}
+.asset-benefits p{
+  font-size:11px!important;
+  margin:0!important;
+  max-width:270px;
+}
+
+
+/* =========================================================
+   MOBILE FINAL
+   ========================================================= */
 
 @media(max-width:800px){
-  .hero h1{line-height:1.08!important;letter-spacing:-4px!important}
-  .feature-grid article{min-height:235px!important;padding:21px 22px!important}
-  .feature-grid article:after{left:22px;right:22px;top:75px}
-  .feature-grid h3{margin-top:55px!important;font-size:21px!important}
-  .feature-grid p{font-size:13px!important;max-width:285px}
-  .asset-benefits{display:grid;grid-template-columns:1fr!important;gap:31px!important}
+
+  .hero h1{
+    line-height:1.08!important;
+    letter-spacing:-4px!important;
+  }
+
+  .feature-grid article{
+    min-height:235px!important;
+    padding:21px 22px!important;
+  }
+  .feature-grid article:after{
+    left:22px;
+    right:22px;
+    top:75px;
+  }
+  .feature-grid h3{
+    margin-top:55px!important;
+    font-size:21px!important;
+  }
+  .feature-grid p{
+    font-size:13px!important;
+    max-width:285px;
+  }
+
+  .asset-benefits{
+    display:grid;
+    grid-template-columns:1fr!important;
+    gap:31px!important;
+  }
   .asset-benefits img{border-radius:3px}
-  .asset-benefits h3{font-size:17px!important;margin-top:13px!important}
-  .asset-benefits p{font-size:13px!important;line-height:1.75!important;max-width:none}
+  .asset-benefits h3{
+    font-size:17px!important;
+    margin-top:13px!important;
+  }
+  .asset-benefits p{
+    font-size:13px!important;
+    line-height:1.75!important;
+    max-width:none;
+  }
 
-  .statement{background:#10100f!important}
-  .partners{background:#151513!important}
 
-  /* HERO PROOF — lebih lega di mobile */
+  /* -------------------------------------------------------
+     MARKET CARD LABEL
+     Tetap tampil "TRADER MINORITAS".
+     Hanya kata "DATA DESK" yang dihilangkan.
+     ------------------------------------------------------- */
+
+  .market-card:before{
+    content:'TRADER MINORITAS'!important;
+    display:block!important;
+  }
+
+
+  /* -------------------------------------------------------
+     HERO PROOF
+     ------------------------------------------------------- */
+
   .hero-proof{
     margin-top:48px!important;
     gap:0!important;
@@ -92,13 +192,24 @@ em{font-family:Manrope,Arial,sans-serif!important;font-style:normal!important;fo
     white-space:normal;
   }
 
-  /* CHART — beri ruang di atas grafik untuk label harga */
-  .market-card .chart{position:relative}
+
+  /* -------------------------------------------------------
+     CHART
+     Beri ruang agar label 4,471.59 tidak bertabrakan
+     dengan garis grafik.
+     ------------------------------------------------------- */
+
+  .market-card .chart{
+    position:relative;
+    overflow:hidden;
+  }
+
   .market-card .chart svg{
     height:calc(100% - 12px)!important;
     transform:translateY(12px);
     transform-origin:bottom center;
   }
+
   .market-card .chart-tag{
     top:2px!important;
     right:3px!important;
@@ -108,23 +219,102 @@ em{font-family:Manrope,Arial,sans-serif!important;font-style:normal!important;fo
     line-height:1.2!important;
   }
 
-  /* DATA DESK — berasal dari .market-card:before di premium.css */
-  .market-card:before{
-    display:none!important;
-    content:none!important;
+
+  /* =======================================================
+     JARAK ANTAR SECTION — DIPERDEK SECARA KESELURUHAN
+     Tidak mengubah isi, hanya mengurangi ruang kosong.
+     ======================================================= */
+
+  .statement,
+  .intro,
+  .features,
+  .membership,
+  .partners,
+  .calculator,
+  .vip-final{
+    padding-top:78px!important;
+    padding-bottom:78px!important;
   }
 
-  .data-desk,
-  .data-desk-label,
-  .hero .data-desk{
-    display:none!important;
+  /* Section yang memang berupa blok konten besar */
+  .statement + section,
+  .intro + section,
+  .features + section,
+  .membership + section{
+    margin-top:0!important;
+  }
+
+  /* Hindari jarak kosong ekstra dari elemen internal */
+  .section-head{
+    margin-bottom:34px!important;
+  }
+
+  .statement .section-head,
+  .intro .section-head{
+    margin-bottom:28px!important;
+  }
+
+  /* Jarak setelah paragraf tidak terlalu lebar */
+  .statement p,
+  .intro p,
+  .membership p{
+    margin-bottom:24px!important;
+  }
+
+  /* CTA / link jangan terlalu jauh dari isi */
+  .statement .underlink{
+    margin-top:28px!important;
+  }
+
+  /* Gambar/video tidak mendapat ruang kosong berlebihan */
+  .asset-grid,
+  .asset-benefits{
+    margin-top:32px!important;
   }
 }
 
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
 @media(max-width:390px){
-  .hero h1{font-size:48px!important;letter-spacing:-3.6px!important}
-  .hero-proof{margin-top:44px!important;border-radius:20px}
-  .hero-proof>div{min-height:76px;padding:14px 7px 13px!important}
-  .hero-proof strong{font-size:19px!important;margin-bottom:5px!important}
-  .hero-proof small{font-size:6.8px!important;letter-spacing:.2px!important;line-height:1.35!important}
+
+  .hero h1{
+    font-size:48px!important;
+    letter-spacing:-3.6px!important;
+  }
+
+  .hero-proof{
+    margin-top:44px!important;
+    border-radius:20px;
+  }
+
+  .hero-proof>div{
+    min-height:76px;
+    padding:14px 7px 13px!important;
+  }
+
+  .hero-proof strong{
+    font-size:19px!important;
+    margin-bottom:5px!important;
+  }
+
+  .hero-proof small{
+    font-size:6.8px!important;
+    letter-spacing:.2px!important;
+    line-height:1.35!important;
+  }
+
+  /* Lebih padat lagi untuk layar kecil */
+  .statement,
+  .intro,
+  .features,
+  .membership,
+  .partners,
+  .calculator,
+  .vip-final{
+    padding-top:68px!important;
+    padding-bottom:68px!important;
+  }
 }
