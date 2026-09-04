@@ -53,7 +53,7 @@
     flex-direction:row!important;
     align-items:center!important;
     justify-content:center!important;
-    gap:0!important;
+    gap:8px!important;
     background:linear-gradient(145deg,#bf8d29,#f6dc86)!important;
     box-shadow:0 11px 27px rgba(0,0,0,.52),0 0 0 1px rgba(255,245,205,.7)!important;
     color:#19130a!important;
@@ -70,7 +70,7 @@
   }
 
   .vip-float span{font-size:12px!important}
-  .vip-float b{display:none!important;width:0!important;min-width:0!important;height:0!important;padding:0!important;margin:0!important;font-size:0!important;line-height:0!important}
+  .vip-float b{font-size:15px!important;font-weight:800!important;line-height:1!important}
   .vip-float:after{display:none!important;content:none!important}
   .vip-float b:before,.vip-float b:after{content:none!important}
 
@@ -98,7 +98,7 @@
   }
 
   .vip-float span{font-size:11px!important}
-  .vip-float b{display:none!important;width:0!important;height:0!important;font-size:0!important}
+  .vip-float b{font-size:14px!important}
 }
 
 /* =========================================================
@@ -144,7 +144,7 @@
   }
 
   .vip-float b{
-    display:none!important;
+    display:inline-block!important;
     width:auto!important;
     min-width:0!important;
     height:auto!important;
@@ -162,5 +162,20 @@
   .vip-float b:after{
     content:none!important;
     display:none!important;
+  }
+}
+
+/* FINAL MOBILE VIP: hide ONLY the arrow, keep the button and label intact */
+@media(max-width:800px){
+  .vip-float b{
+    display:none!important;
+    width:0!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  .vip-float{
+    gap:0!important;
   }
 }
