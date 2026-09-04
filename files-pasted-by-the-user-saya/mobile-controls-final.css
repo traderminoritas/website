@@ -70,7 +70,7 @@
   }
 
   .vip-float span{font-size:12px!important}
-  .vip-float b{font-size:15px!important;font-weight:800!important;line-height:1!important}
+  .vip-float b{display:none!important}
   .vip-float:after{display:none!important;content:none!important}
   .vip-float b:before,.vip-float b:after{content:none!important}
 
