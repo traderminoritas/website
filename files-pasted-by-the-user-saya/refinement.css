@@ -108,8 +108,17 @@ em{font-family:Manrope,Arial,sans-serif!important;font-style:normal!important;fo
     line-height:1.2!important;
   }
 
-  /* DATA DESK dari versi lama */
-  .data-desk,.data-desk-label,.hero .data-desk{display:none!important}
+  /* DATA DESK — berasal dari .market-card:before di premium.css */
+  .market-card:before{
+    display:none!important;
+    content:none!important;
+  }
+
+  .data-desk,
+  .data-desk-label,
+  .hero .data-desk{
+    display:none!important;
+  }
 }
 
 @media(max-width:390px){
