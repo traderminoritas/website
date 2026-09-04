@@ -1,113 +1,77 @@
 /* =========================================================
-   FINAL MOBILE CONTROLS
+   TRADER MINORITAS — MOBILE CONTROLS
+   Final version: compact VIP pill, not circle/sidebar
    ========================================================= */
 
 @media(max-width:800px){
-
-  /* HEADER */
-
-  .nav{
-    display:flex!important;
-    align-items:center!important;
-    gap:5px!important;
-    justify-content:flex-start!important;
-  }
-
-  .official-brand{
-    order:1!important;
-    margin-right:auto!important;
-  }
+  .nav{justify-content:flex-start!important;gap:9px}
+  .official-brand{margin-right:auto!important;width:132px;height:60px;flex:0 1 132px}
+  .official-brand img{object-position:left center}
 
   .login-link{
-    order:2!important;
-    margin:0!important;
+    display:inline-flex!important;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 auto!important;
+    width:auto!important;
+    min-width:88px!important;
+    height:43px!important;
+    padding:0 11px!important;
+    white-space:nowrap!important;
+    font-size:10px!important;
+    line-height:1!important;
+    letter-spacing:.2px!important;
+    order:2;
+    margin-left:0!important;
+    margin-right:0!important;
   }
+
+  .login-link span{display:none!important}
 
   .menu-button{
+    flex:0 0 43px!important;
+    width:43px!important;
+    height:43px!important;
     order:3!important;
-    margin:0!important;
+    margin-left:0!important;
   }
 
+  .menu-button:after{inset:10px!important}
 
-  /* =======================================================
-     FLOATING VIP BUTTON
-     ======================================================= */
-
+  /* FLOATING VIP CTA — pill bottom-right */
   .vip-float{
-    position:fixed!important;
-
     top:auto!important;
     left:auto!important;
-    right:14px!important;
-    bottom:max(18px,env(safe-area-inset-bottom))!important;
-
+    right:16px!important;
+    bottom:max(22px,env(safe-area-inset-bottom))!important;
     width:auto!important;
     min-width:0!important;
     height:48px!important;
-
-    margin:0!important;
     padding:0 17px!important;
-
     border-radius:999px!important;
-
     display:flex!important;
+    flex-direction:row!important;
     align-items:center!important;
     justify-content:center!important;
-    gap:9px!important;
-
-    background:linear-gradient(
-      145deg,
-      #bf8d29,
-      #f6dc86
-    )!important;
-
-    box-shadow:
-      0 10px 24px rgba(0,0,0,.5),
-      0 0 0 1px rgba(255,245,205,.72)!important;
-
+    gap:8px!important;
+    background:linear-gradient(145deg,#bf8d29,#f6dc86)!important;
+    box-shadow:0 11px 27px rgba(0,0,0,.52),0 0 0 1px rgba(255,245,205,.7)!important;
     color:#19130a!important;
-
-    font-family:Manrope,Arial,sans-serif!important;
-    font-size:11px!important;
-    font-weight:800!important;
-    line-height:1!important;
-
-    z-index:9999!important;
-
-    transform:none!important;
+    font:800 11px/1 Manrope,Arial,sans-serif!important;
+    letter-spacing:.15px!important;
+    white-space:nowrap!important;
+    transition:opacity .25s,transform .25s!important;
   }
 
-
-  /* BINTANG */
-
-  .vip-float span{
+  .vip-float span,.vip-float b{
     display:inline!important;
-    position:static!important;
-    font-size:13px!important;
-    line-height:1!important;
+    color:#19130a!important;
+    font:inherit!important;
   }
 
-
-  /* PANAH */
-
-  .vip-float b{
-    display:inline!important;
-    position:static!important;
-    margin-left:2px!important;
-    font-size:15px!important;
-    line-height:1!important;
-  }
-
-
-  /* MATIKAN "VIP" PALSU */
-
-  .vip-float:after{
-    content:none!important;
-    display:none!important;
-  }
-
-
-  /* ANIMASI */
+  .vip-float span{font-size:13px!important}
+  .vip-float b{font-size:16px!important;font-weight:500!important;line-height:1!important}
+  .vip-float:after{display:none!important;content:none!important}
 
   .vip-float.is-hidden{
     opacity:0!important;
@@ -115,38 +79,23 @@
     transform:translateY(70px)!important;
   }
 
-  .vip-float:not(.is-hidden){
-    opacity:1!important;
-    pointer-events:auto!important;
-    transform:none!important;
-  }
+  .vip-float:not(.is-hidden){opacity:1!important;transform:none!important}
 }
 
-
-/* =========================================================
-   HP KECIL
-   ========================================================= */
-
 @media(max-width:370px){
+  .official-brand{width:108px;flex-basis:108px}
+  .login-link{min-width:78px!important;padding:0 8px!important;font-size:9px!important}
+  .menu-button{flex-basis:39px!important;width:39px!important;height:39px!important}
 
   .vip-float{
-    left:auto!important;
     right:12px!important;
-    bottom:max(15px,env(safe-area-inset-bottom))!important;
-
+    bottom:max(18px,env(safe-area-inset-bottom))!important;
     height:45px!important;
     padding:0 14px!important;
-
     gap:7px!important;
-
     font-size:10px!important;
   }
 
-  .vip-float span{
-    font-size:12px!important;
-  }
-
-  .vip-float b{
-    font-size:14px!important;
-  }
+  .vip-float span{font-size:12px!important}
+  .vip-float b{font-size:15px!important}
 }
