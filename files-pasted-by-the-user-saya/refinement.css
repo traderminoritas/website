@@ -12,6 +12,8 @@
 .partners{background:#151513!important;color:#f1eee7!important}
 .partners .section-head h2{color:#f1eee7!important}
 .partners .section-head>p:last-child{color:#aaa69b!important}
+.partner-alert{color:#aaa69b!important;opacity:1!important}
+.partner-alert a{color:#d8b45e!important;opacity:1!important;text-decoration:underline!important;text-decoration-color:rgba(216,180,94,.65)!important;text-underline-offset:3px!important}
 
 /* Editorial typography */
 em{font-family:Manrope,Arial,sans-serif!important;font-style:normal!important;font-weight:inherit!important}
@@ -119,15 +121,15 @@ em{font-family:Manrope,Arial,sans-serif!important;font-style:normal!important;fo
   display:inline-flex!important;
   align-items:center;
   justify-content:center;
-  gap:8px;
-  min-width:92px;
+  gap:7px;
+  min-width:112px;
   height:38px;
   padding:0 12px!important;
   border:1px solid rgba(216,180,94,.62);
   border-radius:999px;
   background:linear-gradient(145deg,rgba(216,180,94,.16),rgba(216,180,94,.04));
   color:#f4e8c4!important;
-  font:700 9px/1 Manrope,Arial,sans-serif!important;
+  font:800 9px/1 Manrope,Arial,sans-serif!important;
   letter-spacing:.2px;
   text-decoration:none!important;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);
@@ -200,7 +202,7 @@ em{font-family:Manrope,Arial,sans-serif!important;font-style:normal!important;fo
 
   .hero-proof>div{
     min-width:0;
-    min-height:84px!important;
+    min-height:92px!important;
     padding:14px 6px 13px!important;
     display:flex!important;
     flex-direction:column!important;
@@ -218,7 +220,7 @@ em{font-family:Manrope,Arial,sans-serif!important;font-style:normal!important;fo
     margin:0 0 7px!important;
     text-align:center!important;
     font-family:Georgia,'Times New Roman',serif!important;
-    font-size:25px!important;
+    font-size:28px!important;
     line-height:1!important;
     letter-spacing:-.5px;
     white-space:nowrap;
@@ -365,17 +367,21 @@ em{font-family:Manrope,Arial,sans-serif!important;font-style:normal!important;fo
   .partner-card>a.partner-visit{
     grid-column:2!important;
     justify-self:start;
-    min-width:104px;
-    height:36px;
+    min-width:118px;
+    height:38px;
     margin-top:0;
     padding:0 11px!important;
     font-size:8.5px!important;
   }
 
   .partner-card>a.partner-visit b{
-    width:21px;
-    height:21px;
-    font-size:12px;
+    width:auto!important;
+    height:auto!important;
+    border-radius:0!important;
+    background:transparent!important;
+    color:#f4e8c4!important;
+    font-size:13px!important;
+    line-height:1!important;
   }
 
   .partner-alert{
@@ -404,11 +410,11 @@ em{font-family:Manrope,Arial,sans-serif!important;font-style:normal!important;fo
   }
 
   .hero-proof>div{
-    min-height:78px!important;
+    min-height:86px!important;
     padding:13px 5px 12px!important;
   }
 
-  .hero-proof strong{font-size:22px!important;margin-bottom:6px!important}
+  .hero-proof strong{font-size:25px!important;margin-bottom:6px!important}
   .hero-proof small{font-size:6.8px!important}
 
   .statement,
@@ -446,8 +452,16 @@ em{font-family:Manrope,Arial,sans-serif!important;font-style:normal!important;fo
   .partner-info small{font-size:6.6px!important}
 
   .partner-card>a.partner-visit{
-    min-width:98px;
+    min-width:108px;
     height:34px;
     font-size:8px!important;
   }
+}
+
+
+/* FINAL PATCH V6 — prevent duplicate VIP arrow/label and keep alert readable */
+@media(max-width:800px){
+  .partner-alert{color:#aaa69b!important;opacity:1!important;text-shadow:none!important}
+  .partner-alert a{color:#d8b45e!important;opacity:1!important}
+  .partner-card>a.partner-visit b{background:transparent!important;color:#f4e8c4!important;box-shadow:none!important;width:auto!important;height:auto!important}
 }

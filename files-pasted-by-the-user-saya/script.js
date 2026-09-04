@@ -135,8 +135,8 @@ if (partnerList) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Kunjungi ${partner.name} di TikTok">
-        <span>Kunjungi</span>
-        <b>↗</b>
+        <span>Kunjungi TikTok</span>
+        <b aria-hidden="true">→</b>
       </a>
     </article>
   `).join('');
@@ -172,6 +172,12 @@ if (footerLinks) {
 
 const floatingVipButton = document.querySelector('.vip-float');
 const heroSection = document.querySelector('.hero');
+
+if (floatingVipButton) {
+  floatingVipButton.innerHTML = '<span>✦ Gabung VIP</span><b aria-hidden="true">→</b>';
+  floatingVipButton.setAttribute('aria-label', 'Gabung VIP');
+}
+
 
 if (floatingVipButton && heroSection && 'IntersectionObserver' in window) {
   floatingVipButton.classList.add('is-hidden');
