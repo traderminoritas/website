@@ -52,7 +52,7 @@ const vipVideos = [
   ['GRAND LAUNCHING - TRADER MINORITAS CHRONO HEATMAP','AJN-i0xh4h8'],
   ['Ngosan (Ngobrol Santai) - Update 6 September 2026','NJfw71NKDYE']
 ] .map(([title,id],i)=>({number:String(i+1).padStart(2,'0'),title,id}));
-vipVideos[0].thumb='assets/vip/01-introduction-class.jpg';
+vipVideos[0].thumb='https://raw.githubusercontent.com/traderminoritas/website/main/files-pasted-by-the-user-saya/01-introduction-class.jpg';
 
 const videoLibrary=document.getElementById('videoLibrary');
 const videoModal=document.getElementById('videoModal');
