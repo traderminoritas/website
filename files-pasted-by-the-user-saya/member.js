@@ -63,3 +63,22 @@ if(videoLibrary){
 }
 if(closeVideo)closeVideo.onclick=()=>{videoFrame.src='';videoModal.close()};
 if(videoModal)videoModal.addEventListener('click',e=>{if(e.target===videoModal){videoFrame.src='';videoModal.close()}});
+
+
+/* Overview state: browser-local learning progress */
+const overviewVideos = [
+['Introduction Class','qu_wCOW0wNI'],['Forex by The Numbers: Rahasia Menghitung Pip, Profit & Resiko Seperti Pro','X3PwOoXoOSk'],['Metode/Strategi Part 1','xoq6ayL8ntM'],['Backtest & Forward Test','aAimxdsn9aE'],['Money Management','3SGEVLCbivc'],['Metode/Strategi Part 2','MzTC-A4bKkY'],['Ngosan (Ngobrol Santai) - 21 September 2025','Lu4tYAVNDyk'],['Foundation - 28 September 2025','NET4ByGlbbI'],['Dow Theory Part 1 - 5 Oktober 2025','Lr5y2XsXCqU'],['Dow Theory Part 2 - 12 Oktober 2025','8I9SWn_tYEU'],['Support & Resistance - 19 Oktober 2025','tNn2_2NaJ_Y'],['Candlestick - 26 Oktober 2025','1AmBp9nKQBU'],['Chart Pattern - 9 November 2025','d6H62mJjeck'],['Trader Minoritas - Divergence - 16 November 2025','UkNXZPl4PBY'],['Trader Minoritas - Bollinger Bands - 30 November 2025','n4rdoF146d4'],['Trader Minoritas - Survival First, Profit Later: Blueprint Anti-MC - 7 Desember 2025','n6sy7LXEX_w'],['Trader Minoritas - EA AUTO TP & SL (LAUNCHING) - 21 Desember 2025','DBoUe1w4ACs'],['Trader Minoritas - Ngosan 4 Januari 2026','RTEy6_KfF6I'],['Trader Minoritas - Trading Psychology 11 Januari 2026','PNPABTuDkOE'],['Trader Minoritas - Ngosan 25 Januari 2026','--0qQtLqQTo'],['New Beginning (OMEGA MINORITAS LAUNCHING) 1 Februari 2026','OWpD4OcAtuA'],['New EDGE - 22 February 2026','S68M4VIktUo'],['NEW EDGE 2 - 15 Maret 2026','PeA1MhlfO70'],['New Project - Trader Minoritas 29 Maret 2026','DQCk-V-lVRs'],['GRAND LAUNCHING EA GLOBAL AUTO TP & SL','vYLmWhyN-QQ'],['Sharing by Member VIP Trader Minoritas - Darcey','v1Q2my4ZHHU'],['Breakout Trading Strategy - Om Sis','ocYXHDNQO6E'],['Sharing by Member (Bang Tama) - 24 Mei 2026 - Trader Minoritas','Y89ranVJFUM'],['Ngosan - 7 Juni 2026 (Trader Minoritas)','1CWNqNPVPu4'],['Wonders of the World - Trader Minoritas 21 Juni 2026','snhCfyWgJeo'],['Anniversary Preparation - 5 July 2026','-Y6rFugbCyc'],['Scalping Edge Sharing 61% winrate by Member (Mr. Tama) & Announcement','wI1G9lRvTeQ'],['Ngobrol Santai Berkualitas, Review Strategy, Update EA, dll - 9 Agustus 2026','7VynpmhQZgQ'],['GRAND LAUNCHING - TRADER MINORITAS CHRONO HEATMAP','AJN-i0xh4h8'],['Ngosan (Ngobrol Santai) - Update 6 September 2026','NJfw71NKDYE']
+];
+const overviewDone=JSON.parse(localStorage.getItem('tmVipCompleted')||'[]');
+const overviewLast=localStorage.getItem('tmVipLast')||'';
+function updateOverview(){
+ const count=overviewDone.length,total=overviewVideos.length,pct=Math.round(count/total*100);
+ const a=document.getElementById('progressCount'),b=document.getElementById('progressPercent'),bar=document.getElementById('progressBar'),label=document.getElementById('progressLabel');
+ if(a)a.textContent=count+' / '+total;b&&(b.textContent=pct+'%');bar&&(bar.style.width=pct+'%');
+ if(label)label.textContent=count?`Anda sudah menyelesaikan ${count} dari ${total} video. Lanjutkan satu materi berikutnya.`:'Mulai dari satu materi, lalu lanjutkan secara konsisten.';
+ const idx=overviewVideos.findIndex(v=>v[1]===overviewLast), contTitle=document.getElementById('continueTitle'),contMeta=document.getElementById('continueMeta'),btn=document.getElementById('continueButton');
+ if(idx>=0){contTitle.textContent=overviewVideos[idx][0];contMeta.textContent='Materi '+String(idx+1).padStart(2,'0')+' · Modul VIP Trader Minoritas';btn.textContent='Buka Modul VIP →';btn.onclick=()=>openPage('learn')}
+ const recent=document.getElementById('recentMaterials');
+ if(recent)recent.innerHTML=overviewVideos.slice(-3).reverse().map((v,i)=>`<div class="recent-item"><div><b>${v[0]}</b><small>VIDEO ${total-i}</small></div><span>▶</span></div>`).join('');
+}
+updateOverview();
