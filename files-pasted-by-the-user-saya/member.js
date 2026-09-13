@@ -56,6 +56,8 @@ const videoModal=document.getElementById('videoModal');
 const videoFrame=document.getElementById('videoFrame');
 const videoModalTitle=document.getElementById('videoModalTitle');
 const closeVideo=document.getElementById('closeVideo');
+const modalComplete=document.getElementById('modalComplete');
+let activeVideoId=null;
 
 if(videoLibrary){
   const completed=()=>JSON.parse(localStorage.getItem('tmVipCompleted')||'[]');
@@ -69,12 +71,13 @@ if(videoLibrary){
   }
   function markComplete(id){
     const list=completed();
-    if(!list.includes(id)) list.push(id);
-    localStorage.setItem('tmVipCompleted',JSON.stringify(list));
+    const alreadyDone=list.includes(id);
+    const next=alreadyDone ? list.filter(item=>item!==id) : [...list,id];
+    localStorage.setItem('tmVipCompleted',JSON.stringify(next));
     localStorage.setItem('tmVipLast',id);
     renderVideoLibrary();
     updateOverview();
-    toastMessage('Materi ditandai sebagai selesai. Progress belajar diperbarui.');
+    toastMessage(alreadyDone ? 'Status materi dibatalkan. Progress belajar diperbarui.' : 'Materi ditandai sebagai selesai. Progress belajar diperbarui.');
   }
   videoLibrary.addEventListener('click',e=>{
     const complete=e.target.closest('[data-complete-id]');
@@ -83,13 +86,31 @@ if(videoLibrary){
     if(!btn)return;
     localStorage.setItem('tmVipLast',btn.dataset.videoId);
     updateOverview();
+    activeVideoId=btn.dataset.videoId;
     videoModalTitle.textContent=btn.dataset.videoTitle;
+    if(modalComplete){const done=isDone(activeVideoId);modalComplete.textContent=done?'✓ Sudah selesai':'✓ Tandai sudah selesai';modalComplete.classList.toggle('done',done);modalComplete.disabled=done;}
     videoFrame.src=`https://www.youtube.com/embed/${btn.dataset.videoId}?autoplay=1&modestbranding=1&playsinline=1&rel=0`;
     videoModal.showModal();
   });
   renderVideoLibrary();
 }
-if(closeVideo)closeVideo.onclick=()=>{videoFrame.src='';videoModal.close()};
+if(modalComplete)modalComplete.onclick=()=>{if(activeVideoId)markVideoCompleteFromModal(activeVideoId)};
+function markVideoCompleteFromModal(id){
+  const list=JSON.parse(localStorage.getItem('tmVipCompleted')||'[]');
+  const alreadyDone=list.includes(id);
+  const next=alreadyDone ? list.filter(item=>item!==id) : [...list,id];
+  localStorage.setItem('tmVipCompleted',JSON.stringify(next));
+  localStorage.setItem('tmVipLast',id);
+  renderVideoLibrary();
+  updateOverview();
+  if(modalComplete){
+    modalComplete.textContent=alreadyDone?'○ Tandai sudah selesai':'✓ Sudah selesai';
+    modalComplete.classList.toggle('done',!alreadyDone);
+    modalComplete.disabled=false;
+  }
+  toastMessage(alreadyDone ? 'Status materi dibatalkan. Progress belajar diperbarui.' : 'Materi ditandai sebagai selesai. Progress belajar diperbarui.');
+}
+if(closeVideo)closeVideo.onclick=()=>{videoFrame.src='';videoModal.close();activeVideoId=null};
 if(videoModal)videoModal.addEventListener('click',e=>{if(e.target===videoModal){videoFrame.src='';videoModal.close()}});
 
 
