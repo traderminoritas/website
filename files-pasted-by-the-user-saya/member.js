@@ -6,3 +6,60 @@ document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>openPage(b.dat
 const tool={lot:{type:'POSITION SIZING',title:'Lot Size Calculator',desc:'Tentukan posisi berdasarkan batas risiko Anda.',fields:[['Modal akun','balance',1000],['Risiko per transaksi (%)','risk',1],['Stop loss (pips)','sl',30]],calc:v=>[['RISIKO MAKSIMUM','$'+(v.balance*v.risk/100).toFixed(2)],['UKURAN POSISI',(v.balance*v.risk/100/(v.sl*10||1)).toFixed(2)+' lot']]},rr:{type:'RISK ANALYSIS',title:'Risk / Reward Calculator',desc:'Bandingkan potensi kerugian dan target sebelum entry.',fields:[['Entry price','entry',1.085],['Stop loss','stop',1.08],['Take profit','tp',1.0975]],calc:v=>[['RISIKO',Math.abs(v.entry-v.stop).toFixed(4)],['RISK : REWARD','1 : '+(Math.abs(v.tp-v.entry)/(Math.abs(v.entry-v.stop)||1)).toFixed(2)]]},comp:{type:'GROWTH PLAN',title:'Compounding Calculator',desc:'Visualisasikan pertumbuhan modal dengan target realistis.',fields:[['Modal awal','capital',1000],['Target per bulan (%)','rate',5],['Durasi (bulan)','months',12]],calc:v=>[['PROYEKSI MODAL','$'+(v.capital*Math.pow(1+v.rate/100,v.months)).toFixed(2)],['PERTUMBUHAN','$'+(v.capital*Math.pow(1+v.rate/100,v.months)-v.capital).toFixed(2)]]}};
 function render(type='lot'){let t=tool[type];document.getElementById('calcType').textContent=t.type;document.getElementById('calcTitle').textContent=t.title;document.getElementById('calcDesc').textContent=t.desc;let box=document.getElementById('calcForm');box.innerHTML='<div class="calc-fields">'+t.fields.map(f=>`<label>${f[0]}<input id="${f[1]}" type="number" step="any" value="${f[2]}"></label>`).join('')+'</div><div class="calc-result" id="resultBox"></div>';let update=()=>{let v=Object.fromEntries(t.fields.map(f=>[f[1],+document.getElementById(f[1]).value||0]));document.getElementById('resultBox').innerHTML=t.calc(v).map(r=>`<div><small>${r[0]}</small><b>${r[1]}</b></div>`).join('')};t.fields.forEach(f=>document.getElementById(f[1]).oninput=update);update()};document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{render(b.dataset.tool);document.querySelectorAll('.toolcards article').forEach(a=>a.classList.remove('selected'));b.closest('article').classList.add('selected')});render();
 const modal=document.getElementById('modal'),toast=document.getElementById('toast');document.getElementById('newTrade').onclick=()=>modal.showModal();document.getElementById('close').onclick=()=>modal.close();document.getElementById('tradeForm').onsubmit=e=>{e.preventDefault();modal.close();toast.textContent='Transaksi tersimpan di jurnal demo.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3000)};document.getElementById('profileForm').onsubmit=e=>e.preventDefault();document.getElementById('profileForm').querySelector('button').onclick=()=>{toast.textContent='Profile tersimpan di sesi demo.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3000)};
+
+
+/* =========================================================
+   MODUL VIP — VIDEO LIBRARY
+   Source: everwealth.id/modul
+   No categories applied; preserve source order.
+   ========================================================= */
+const vipVideos = [
+  ['Introduction Class','qu_wCOW0wNI'],
+  ['Forex by The Numbers: Rahasia Menghitung Pip, Profit & Resiko Seperti Pro','X3PwOoXoOSk'],
+  ['Metode/Strategi Part 1','xoq6ayL8ntM'],
+  ['Backtest & Forward Test','aAimxdsn9aE'],
+  ['Money Management','3SGEVLCbivc'],
+  ['Metode/Strategi Part 2','MzTC-A4bKkY'],
+  ['Ngosan (Ngobrol Santai) - 21 September 2025','Lu4tYAVNDyk'],
+  ['Foundation - 28 September 2025','NET4ByGlbbI'],
+  ['Dow Theory Part 1 - 5 Oktober 2025','Lr5y2XsXCqU'],
+  ['Dow Theory Part 2 - 12 Oktober 2025','8I9SWn_tYEU'],
+  ['Support & Resistance - 19 Oktober 2025','tNn2_2NaJ_Y'],
+  ['Candlestick - 26 Oktober 2025','1AmBp9nKQBU'],
+  ['Chart Pattern - 9 November 2025','d6H62mJjeck'],
+  ['Trader Minoritas - Divergence - 16 November 2025','UkNXZPl4PBY'],
+  ['Trader Minoritas - Bollinger Bands - 30 November 2025','n4rdoF146d4'],
+  ['Trader Minoritas - Survival First, Profit Later: Blueprint Anti-MC - 7 Desember 2025','n6sy7LXEX_w'],
+  ['Trader Minoritas - EA AUTO TP & SL (LAUNCHING) - 21 Desember 2025','DBoUe1w4ACs'],
+  ['Trader Minoritas - Ngosan 4 Januari 2026','RTEy6_KfF6I'],
+  ['Trader Minoritas - Trading Psychology 11 Januari 2026','PNPABTuDkOE'],
+  ['Trader Minoritas - Ngosan 25 Januari 2026','--0qQtLqQTo'],
+  ['New Beginning (OMEGA MINORITAS LAUNCHING) 1 Februari 2026','OWpD4OcAtuA'],
+  ['New EDGE - 22 February 2026','S68M4VIktUo'],
+  ['NEW EDGE 2 - 15 Maret 2026','PeA1MhlfO70'],
+  ['New Project - Trader Minoritas 29 Maret 2026','DQCk-V-lVRs'],
+  ['GRAND LAUNCHING EA GLOBAL AUTO TP & SL','vYLmWhyN-QQ'],
+  ['Sharing by Member VIP Trader Minoritas - Darcey','v1Q2my4ZHHU'],
+  ['Breakout Trading Strategy - Om Sis','ocYXHDNQO6E'],
+  ['Sharing by Member (Bang Tama) - 24 Mei 2026 - Trader Minoritas','Y89ranVJFUM'],
+  ['Ngosan - 7 Juni 2026 (Trader Minoritas)','1CWNqNPVPu4'],
+  ['Wonders of the World - Trader Minoritas 21 Juni 2026','snhCfyWgJeo'],
+  ['Anniversary Preparation - 5 July 2026','-Y6rFugbCyc'],
+  ['Scalping Edge Sharing 61% winrate by Member (Mr. Tama) & Announcement','wI1G9lRvTeQ'],
+  ['Ngobrol Santai Berkualitas, Review Strategy, Update EA, dll - 9 Agustus 2026','7VynpmhQZgQ'],
+  ['GRAND LAUNCHING - TRADER MINORITAS CHRONO HEATMAP','AJN-i0xh4h8'],
+  ['Ngosan (Ngobrol Santai) - Update 6 September 2026','NJfw71NKDYE']
+].map(([title,id],i)=>({number:String(i+1).padStart(2,'0'),title,id}));
+
+const videoLibrary=document.getElementById('videoLibrary');
+const videoModal=document.getElementById('videoModal');
+const videoFrame=document.getElementById('videoFrame');
+const videoModalTitle=document.getElementById('videoModalTitle');
+const closeVideo=document.getElementById('closeVideo');
+
+if(videoLibrary){
+  videoLibrary.innerHTML=vipVideos.map(v=>`<article class="video-card"><button class="video-thumb" data-video-id="${v.id}" data-video-title="${v.title.replace(/"/g,'&quot;')}"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="Thumbnail ${v.title.replace(/"/g,'&quot;')}" loading="lazy"><span class="video-play">▶</span><b>${v.number}</b></button><div class="video-card-body"><small>MODUL VIP · VIDEO ${v.number}</small><h3>${v.title}</h3><button class="watch-video" data-video-id="${v.id}" data-video-title="${v.title.replace(/"/g,'&quot;')}">Tonton video <span>→</span></button></div></article>`).join('');
+  videoLibrary.addEventListener('click',e=>{const btn=e.target.closest('[data-video-id]');if(!btn)return;const id=btn.dataset.videoId;const title=btn.dataset.videoTitle;videoModalTitle.textContent=title;videoFrame.src=`https://www.youtube.com/embed/${id}?autoplay=1&modestbranding=1&playsinline=1&rel=0`;videoModal.showModal();});
+}
+if(closeVideo)closeVideo.onclick=()=>{videoFrame.src='';videoModal.close()};
+if(videoModal)videoModal.addEventListener('click',e=>{if(e.target===videoModal){videoFrame.src='';videoModal.close()}});
