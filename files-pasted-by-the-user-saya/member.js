@@ -92,8 +92,8 @@ function createYouTubePlayer(videoId){
   loadYouTubeAPI().then(()=>{
     if(ytPlayer){ytPlayer.loadVideoById(videoId);return}
     ytPlayer=new YT.Player('videoFrame',{
-      videoId,
-      playerVars:{autoplay:1,controls:0,rel:0,playsinline:1,disablekb:1,iv_load_policy:3,origin:location.origin},
+      width:'100%',height:'100%',videoId,
+      playerVars:{autoplay:1,controls:0,rel:0,playsinline:1,disablekb:1,iv_load_policy:3,fs:1,origin:location.origin},
       events:{
         onReady:()=>{startVideoTimer();syncVideoControls()},
         onStateChange:e=>{if(videoPlay)videoPlay.textContent=e.data===1?'❚❚':'▶';syncVideoControls()}
