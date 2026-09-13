@@ -93,9 +93,13 @@ function createYouTubePlayer(videoId){
     if(ytPlayer){ytPlayer.loadVideoById(videoId);return}
     ytPlayer=new YT.Player('videoFrame',{
       width:'100%',height:'100%',videoId,
-      playerVars:{autoplay:1,controls:0,rel:0,playsinline:1,disablekb:1,iv_load_policy:3,fs:1,origin:location.origin},
+      playerVars:{autoplay:1,controls:0,rel:0,playsinline:1,disablekb:1,iv_load_policy:3,fs:1,enablejsapi:1,origin:location.origin},
       events:{
-        onReady:()=>{startVideoTimer();syncVideoControls()},
+        onReady:()=>{
+          const frame=ytPlayer.getIframe?.();
+          if(frame){ frame.setAttribute('allow','autoplay; encrypted-media; picture-in-picture; fullscreen'); frame.setAttribute('allowfullscreen',''); frame.allowFullscreen=true; }
+          startVideoTimer();syncVideoControls();
+        },
         onStateChange:e=>{if(videoPlay)videoPlay.textContent=e.data===1?'❚❚':'▶';syncVideoControls()}
       }
     });
@@ -148,7 +152,26 @@ if(videoPlay)videoPlay.onclick=()=>{if(!ytPlayer)return;ytPlayer.getPlayerState(
 if(videoSeek)videoSeek.oninput=()=>{if(ytPlayer){const d=ytPlayer.getDuration()||0;ytPlayer.seekTo(d*(+videoSeek.value/1000),true);syncVideoControls()}};
 if(videoMute)videoMute.onclick=()=>{if(!ytPlayer)return;ytPlayer.isMuted()?ytPlayer.unMute():ytPlayer.mute();syncVideoControls()};
 if(videoVolume)videoVolume.oninput=()=>{if(!ytPlayer)return;const v=+videoVolume.value;v===0?ytPlayer.mute():ytPlayer.unMute();ytPlayer.setVolume(v);syncVideoControls()};
-if(videoFullscreen)videoFullscreen.onclick=()=>{if(!videoFrameWrap)return;if(document.fullscreenElement)document.exitFullscreen?.();else videoFrameWrap.requestFullscreen?.()};
+if(videoFullscreen)videoFullscreen.onclick=async()=>{
+  if(!ytPlayer||!videoFrameWrap)return;
+  try{
+    if(document.fullscreenElement){await document.exitFullscreen();return;}
+    if(videoFrameWrap.requestFullscreen){
+      await videoFrameWrap.requestFullscreen({navigationUI:'hide'});
+      return;
+    }
+    const frame=ytPlayer.getIframe?.();
+    if(frame?.requestFullscreen){await frame.requestFullscreen({navigationUI:'hide'});return;}
+    if(frame?.webkitRequestFullscreen){frame.webkitRequestFullscreen();return;}
+  }catch(err){
+    const frame=ytPlayer.getIframe?.();
+    try{if(frame?.requestFullscreen)await frame.requestFullscreen();else if(frame?.webkitRequestFullscreen)frame.webkitRequestFullscreen();}catch(_){}
+  }
+};
+
+document.addEventListener('fullscreenchange',()=>{
+  if(videoFullscreen)videoFullscreen.textContent=document.fullscreenElement?'⛶':'⛶';
+});
 
 
 function toastMessage(message){const t=document.getElementById('toast');if(!t)return;t.textContent=message;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
