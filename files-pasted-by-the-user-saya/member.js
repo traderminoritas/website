@@ -89,7 +89,7 @@ if(videoLibrary){
     activeVideoId=btn.dataset.videoId;
     videoModalTitle.textContent=btn.dataset.videoTitle;
     if(modalComplete){const done=isDone(activeVideoId);modalComplete.textContent=done?'✓ Sudah selesai':'✓ Tandai sudah selesai';modalComplete.classList.toggle('done',done);modalComplete.disabled=done;}
-    videoFrame.src=`https://www.youtube.com/embed/${btn.dataset.videoId}?autoplay=1&modestbranding=1&playsinline=1&rel=0`;
+    videoFrame.src=`https://www.youtube-nocookie.com/embed/${btn.dataset.videoId}?autoplay=1&controls=1&rel=0&playsinline=1&fs=0&disablekb=1&iv_load_policy=3`;
     videoModal.showModal();
   });
   renderVideoLibrary();
