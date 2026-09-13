@@ -53,6 +53,7 @@ const vipVideos = [
   ['Ngosan (Ngobrol Santai) - Update 6 September 2026','NJfw71NKDYE']
 ] .map(([title,id],i)=>({number:String(i+1).padStart(2,'0'),title,id}));
 vipVideos[0].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/01-introduction-class.jpg';
+vipVideos[1].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/02-forex-by-the-numbers.jpg';
 
 const videoLibrary=document.getElementById('videoLibrary');
 const videoModal=document.getElementById('videoModal');
