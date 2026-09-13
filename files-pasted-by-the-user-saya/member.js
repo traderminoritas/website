@@ -152,25 +152,42 @@ if(videoPlay)videoPlay.onclick=()=>{if(!ytPlayer)return;ytPlayer.getPlayerState(
 if(videoSeek)videoSeek.oninput=()=>{if(ytPlayer){const d=ytPlayer.getDuration()||0;ytPlayer.seekTo(d*(+videoSeek.value/1000),true);syncVideoControls()}};
 if(videoMute)videoMute.onclick=()=>{if(!ytPlayer)return;ytPlayer.isMuted()?ytPlayer.unMute():ytPlayer.mute();syncVideoControls()};
 if(videoVolume)videoVolume.oninput=()=>{if(!ytPlayer)return;const v=+videoVolume.value;v===0?ytPlayer.mute():ytPlayer.unMute();ytPlayer.setVolume(v);syncVideoControls()};
+function enterCssFullscreen(){
+  if(!videoFrameWrap)return;
+  videoFrameWrap.classList.add('tm-css-fullscreen');
+  document.documentElement.classList.add('tm-video-open');
+  document.body.classList.add('tm-video-fullscreen');
+  videoFullscreen?.setAttribute('aria-label','Keluar layar penuh');
+}
+function exitCssFullscreen(){
+  videoFrameWrap?.classList.remove('tm-css-fullscreen');
+  document.documentElement.classList.remove('tm-video-open');
+  document.body.classList.remove('tm-video-fullscreen');
+  videoFullscreen?.setAttribute('aria-label','Layar penuh');
+}
 if(videoFullscreen)videoFullscreen.onclick=async()=>{
   if(!ytPlayer||!videoFrameWrap)return;
+  if(document.fullscreenElement){
+    try{await document.exitFullscreen()}catch(_){}
+    return;
+  }
+  if(videoFrameWrap.classList.contains('tm-css-fullscreen')){exitCssFullscreen();return;}
+  // Native fullscreen where the browser supports it.
   try{
-    if(document.fullscreenElement){await document.exitFullscreen();return;}
     if(videoFrameWrap.requestFullscreen){
       await videoFrameWrap.requestFullscreen({navigationUI:'hide'});
       return;
     }
-    const frame=ytPlayer.getIframe?.();
-    if(frame?.requestFullscreen){await frame.requestFullscreen({navigationUI:'hide'});return;}
-    if(frame?.webkitRequestFullscreen){frame.webkitRequestFullscreen();return;}
-  }catch(err){
-    const frame=ytPlayer.getIframe?.();
-    try{if(frame?.requestFullscreen)await frame.requestFullscreen();else if(frame?.webkitRequestFullscreen)frame.webkitRequestFullscreen();}catch(_){}
-  }
+  }catch(_){}
+  // Mobile Safari and some in-app browsers do not expose element fullscreen.
+  // Fall back to a true viewport-sized player inside the modal.
+  enterCssFullscreen();
 };
 
 document.addEventListener('fullscreenchange',()=>{
-  if(videoFullscreen)videoFullscreen.textContent=document.fullscreenElement?'⛶':'⛶';
+  if(!document.fullscreenElement && videoFrameWrap?.classList.contains('tm-css-fullscreen')===false){
+    videoFullscreen?.setAttribute('aria-label','Layar penuh');
+  }
 });
 
 
