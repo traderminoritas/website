@@ -51,7 +51,8 @@ const vipVideos = [
   ['Ngobrol Santai Berkualitas, Review Strategy, Update EA, dll - 9 Agustus 2026','7VynpmhQZgQ'],
   ['GRAND LAUNCHING - TRADER MINORITAS CHRONO HEATMAP','AJN-i0xh4h8'],
   ['Ngosan (Ngobrol Santai) - Update 6 September 2026','NJfw71NKDYE']
-].map(([title,id],i)=>({number:String(i+1).padStart(2,'0'),title,id}));
+] .map(([title,id],i)=>({number:String(i+1).padStart(2,'0'),title,id}));
+vipVideos[0].thumb='assets/vip/01-introduction-class.jpg';
 
 const videoLibrary=document.getElementById('videoLibrary');
 const videoModal=document.getElementById('videoModal');
@@ -130,7 +131,7 @@ if(videoLibrary){
   function renderVideoLibrary(){
     videoLibrary.innerHTML=vipVideos.map(v=>{
       const done=isDone(v.id);
-      return `<article class="video-card ${done?'is-complete':''}"><button class="video-thumb" data-video-id="${v.id}" data-video-title="${esc(v.title)}"><div class="video-thumb-art" aria-hidden="true"><span>TRADER<br>MINORITAS</span><strong>${v.number}</strong></div><span class="video-play">▶</span><b>${v.number}</b></button><div class="video-card-body"><div class="video-card-label"><small>MODUL VIP · VIDEO ${v.number}</small>${done?'<span class="complete-badge">✓ SELESAI</span>':''}</div><h3>${esc(v.title)}</h3><div class="video-actions"><button class="watch-video" data-video-id="${v.id}" data-video-title="${esc(v.title)}">Tonton video <span>→</span></button><button class="complete-video ${done?'done':''}" data-complete-id="${v.id}">${done?'✓ Sudah selesai':'○ Tandai selesai'}</button></div></div></article>`;
+      return `<article class="video-card ${done?'is-complete':''}"><button class="video-thumb" data-video-id="${v.id}" data-video-title="${esc(v.title)}">${v.thumb?`<img src="${v.thumb}" alt="" loading="lazy">`:`<div class="video-thumb-art" aria-hidden="true"><span>TRADER<br>MINORITAS</span><strong>${v.number}</strong></div>`}<span class="video-play">▶</span><b>${v.number}</b></button><div class="video-card-body"><div class="video-card-label"><small>MODUL VIP · VIDEO ${v.number}</small>${done?'<span class="complete-badge">✓ SELESAI</span>':''}</div><h3>${esc(v.title)}</h3><div class="video-actions"><button class="watch-video" data-video-id="${v.id}" data-video-title="${esc(v.title)}">Tonton video <span>→</span></button><button class="complete-video ${done?'done':''}" data-complete-id="${v.id}">${done?'✓ Sudah selesai':'○ Tandai selesai'}</button></div></div></article>`;
     }).join('');
   }
   function markComplete(id){
