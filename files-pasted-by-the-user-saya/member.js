@@ -1,4 +1,6 @@
-if(!sessionStorage.getItem('tmDemoMember'))location.replace('index.html');
+const WORKER_URL='https://tm-vip-video.bossrobot-id.workers.dev';
+const VIP_TOKEN=sessionStorage.getItem('tmVipToken');
+if(!VIP_TOKEN)location.replace('index.html');
 const officialLogoStyles=document.createElement('style');officialLogoStyles.textContent="aside .brand>b{font-size:0!important;background:#111 url('https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/Trader%20MInoritas%20logo.png') center/90% auto no-repeat!important;border-color:rgba(216,180,94,.45)!important}";document.head.appendChild(officialLogoStyles);
 const pages=document.querySelectorAll('.page'),side=document.getElementById('side'),crumb=document.getElementById('crumb');
 function openPage(id){pages.forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));crumb.textContent='DASHBOARD / '+id.toUpperCase().replace('LEARN','MODUL VIP').replace('JOURNAL','JOURNAL & BACKTEST');side.classList.remove('open');scrollTo({top:0,behavior:'smooth'})}
@@ -10,7 +12,7 @@ const modal=document.getElementById('modal'),toast=document.getElementById('toas
 
 /* =========================================================
    MODUL VIP — VIDEO LIBRARY
-   Source: everwealth.id/modul
+   Source: VIP video library
    No categories applied; preserve source order.
    ========================================================= */
 const vipVideos = [
@@ -65,50 +67,59 @@ const videoMute=document.getElementById('videoMute');
 const videoVolume=document.getElementById('videoVolume');
 const videoFullscreen=document.getElementById('videoFullscreen');
 const videoFrameWrap=document.querySelector('.video-frame-wrap');
-let activeVideoId=null,ytPlayer=null,ytApiPromise=null,ytTimer=null;
+let activeVideoId=null,videoPlayer=videoFrame,videoTimer=null;
 
-function loadYouTubeAPI(){
-  if(window.YT&&window.YT.Player)return Promise.resolve();
-  if(ytApiPromise)return ytApiPromise;
-  ytApiPromise=new Promise(resolve=>{
-    const previous=window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady=()=>{if(typeof previous==='function')previous();resolve()};
-    const tag=document.createElement('script');tag.src='https://www.youtube.com/iframe_api';document.head.appendChild(tag);
-  });
-  return ytApiPromise;
-}
-function formatTime(sec){sec=Math.max(0,Math.floor(sec||0));const m=Math.floor(sec/60),s=String(sec%60).padStart(2,'0');return `${m}:${s}`}
+function formatTime(sec){sec=Math.max(0,Math.floor(sec||0));const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=String(sec%60).padStart(2,'0');return h?`${h}:${String(m).padStart(2,'0')}:${s}`:`${m}:${s}`}
 function syncVideoControls(){
-  if(!ytPlayer||typeof ytPlayer.getDuration!=='function')return;
-  const duration=ytPlayer.getDuration()||0,current=ytPlayer.getCurrentTime()||0;
+  if(!videoPlayer)return;
+  const duration=videoPlayer.duration||0,current=videoPlayer.currentTime||0;
   if(videoSeek)videoSeek.value=duration?Math.round(current/duration*1000):0;
   if(videoTime)videoTime.textContent=`${formatTime(current)} / ${formatTime(duration)}`;
-  if(videoVolume)videoVolume.value=ytPlayer.isMuted()?0:ytPlayer.getVolume();
-  if(videoMute)videoMute.textContent=ytPlayer.isMuted()?'🔇':'🔊';
+  if(videoVolume)videoVolume.value=Math.round((videoPlayer.muted?0:videoPlayer.volume*100));
+  if(videoMute)videoMute.textContent=(videoPlayer.muted||videoPlayer.volume===0)?'🔇':'🔊';
+  if(videoPlay)videoPlay.textContent=videoPlayer.paused?'▶':'❚❚';
 }
-function startVideoTimer(){clearInterval(ytTimer);ytTimer=setInterval(syncVideoControls,500)}
-function stopVideoTimer(){clearInterval(ytTimer);ytTimer=null}
-function createYouTubePlayer(videoId){
-  loadYouTubeAPI().then(()=>{
-    if(ytPlayer){ytPlayer.loadVideoById(videoId);return}
-    ytPlayer=new YT.Player('videoFrame',{
-      width:'100%',height:'100%',videoId,
-      playerVars:{autoplay:1,controls:0,rel:0,playsinline:1,disablekb:1,iv_load_policy:3,fs:1,enablejsapi:1,origin:location.origin},
-      events:{
-        onReady:()=>{
-          const frame=ytPlayer.getIframe?.();
-          if(frame){ frame.setAttribute('allow','autoplay; encrypted-media; picture-in-picture; fullscreen'); frame.setAttribute('allowfullscreen',''); frame.allowFullscreen=true; }
-          startVideoTimer();syncVideoControls();
-        },
-        onStateChange:e=>{if(videoPlay)videoPlay.textContent=e.data===1?'❚❚':'▶';syncVideoControls()}
-      }
-    });
-  });
+function startVideoTimer(){clearInterval(videoTimer);videoTimer=setInterval(syncVideoControls,500)}
+function stopVideoTimer(){clearInterval(videoTimer);videoTimer=null}
+async function getSignedVideoUrl(file){
+  const token=sessionStorage.getItem('tmVipToken');
+  if(!token)throw new Error('Session login tidak ditemukan.');
+  const res=await fetch(`${WORKER_URL}/video-url?file=${encodeURIComponent(file)}`,{headers:{Authorization:`Bearer ${token}`}});
+  if(res.status===401){sessionStorage.removeItem('tmVipToken');sessionStorage.removeItem('tmDemoMember');throw new Error('Sesi login sudah berakhir. Silakan login kembali.');}
+  if(!res.ok)throw new Error('Gagal mendapatkan akses video.');
+  const data=await res.json();
+  if(!data.success||!data.url)throw new Error('Signed video URL tidak tersedia.');
+  return data.url;
+}
+async function createR2Player(file){
+  if(!videoPlayer)return;
+  videoPlayer.pause();
+  videoPlayer.removeAttribute('src');
+  videoPlayer.load();
+  videoPlayer.dataset.file=file;
+  if(videoPlay)videoPlay.textContent='…';
+  try{
+    const signedUrl=await getSignedVideoUrl(file);
+    if(activeVideoId!==file.replace(/\.mp4$/i,''))return;
+    videoPlayer.src=signedUrl;
+    videoPlayer.load();
+    await videoPlayer.play().catch(()=>{});
+    startVideoTimer();
+    syncVideoControls();
+  }catch(err){
+    stopVideoTimer();
+    videoPlayer.removeAttribute('src');
+    videoPlayer.load();
+    if(videoTime)videoTime.textContent=err.message||'Video gagal dimuat.';
+    if(videoPlay)videoPlay.textContent='▶';
+    toastMessage(err.message||'Video gagal dimuat.');
+  }
 }
 function closeVipVideo(){
   stopVideoTimer();
-  if(ytPlayer&&typeof ytPlayer.stopVideo==='function')ytPlayer.stopVideo();
-  if(document.fullscreenElement)document.exitFullscreen?.();
+  if(videoPlayer){videoPlayer.pause();videoPlayer.removeAttribute('src');videoPlayer.load();}
+  if(document.fullscreenElement)document.exitFullscreen?.().catch?.(()=>{});
+  exitCssFullscreen();
   videoModal?.close();activeVideoId=null;
 }
 
@@ -119,7 +130,7 @@ if(videoLibrary){
   function renderVideoLibrary(){
     videoLibrary.innerHTML=vipVideos.map(v=>{
       const done=isDone(v.id);
-      return `<article class="video-card ${done?'is-complete':''}"><button class="video-thumb" data-video-id="${v.id}" data-video-title="${esc(v.title)}"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="Thumbnail ${esc(v.title)}" loading="lazy"><span class="video-play">▶</span><b>${v.number}</b></button><div class="video-card-body"><div class="video-card-label"><small>MODUL VIP · VIDEO ${v.number}</small>${done?'<span class="complete-badge">✓ SELESAI</span>':''}</div><h3>${esc(v.title)}</h3><div class="video-actions"><button class="watch-video" data-video-id="${v.id}" data-video-title="${esc(v.title)}">Tonton video <span>→</span></button><button class="complete-video ${done?'done':''}" data-complete-id="${v.id}">${done?'✓ Sudah selesai':'○ Tandai selesai'}</button></div></div></article>`;
+      return `<article class="video-card ${done?'is-complete':''}"><button class="video-thumb" data-video-id="${v.id}" data-video-title="${esc(v.title)}"><div class="video-thumb-art" aria-hidden="true"><span>TRADER<br>MINORITAS</span><strong>${v.number}</strong></div><span class="video-play">▶</span><b>${v.number}</b></button><div class="video-card-body"><div class="video-card-label"><small>MODUL VIP · VIDEO ${v.number}</small>${done?'<span class="complete-badge">✓ SELESAI</span>':''}</div><h3>${esc(v.title)}</h3><div class="video-actions"><button class="watch-video" data-video-id="${v.id}" data-video-title="${esc(v.title)}">Tonton video <span>→</span></button><button class="complete-video ${done?'done':''}" data-complete-id="${v.id}">${done?'✓ Sudah selesai':'○ Tandai selesai'}</button></div></div></article>`;
     }).join('');
   }
   function markComplete(id){
@@ -132,9 +143,9 @@ if(videoLibrary){
     if(complete){markComplete(complete.dataset.completeId);return;}
     const btn=e.target.closest('[data-video-id]');if(!btn)return;
     localStorage.setItem('tmVipLast',btn.dataset.videoId);updateOverview();activeVideoId=btn.dataset.videoId;videoModalTitle.textContent=btn.dataset.videoTitle;
-    if(modalComplete){const done=isDone(activeVideoId);modalComplete.textContent=done?'✓ Sudah selesai':'✓ Tandai sudah selesai';modalComplete.classList.toggle('done',done);modalComplete.disabled=done;}
+    if(modalComplete){const done=isDone(activeVideoId);modalComplete.textContent=done?'✓ Sudah selesai':'✓ Tandai sudah selesai';modalComplete.classList.toggle('done',done);modalComplete.disabled=false;}
     videoModal.showModal();
-    createYouTubePlayer(activeVideoId);
+    createR2Player(`${activeVideoId}.mp4`);
   });
   renderVideoLibrary();
 }
@@ -148,10 +159,10 @@ function markVideoCompleteFromModal(id){
 if(closeVideo)closeVideo.onclick=closeVipVideo;
 if(videoModal)videoModal.addEventListener('click',e=>{if(e.target===videoModal)closeVipVideo()});
 
-if(videoPlay)videoPlay.onclick=()=>{if(!ytPlayer)return;ytPlayer.getPlayerState()===1?ytPlayer.pauseVideo():ytPlayer.playVideo()};
-if(videoSeek)videoSeek.oninput=()=>{if(ytPlayer){const d=ytPlayer.getDuration()||0;ytPlayer.seekTo(d*(+videoSeek.value/1000),true);syncVideoControls()}};
-if(videoMute)videoMute.onclick=()=>{if(!ytPlayer)return;ytPlayer.isMuted()?ytPlayer.unMute():ytPlayer.mute();syncVideoControls()};
-if(videoVolume)videoVolume.oninput=()=>{if(!ytPlayer)return;const v=+videoVolume.value;v===0?ytPlayer.mute():ytPlayer.unMute();ytPlayer.setVolume(v);syncVideoControls()};
+if(videoPlay)videoPlay.onclick=()=>{if(!videoPlayer)return;videoPlayer.paused?videoPlayer.play():videoPlayer.pause();syncVideoControls()};
+if(videoSeek)videoSeek.oninput=()=>{if(videoPlayer){const d=videoPlayer.duration||0;videoPlayer.currentTime=d*(+videoSeek.value/1000);syncVideoControls()}};
+if(videoMute)videoMute.onclick=()=>{if(!videoPlayer)return;videoPlayer.muted=!videoPlayer.muted;syncVideoControls()};
+if(videoVolume)videoVolume.oninput=()=>{if(!videoPlayer)return;const v=Math.max(0,Math.min(100,+videoVolume.value))/100;videoPlayer.volume=v;videoPlayer.muted=v===0;syncVideoControls()};
 function enterCssFullscreen(){
   if(!videoFrameWrap)return;
   videoFrameWrap.classList.add('tm-css-fullscreen');
@@ -166,30 +177,18 @@ function exitCssFullscreen(){
   videoFullscreen?.setAttribute('aria-label','Layar penuh');
 }
 if(videoFullscreen)videoFullscreen.onclick=async()=>{
-  if(!ytPlayer||!videoFrameWrap)return;
-  if(document.fullscreenElement){
-    try{await document.exitFullscreen()}catch(_){}
-    return;
-  }
+  if(!videoPlayer||!videoFrameWrap)return;
+  if(document.fullscreenElement){try{await document.exitFullscreen()}catch(_){}return;}
   if(videoFrameWrap.classList.contains('tm-css-fullscreen')){exitCssFullscreen();return;}
-  // Native fullscreen where the browser supports it.
-  try{
-    if(videoFrameWrap.requestFullscreen){
-      await videoFrameWrap.requestFullscreen({navigationUI:'hide'});
-      return;
-    }
-  }catch(_){}
-  // Mobile Safari and some in-app browsers do not expose element fullscreen.
-  // Fall back to a true viewport-sized player inside the modal.
+  try{if(videoFrameWrap.requestFullscreen){await videoFrameWrap.requestFullscreen({navigationUI:'hide'});return;}}catch(_){}
   enterCssFullscreen();
 };
-
 document.addEventListener('fullscreenchange',()=>{
-  if(!document.fullscreenElement && videoFrameWrap?.classList.contains('tm-css-fullscreen')===false){
-    videoFullscreen?.setAttribute('aria-label','Layar penuh');
-  }
+  if(!document.fullscreenElement&&!videoFrameWrap?.classList.contains('tm-css-fullscreen'))videoFullscreen?.setAttribute('aria-label','Layar penuh');
 });
-
+if(videoPlayer){
+  ['loadedmetadata','timeupdate','durationchange','play','pause','volumechange','ended'].forEach(ev=>videoPlayer.addEventListener(ev,syncVideoControls));
+}
 
 function toastMessage(message){const t=document.getElementById('toast');if(!t)return;t.textContent=message;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
 

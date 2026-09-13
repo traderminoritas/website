@@ -56,3 +56,15 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
 
 /* YouTube player uses custom controls so native YouTube link/share controls are not exposed. */
 @media(max-width:600px){.video-frame-wrap iframe{min-height:210px}}
+
+
+/* R2 HTML5 player */
+.video-frame-wrap video.video-player-host{display:block;width:100%;height:100%;object-fit:contain;background:#000;border:0}
+.video-frame-wrap.tm-css-fullscreen video.video-player-host{width:100%!important;height:100%!important;min-height:0!important;object-fit:contain}
+.video-frame-wrap:fullscreen video.video-player-host,.video-frame-wrap:-webkit-full-screen video.video-player-host{width:100%;height:100%;object-fit:contain}
+
+.video-thumb-art{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 45%,#343027 0,#191815 46%,#0b0b0a 100%);color:var(--gold);overflow:hidden}
+.video-thumb-art:before{content:"";position:absolute;width:180px;height:180px;border:1px solid rgba(213,176,92,.18);border-radius:50%;box-shadow:0 0 0 18px rgba(213,176,92,.03),0 0 0 36px rgba(213,176,92,.025)}
+.video-thumb-art span{position:relative;z-index:1;text-align:center;font:700 10px/1.35 'DM Mono';letter-spacing:2.5px;color:#eeeae0;opacity:.85}
+.video-thumb-art strong{position:absolute;left:12px;bottom:10px;z-index:2;font:8px 'DM Mono';letter-spacing:1px;color:#eeeae0;background:rgba(10,10,9,.72);padding:5px 7px;border:1px solid rgba(216,180,94,.3)}
+.video-card:hover .video-thumb-art{transform:scale(1.015);transition:transform .35s}

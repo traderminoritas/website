@@ -10,16 +10,33 @@ dialog.addEventListener('click', (event) => {
   if (event.target === dialog) dialog.close();
 });
 
-document.getElementById('loginForm').addEventListener('submit', (event) => {
+const TM_VIDEO_WORKER = 'https://tm-vip-video.bossrobot-id.workers.dev';
+
+document.getElementById('loginForm').addEventListener('submit', async (event) => {
   event.preventDefault();
   const email = document.getElementById('loginEmail').value.trim().toLowerCase();
   const password = document.getElementById('loginPassword').value;
-
-  if (email === 'member@tradminoritas.id' && password === 'TM2026!') {
+  const error = document.getElementById('loginError');
+  const submit = document.querySelector('#loginForm button[type=submit]');
+  error.textContent = '';
+  if (submit) { submit.disabled = true; submit.dataset.originalText = submit.innerHTML; submit.innerHTML = 'Memeriksa akses…'; }
+  try {
+    const response = await fetch(`${TM_VIDEO_WORKER}/auth`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: email, password })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.success || !data.token) {
+      throw new Error('Email atau password tidak sesuai.');
+    }
+    sessionStorage.setItem('tmVipToken', data.token);
     sessionStorage.setItem('tmDemoMember', 'Andi Mahendra');
     window.location.href = 'member.html';
-  } else {
-    document.getElementById('loginError').textContent = 'Email atau password demo belum sesuai.';
+  } catch (err) {
+    error.textContent = err.message || 'Login gagal. Silakan coba lagi.';
+  } finally {
+    if (submit) { submit.disabled = false; submit.innerHTML = submit.dataset.originalText || 'Masuk ke dashboard <span>→</span>'; }
   }
 });
 
