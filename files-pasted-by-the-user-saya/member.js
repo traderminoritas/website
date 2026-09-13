@@ -57,7 +57,56 @@ const videoFrame=document.getElementById('videoFrame');
 const videoModalTitle=document.getElementById('videoModalTitle');
 const closeVideo=document.getElementById('closeVideo');
 const modalComplete=document.getElementById('modalComplete');
-let activeVideoId=null;
+const videoControls=document.getElementById('videoControls');
+const videoPlay=document.getElementById('videoPlay');
+const videoSeek=document.getElementById('videoSeek');
+const videoTime=document.getElementById('videoTime');
+const videoMute=document.getElementById('videoMute');
+const videoVolume=document.getElementById('videoVolume');
+const videoFullscreen=document.getElementById('videoFullscreen');
+const videoFrameWrap=document.querySelector('.video-frame-wrap');
+let activeVideoId=null,ytPlayer=null,ytApiPromise=null,ytTimer=null;
+
+function loadYouTubeAPI(){
+  if(window.YT&&window.YT.Player)return Promise.resolve();
+  if(ytApiPromise)return ytApiPromise;
+  ytApiPromise=new Promise(resolve=>{
+    const previous=window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady=()=>{if(typeof previous==='function')previous();resolve()};
+    const tag=document.createElement('script');tag.src='https://www.youtube.com/iframe_api';document.head.appendChild(tag);
+  });
+  return ytApiPromise;
+}
+function formatTime(sec){sec=Math.max(0,Math.floor(sec||0));const m=Math.floor(sec/60),s=String(sec%60).padStart(2,'0');return `${m}:${s}`}
+function syncVideoControls(){
+  if(!ytPlayer||typeof ytPlayer.getDuration!=='function')return;
+  const duration=ytPlayer.getDuration()||0,current=ytPlayer.getCurrentTime()||0;
+  if(videoSeek)videoSeek.value=duration?Math.round(current/duration*1000):0;
+  if(videoTime)videoTime.textContent=`${formatTime(current)} / ${formatTime(duration)}`;
+  if(videoVolume)videoVolume.value=ytPlayer.isMuted()?0:ytPlayer.getVolume();
+  if(videoMute)videoMute.textContent=ytPlayer.isMuted()?'🔇':'🔊';
+}
+function startVideoTimer(){clearInterval(ytTimer);ytTimer=setInterval(syncVideoControls,500)}
+function stopVideoTimer(){clearInterval(ytTimer);ytTimer=null}
+function createYouTubePlayer(videoId){
+  loadYouTubeAPI().then(()=>{
+    if(ytPlayer){ytPlayer.loadVideoById(videoId);return}
+    ytPlayer=new YT.Player('videoFrame',{
+      videoId,
+      playerVars:{autoplay:1,controls:0,rel:0,playsinline:1,disablekb:1,iv_load_policy:3,origin:location.origin},
+      events:{
+        onReady:()=>{startVideoTimer();syncVideoControls()},
+        onStateChange:e=>{if(videoPlay)videoPlay.textContent=e.data===1?'❚❚':'▶';syncVideoControls()}
+      }
+    });
+  });
+}
+function closeVipVideo(){
+  stopVideoTimer();
+  if(ytPlayer&&typeof ytPlayer.stopVideo==='function')ytPlayer.stopVideo();
+  if(document.fullscreenElement)document.exitFullscreen?.();
+  videoModal?.close();activeVideoId=null;
+}
 
 if(videoLibrary){
   const completed=()=>JSON.parse(localStorage.getItem('tmVipCompleted')||'[]');
@@ -70,48 +119,36 @@ if(videoLibrary){
     }).join('');
   }
   function markComplete(id){
-    const list=completed();
-    const alreadyDone=list.includes(id);
-    const next=alreadyDone ? list.filter(item=>item!==id) : [...list,id];
-    localStorage.setItem('tmVipCompleted',JSON.stringify(next));
-    localStorage.setItem('tmVipLast',id);
-    renderVideoLibrary();
-    updateOverview();
-    toastMessage(alreadyDone ? 'Status materi dibatalkan. Progress belajar diperbarui.' : 'Materi ditandai sebagai selesai. Progress belajar diperbarui.');
+    const list=completed(),alreadyDone=list.includes(id),next=alreadyDone?list.filter(item=>item!==id):[...list,id];
+    localStorage.setItem('tmVipCompleted',JSON.stringify(next));localStorage.setItem('tmVipLast',id);renderVideoLibrary();updateOverview();
+    toastMessage(alreadyDone?'Status materi dibatalkan. Progress belajar diperbarui.':'Materi ditandai sebagai selesai. Progress belajar diperbarui.');
   }
   videoLibrary.addEventListener('click',e=>{
     const complete=e.target.closest('[data-complete-id]');
     if(complete){markComplete(complete.dataset.completeId);return;}
-    const btn=e.target.closest('[data-video-id]');
-    if(!btn)return;
-    localStorage.setItem('tmVipLast',btn.dataset.videoId);
-    updateOverview();
-    activeVideoId=btn.dataset.videoId;
-    videoModalTitle.textContent=btn.dataset.videoTitle;
+    const btn=e.target.closest('[data-video-id]');if(!btn)return;
+    localStorage.setItem('tmVipLast',btn.dataset.videoId);updateOverview();activeVideoId=btn.dataset.videoId;videoModalTitle.textContent=btn.dataset.videoTitle;
     if(modalComplete){const done=isDone(activeVideoId);modalComplete.textContent=done?'✓ Sudah selesai':'✓ Tandai sudah selesai';modalComplete.classList.toggle('done',done);modalComplete.disabled=done;}
-    videoFrame.src=`https://www.youtube-nocookie.com/embed/${btn.dataset.videoId}?autoplay=1&controls=1&rel=0&playsinline=1&fs=1&disablekb=1&iv_load_policy=3`;
     videoModal.showModal();
+    createYouTubePlayer(activeVideoId);
   });
   renderVideoLibrary();
 }
 if(modalComplete)modalComplete.onclick=()=>{if(activeVideoId)markVideoCompleteFromModal(activeVideoId)};
 function markVideoCompleteFromModal(id){
-  const list=JSON.parse(localStorage.getItem('tmVipCompleted')||'[]');
-  const alreadyDone=list.includes(id);
-  const next=alreadyDone ? list.filter(item=>item!==id) : [...list,id];
-  localStorage.setItem('tmVipCompleted',JSON.stringify(next));
-  localStorage.setItem('tmVipLast',id);
-  renderVideoLibrary();
-  updateOverview();
-  if(modalComplete){
-    modalComplete.textContent=alreadyDone?'○ Tandai sudah selesai':'✓ Sudah selesai';
-    modalComplete.classList.toggle('done',!alreadyDone);
-    modalComplete.disabled=false;
-  }
-  toastMessage(alreadyDone ? 'Status materi dibatalkan. Progress belajar diperbarui.' : 'Materi ditandai sebagai selesai. Progress belajar diperbarui.');
+  const list=JSON.parse(localStorage.getItem('tmVipCompleted')||'[]'),alreadyDone=list.includes(id),next=alreadyDone?list.filter(item=>item!==id):[...list,id];
+  localStorage.setItem('tmVipCompleted',JSON.stringify(next));localStorage.setItem('tmVipLast',id);renderVideoLibrary();updateOverview();
+  if(modalComplete){modalComplete.textContent=alreadyDone?'○ Tandai sudah selesai':'✓ Sudah selesai';modalComplete.classList.toggle('done',!alreadyDone);modalComplete.disabled=false;}
+  toastMessage(alreadyDone?'Status materi dibatalkan. Progress belajar diperbarui.':'Materi ditandai sebagai selesai. Progress belajar diperbarui.');
 }
-if(closeVideo)closeVideo.onclick=()=>{videoFrame.src='';videoModal.close();activeVideoId=null};
-if(videoModal)videoModal.addEventListener('click',e=>{if(e.target===videoModal){videoFrame.src='';videoModal.close()}});
+if(closeVideo)closeVideo.onclick=closeVipVideo;
+if(videoModal)videoModal.addEventListener('click',e=>{if(e.target===videoModal)closeVipVideo()});
+
+if(videoPlay)videoPlay.onclick=()=>{if(!ytPlayer)return;ytPlayer.getPlayerState()===1?ytPlayer.pauseVideo():ytPlayer.playVideo()};
+if(videoSeek)videoSeek.oninput=()=>{if(ytPlayer){const d=ytPlayer.getDuration()||0;ytPlayer.seekTo(d*(+videoSeek.value/1000),true);syncVideoControls()}};
+if(videoMute)videoMute.onclick=()=>{if(!ytPlayer)return;ytPlayer.isMuted()?ytPlayer.unMute():ytPlayer.mute();syncVideoControls()};
+if(videoVolume)videoVolume.oninput=()=>{if(!ytPlayer)return;const v=+videoVolume.value;v===0?ytPlayer.mute():ytPlayer.unMute();ytPlayer.setVolume(v);syncVideoControls()};
+if(videoFullscreen)videoFullscreen.onclick=()=>{if(!videoFrameWrap)return;if(document.fullscreenElement)document.exitFullscreen?.();else videoFrameWrap.requestFullscreen?.()};
 
 
 function toastMessage(message){const t=document.getElementById('toast');if(!t)return;t.textContent=message;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
