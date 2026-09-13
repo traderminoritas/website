@@ -54,6 +54,10 @@ const vipVideos = [
 ] .map(([title,id],i)=>({number:String(i+1).padStart(2,'0'),title,id}));
 vipVideos[0].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/01-introduction-class.jpg';
 vipVideos[1].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/02-forex-by-the-numbers.jpg';
+vipVideos[2].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/03-metode%26strategi-part1.jpg';
+vipVideos[3].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/04-backtest%26forwardtest.jpg';
+vipVideos[4].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/05-money-management.jpg';
+vipVideos[5].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/06-metode%26strategi-part2.jpg';
 
 const videoLibrary=document.getElementById('videoLibrary');
 const videoModal=document.getElementById('videoModal');
