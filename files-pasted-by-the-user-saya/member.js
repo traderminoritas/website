@@ -318,74 +318,60 @@ updateOverview();
 
 
 /* =========================================================
-   BACKTEST / FORWARD TEST — local workspace
+   BACKTEST + FORWARD TEST — unified local workspace
    ========================================================= */
 (function(){
-  const store={backtest:'tmBacktestTrades',forward:'tmForwardTrades'};
-  const configs={backtest:'tmBacktestConfig',forward:'tmForwardConfig'};
-  let activeMode='backtest';
+  const store={backtest:'tmTestingBacktestTrades',forward:'tmTestingForwardTrades'};
+  const configs={backtest:'tmTestingBacktestConfig',forward:'tmTestingForwardConfig'};
+  let activeMode='backtest',activeView='overall';
   const $=id=>document.getElementById(id);
   const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))}catch(_){return fallback}};
   const write=(key,val)=>localStorage.setItem(key,JSON.stringify(val));
   const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   const today=new Date().toISOString().slice(0,10);
-  const cfgDefaults={
-    backtest:{strategy:'',instrument:'XAUUSD',lot:.1,period:'',initial:1000,rules:''},
-    forward:{strategy:'',instrument:'XAUUSD',lot:.1,period:'',initial:1000,notes:''}
-  };
-  function getCfg(mode){return {...cfgDefaults[mode],...read(configs[mode],{})}}
-  function saveCfg(mode){
-    const c=getCfg(mode);
-    if(mode==='backtest')Object.assign(c,{strategy:$('btStrategy').value.trim(),instrument:$('btInstrument').value.trim(),lot:+$('btLot').value||.1,period:$('btPeriod').value.trim(),initial:+$('btInitial').value||1000,rules:$('btRules').value.trim()});
-    if(mode==='forward')Object.assign(c,{strategy:$('ftStrategy').value.trim(),instrument:$('ftInstrument').value.trim(),lot:+$('ftLot').value||.1,period:$('ftPeriod').value.trim(),initial:+$('ftInitial').value||1000,notes:$('ftNotes').value.trim()});
-    write(configs[mode],c);toastMessage('Konfigurasi test tersimpan.');renderMode(mode);
+  const cfgDefaults={strategy:'',instrument:'XAUUSD',lot:.01,period:'',initial:1000,rules:''};
+  function getCfg(){return {...cfgDefaults,...read(configs[activeMode],{})}}
+  function saveCfg(){
+    const c={strategy:$('testStrategy').value.trim(),instrument:$('testInstrument').value.trim()||'XAUUSD',lot:+$('testLot').value||.01,period:$('testPeriod').value.trim(),initial:+$('testInitial').value||1000,rules:$('testRules').value.trim()};
+    write(configs[activeMode],c);toastMessage('Konfigurasi test tersimpan.');render();
   }
-  function loadCfg(mode){
-    const c=getCfg(mode);
-    if(mode==='backtest'){$('btStrategy').value=c.strategy||'';$('btInstrument').value=c.instrument||'XAUUSD';$('btLot').value=c.lot??.1;$('btPeriod').value=c.period||'';$('btInitial').value=c.initial??1000;$('btRules').value=c.rules||''}
-    if(mode==='forward'){$('ftStrategy').value=c.strategy||'';$('ftInstrument').value=c.instrument||'XAUUSD';$('ftLot').value=c.lot??.1;$('ftPeriod').value=c.period||'';$('ftInitial').value=c.initial??1000;$('ftNotes').value=c.notes||''}
+  function loadCfg(){
+    const c=getCfg();$('testStrategy').value=c.strategy||'';$('testInstrument').value=c.instrument||'XAUUSD';$('testLot').value=c.lot??.01;$('testPeriod').value=c.period||'';$('testInitial').value=c.initial??1000;$('testRules').value=c.rules||'';
   }
-  function metrics(mode){
-    const trades=read(store[mode],[]),c=getCfg(mode),initial=+c.initial||1000;
-    let balance=initial,peak=initial,maxDD=0,win=0,loss=0,be=0,buy=0,sell=0,winStreak=0,lossStreak=0,currentW=0,currentL=0,gp=0,gl=0;
-    const rows=trades.map((t,i)=>{
-      const pl=+t.pl||0;balance+=pl;peak=Math.max(peak,balance);const dd=Math.max(0,peak-balance);maxDD=Math.max(maxDD,dd);
-      if(t.direction==='Buy')buy++;else sell++;
-      if(t.result==='win'){win++;currentW++;currentL=0;winStreak=Math.max(winStreak,currentW);gp+=Math.max(pl,0)}
-      else if(t.result==='loss'){loss++;currentL++;currentW=0;lossStreak=Math.max(lossStreak,currentL);gl+=Math.max(-pl,0)}
-      else{be++;currentW=0;currentL=0}
-      return {...t,num:i+1,balance,peak,dd,winStreak:currentW,lossStreak:currentL};
-    });
+  function metrics(){
+    const trades=read(store[activeMode],[]),c=getCfg(),initial=+c.initial||1000;
+    let balance=initial,peak=initial,maxDD=0,win=0,loss=0,be=0,buy=0,sell=0,currentW=0,currentL=0,winStreak=0,lossStreak=0,gp=0,gl=0;
+    const rows=trades.map((t,i)=>{const pl=+t.pl||0;balance+=pl;peak=Math.max(peak,balance);const dd=Math.max(0,peak-balance);maxDD=Math.max(maxDD,dd);if(t.direction==='Buy')buy++;else if(t.direction==='Sell')sell++;if(t.result==='win'){win++;currentW++;currentL=0;winStreak=Math.max(winStreak,currentW);gp+=Math.max(pl,0)}else if(t.result==='loss'){loss++;currentL++;currentW=0;lossStreak=Math.max(lossStreak,currentL);gl+=Math.max(-pl,0)}else{be++;currentW=0;currentL=0}return {...t,num:i+1,balance,peak,dd,winStreak:currentW,lossStreak:currentL}});
     return {trades,rows,initial,balance,peak,maxDD,win,loss,be,buy,sell,pf:gl?gp/gl:(gp?gp:0),winRate:trades.length?win/trades.length*100:0,conWins:winStreak,conLoss:lossStreak,recovery:maxDD?((balance-initial)/maxDD):0,avgWin:win?gp/win:0,avgLoss:loss?gl/loss:0};
   }
   function money(n){return (n<0?'−':'')+'$'+Math.abs(n).toFixed(2)}
   function pct(n){return n.toFixed(2)+'%'}
-  function statHTML(m){return `<b>NET PROFIT/LOSS<strong class="${(m.balance-m.initial)<0?'loss':''}">${money(m.balance-m.initial)}</strong></b><b>WIN RATE<strong>${pct(m.winRate)}</strong></b><b>PROFIT FACTOR<strong>${m.pf.toFixed(2)}</strong></b><b>MAX DRAWDOWN<strong class="${m.maxDD?'loss':''}">${money(m.maxDD)}${m.initial?` <small>(${pct(m.maxDD/m.initial*100)})</small>`:''}</strong></b><b>INITIAL DEPOSIT<strong>${money(m.initial)}</strong></b><b>TOTAL TRADES<strong>${m.trades.length}</strong></b><b>TOTAL WIN<strong>${m.win}</strong></b><b>TOTAL LOSS<strong>${m.loss}</strong></b><b>TOTAL BUY<strong>${m.buy}</strong></b><b>TOTAL SELL<strong>${m.sell}</strong></b><b>CONSECUTIVE WINS<strong>${m.conWins}</strong></b><b>CONSECUTIVE LOSSES<strong>${m.conLoss}</strong></b><b>RECOVERY FACTOR<strong>${m.recovery.toFixed(2)}</strong></b><b>AVG WIN / LOSS<strong>${money(m.avgWin)} / ${money(m.avgLoss)}</strong></b>`}
-  function tableHTML(mode,m){
-    if(!m.rows.length)return `<div class="empty-state"><b>Belum ada trade.</b><span>Tambahkan trade pertama untuk mulai membangun data ${mode==='backtest'?'backtest':'forward test'} Anda.</span></div>`;
-    return `<div class="trade-table-scroll"><div class="trade-table"><div class="trade-row trade-head"><span>#</span><span>TRADE</span><span>TYPE</span><span>WIN/LOSS</span><span>P/L (USD)</span><span>BALANCE</span><span>PEAK</span><span>DRAWDOWN</span><span>WIN STREAK</span><span>LOSS STREAK</span><span></span></div>${m.rows.map(t=>`<div class="trade-row"><span>${t.num}</span><span><b>${esc(t.instrument||'—')}</b><small>${esc(t.date||'')}</small></span><span><i class="${t.direction==='Sell'?'sell':''}">${esc(t.direction||'—').toUpperCase()}</i></span><span><i class="${t.result==='loss'?'sell':t.result==='be'?'be':''}">${t.result==='be'?'BE':t.result.toUpperCase()}</i></span><span class="${+t.pl<0?'loss':''}">${money(+t.pl||0)}</span><span>${money(t.balance)}</span><span>${money(t.peak)}</span><span class="${t.dd?'loss':''}">${money(t.dd)}</span><span>${t.winStreak}</span><span>${t.lossStreak}</span><button class="delete-trade" data-mode="${mode}" data-id="${esc(t.id)}" title="Hapus">×</button></div>`).join('')}</div></div>`;
+  function statHTML(m){return `<b>NET PROFIT/LOSS<strong class="${(m.balance-m.initial)<0?'loss':''}">${money(m.balance-m.initial)}</strong></b><b>WIN RATE<strong>${pct(m.winRate)}</strong></b><b>PROFIT FACTOR<strong>${m.pf.toFixed(2)}</strong></b><b>MAX DRAWDOWN<strong class="${m.maxDD?'loss':''}">${money(m.maxDD)} <small>(${pct(m.maxDD/m.initial*100)})</small></strong></b><b>INITIAL DEPOSIT<strong>${money(m.initial)}</strong></b><b>TOTAL TRADES<strong>${m.trades.length}</strong></b><b>TOTAL WIN<strong>${m.win}</strong></b><b>TOTAL LOSS<strong>${m.loss}</strong></b><b>TOTAL BUY<strong>${m.buy}</strong></b><b>TOTAL SELL<strong>${m.sell}</strong></b><b>CONSECUTIVE WINS<strong>${m.conWins}</strong></b><b>CONSECUTIVE LOSSES<strong>${m.conLoss}</strong></b><b>RECOVERY FACTOR<strong>${m.recovery.toFixed(2)}</strong></b><b>AVG WIN / LOSS<strong>${money(m.avgWin)} / ${money(m.avgLoss)}</strong></b>`}
+  function tableHTML(m){if(!m.rows.length)return `<div class="empty-state"><b>Belum ada trade.</b><span>Tambahkan trade pertama untuk mulai membangun data ${activeMode==='backtest'?'backtest':'forward test'} Anda.</span></div>`;return `<div class="trade-table-scroll"><div class="trade-table"><div class="trade-row trade-head"><span>#</span><span>TRADE</span><span>TYPE</span><span>WIN/LOSS</span><span>P/L (USD)</span><span>BALANCE</span><span>PEAK</span><span>DRAWDOWN</span><span>WIN STREAK</span><span>LOSS STREAK</span><span></span></div>${m.rows.map(t=>`<div class="trade-row"><span>${t.num}</span><span><b>${esc(t.instrument||'—')}</b><small>${esc(t.date||'')}</small></span><span><i class="${t.direction==='Sell'?'sell':''}">${esc(t.direction||'—').toUpperCase()}</i></span><span><i class="${t.result==='loss'?'sell':t.result==='be'?'be':''}">${t.result==='be'?'BE':t.result.toUpperCase()}</i></span><span class="${+t.pl<0?'loss':''}">${money(+t.pl||0)}</span><span>${money(t.balance)}</span><span>${money(t.peak)}</span><span class="${t.dd?'loss':''}">${money(t.dd)}</span><span>${t.winStreak}</span><span>${t.lossStreak}</span><button class="delete-trade" data-id="${esc(t.id)}" title="Hapus">×</button></div>`).join('')}</div></div>`}
+  function monthHTML(m){
+    if(!m.rows.length)return '<div class="empty-state"><b>Belum ada data bulanan.</b><span>Tambahkan trade untuk melihat performa per bulan.</span></div>';
+    const groups={};m.rows.forEach(r=>{const key=(r.date||'').slice(0,7)||'Tanpa tanggal';(groups[key]??=[]).push(r)});
+    const rows=Object.entries(groups).sort((a,b)=>a[0].localeCompare(b[0])).map(([month,rs])=>{const pl=rs.reduce((a,x)=>a+(+x.pl||0),0),w=rs.filter(x=>x.result==='win').length,l=rs.filter(x=>x.result==='loss').length;return `<div class="period-row"><b>${esc(month)}</b><span>${rs.length} trades</span><span>${w} W / ${l} L</span><strong class="${pl<0?'loss':''}">${money(pl)}</strong><span>${pct(rs.length?w/rs.length*100:0)}</span></div>`}).join('');
+    return `<div class="period-table"><div class="period-head"><span>MONTH</span><span>TRADES</span><span>RESULT</span><span>P/L (USD)</span><span>WIN RATE</span></div>${rows}</div>`;
   }
-  function drawChart(mode,m){
-    const el=$(mode==='backtest'?'btChart':'ftChart');if(!el)return;const svg=el.querySelector('svg');const vals=[m.initial,...m.rows.map(x=>x.balance)];const W=600,H=220,pad=18,min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;const pts=vals.map((v,i)=>`${pad+(i/(Math.max(vals.length-1,1)))*(W-pad*2)},${H-pad-((v-min)/range)*(H-pad*2)}`).join(' ');svg.innerHTML=`<line x1="18" y1="202" x2="582" y2="202" class="chart-axis"/><polyline points="${pts}" class="chart-line"/>`;
+  function growthHTML(m){
+    if(!m.rows.length)return '<div class="empty-state"><b>Belum ada growth data.</b><span>Tambahkan trade untuk melihat pertumbuhan modal.</span></div>';
+    const rows=m.rows.map(r=>`<div class="period-row"><b>Trade ${r.num}</b><span>${esc(r.date||'—')}</span><span>Balance</span><strong>${money(r.balance)}</strong><span>${pct((r.balance-m.initial)/m.initial*100)}</span></div>`).join('');
+    return `<div class="growth-head"><b>INITIAL</b><strong>${money(m.initial)}</strong><b>CURRENT</b><strong>${money(m.balance)}</strong><b>GROWTH</b><strong class="${m.balance<m.initial?'loss':''}">${pct((m.balance-m.initial)/m.initial*100)}</strong></div><div class="period-table"><div class="period-head"><span>TRADE</span><span>DATE</span><span>TYPE</span><span>BALANCE</span><span>GROWTH</span></div>${rows}</div>`;
   }
-  function renderMode(mode){const m=metrics(mode);if(mode==='backtest'){$('btStats').innerHTML=statHTML(m);$('btTable').innerHTML=tableHTML(mode,m);$('btTradeCount').textContent=m.trades.length+' TRADES';drawChart(mode,m)}if(mode==='forward'){$('ftStats').innerHTML=statHTML(m);$('ftTable').innerHTML=tableHTML(mode,m);$('ftTradeCount').textContent=m.trades.length+' TRADES';drawChart(mode,m)}}
-  function openTrade(mode){activeMode=mode;const c=getCfg(mode);$('tradeModalKicker').textContent=mode==='backtest'?'BACKTEST TRADE':'FORWARD TEST TRADE';$('tradeModalTitle').textContent=mode==='backtest'?'Catat hasil backtest.':'Catat hasil forward test.';$('tradeForm').reset();$('tradeInstrument').value=c.instrument||'';$('tradeDate').value=today;$('tradePL').value=0;updateAutoPL();modal.showModal()}
-  ['backtestAddTrade','forwardAddTrade'].forEach((id,i)=>$(id)?.addEventListener('click',()=>openTrade(['backtest','forward'][i])));
-  $('btSaveConfig')?.addEventListener('click',()=>saveCfg('backtest'));$('ftSaveConfig')?.addEventListener('click',()=>saveCfg('forward'));
-  function updateAutoPL(){
-    const result=$('tradeResult')?.value,lot=+getCfg(activeMode).lot||.1,entry=+$('tradeEntry')?.value||0,sl=+$('tradeSL')?.value||0,tp=+$('tradeTP')?.value||0,instrument=($('tradeInstrument')?.value||'').trim().toUpperCase();
-    let pl=0;if(result==='win'&&entry&&tp&&lot)pl=Math.abs(tp-entry)*lot*(instrument.includes('XAU')?100:100);else if(result==='loss'&&entry&&sl&&lot)pl=-Math.abs(sl-entry)*lot*(instrument.includes('XAU')?100:100);$('tradePL').value=pl.toFixed(2);
-  }
+  function renderSummary(m){const panel=$('testSummaryPanel');if(!panel)return;if(activeView==='month')panel.innerHTML=`<p class="kicker">PER MONTH</p><h2>Performance per bulan.</h2>${monthHTML(m)}`;else if(activeView==='growth')panel.innerHTML=`<p class="kicker">GROWTH</p><h2>Perkembangan balance.</h2>${growthHTML(m)}`;else panel.innerHTML=`<p class="kicker">OVERALL</p><h2>Ringkasan hasil test.</h2><p class="summary-copy">Semua hasil dihitung dari trade yang tersimpan pada ${activeMode==='backtest'?'Backtest':'Forward Test'} ini.</p>`}
+  function drawChart(m){const el=$('testChart');if(!el)return;const svg=el.querySelector('svg'),vals=[m.initial,...m.rows.map(x=>x.balance)],W=600,H=220,pad=18,min=Math.min(...vals),max=Math.max(...vals),range=max-min||1,pts=vals.map((v,i)=>`${pad+(i/Math.max(vals.length-1,1))*(W-pad*2)},${H-pad-((v-min)/range)*(H-pad*2)}`).join(' ');svg.innerHTML=`<line x1="18" y1="202" x2="582" y2="202" class="chart-axis"/><polyline points="${pts}" class="chart-line"/>`}
+  function render(){const m=metrics();loadCfg();$('testStats').innerHTML=statHTML(m);$('testTable').innerHTML=tableHTML(m);$('testTradeCount').textContent=m.trades.length+' TRADES';$('testLogKicker').textContent=(activeMode==='backtest'?'BACKTEST':'FORWARD TEST')+' LOG';renderSummary(m);drawChart(m);document.querySelectorAll('[data-test-mode]').forEach(b=>b.classList.toggle('active',b.dataset.testMode===activeMode));}
+  function openTrade(){const c=getCfg();$('tradeModalKicker').textContent=activeMode==='backtest'?'BACKTEST TRADE':'FORWARD TEST TRADE';$('tradeModalTitle').textContent=activeMode==='backtest'?'Catat hasil backtest.':'Catat hasil forward test.';$('tradeForm').reset();$('tradeInstrument').value=c.instrument||'';$('tradeDate').value=today;$('tradePL').value=0;updateAutoPL();modal.showModal()}
+  function updateAutoPL(){const result=$('tradeResult')?.value,lot=+getCfg().lot||.01,entry=+$('tradeEntry')?.value||0,sl=+$('tradeSL')?.value||0,tp=+$('tradeTP')?.value||0,instrument=($('tradeInstrument')?.value||'').trim().toUpperCase();let pl=0;if(result==='win'&&entry&&tp&&lot)pl=Math.abs(tp-entry)*lot*100;if(result==='loss'&&entry&&sl&&lot)pl=-Math.abs(sl-entry)*lot*100;$('tradePL').value=pl.toFixed(2)}
+  function downloadText(name,text,type){const a=document.createElement('a');const url=URL.createObjectURL(new Blob([text],{type}));a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500)}
+  function exportAll(){const payload={version:1,exportedAt:new Date().toISOString(),backtest:{config:read(configs.backtest,cfgDefaults),trades:read(store.backtest,[])},forward:{config:read(configs.forward,cfgDefaults),trades:read(store.forward,[])}};downloadText('TM_Backtest_ForwardTest_Save.json',JSON.stringify(payload,null,2),'application/json');toastMessage('Data test berhasil disimpan ke file.');}
+  function importAll(file){const reader=new FileReader();reader.onload=()=>{try{const p=JSON.parse(reader.result);if(!p.backtest&&!p.forward)throw Error('Format file tidak dikenali');if(p.backtest){write(configs.backtest,p.backtest.config||cfgDefaults);write(store.backtest,Array.isArray(p.backtest.trades)?p.backtest.trades:[])}if(p.forward){write(configs.forward,p.forward.config||cfgDefaults);write(store.forward,Array.isArray(p.forward.trades)?p.forward.trades:[])}loadCfg();render();toastMessage('Data test berhasil di-import.');}catch(e){toastMessage('File import tidak valid.');}};reader.readAsText(file)}
+  $('testingAddTrade')?.addEventListener('click',openTrade);$('testSaveConfig')?.addEventListener('click',saveCfg);$('testingExport')?.addEventListener('click',exportAll);$('testingImport')?.addEventListener('click',()=>$('testingImportFile').click());$('testingImportFile')?.addEventListener('change',e=>{if(e.target.files[0])importAll(e.target.files[0]);e.target.value='' });
+  document.querySelectorAll('[data-test-mode]').forEach(b=>b.addEventListener('click',()=>{activeMode=b.dataset.testMode;activeView='overall';render()}));
+  document.querySelectorAll('#testingSummaryTabs button').forEach(b=>b.addEventListener('click',()=>{activeView=b.dataset.view;document.querySelectorAll('#testingSummaryTabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()}));
   ['tradeResult','tradeEntry','tradeSL','tradeTP','tradeInstrument'].forEach(id=>$(id)?.addEventListener('input',updateAutoPL));
-  $('tradeForm')?.addEventListener('submit',e=>{e.preventDefault();updateAutoPL();const mode=activeMode,arr=read(store[mode],[]),c=getCfg(mode);arr.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),instrument:$('tradeInstrument').value.trim(),direction:$('tradeDirection').value,result:$('tradeResult').value,lot:+c.lot||.1,entry:+$('tradeEntry').value||0,sl:+$('tradeSL').value||0,tp:+$('tradeTP').value||0,pl:+$('tradePL').value||0,date:$('tradeDate').value,exitDate:$('tradeExitDate').value});write(store[mode],arr);modal.close();renderMode(mode);toastMessage('Trade tersimpan. Statistik diperbarui otomatis.')});
-  document.addEventListener('click',e=>{const b=e.target.closest('.delete-trade');if(!b)return;const mode=b.dataset.mode,arr=read(store[mode],[]).filter(t=>t.id!==b.dataset.id);write(store[mode],arr);renderMode(mode);toastMessage('Trade dihapus.')});
-  function downloadText(name,text,type='text/csv'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
-  const csvHeader='Trade,Direction,Result,Profit/Loss (USD),Entry Price,Stop Loss,Take Profit,Entry Date,Exit Date';
-  function csvCell(v){return '"'+String(v??'').replaceAll('"','""')+'"'}
-  function exportMode(mode){const rows=read(store[mode],[]);const csv=[csvHeader,...rows.map((x,i)=>[i+1,x.direction,x.result,x.pl,x.entry,x.sl,x.tp,x.date,x.exitDate].map(csvCell).join(','))].join('\n');downloadText(`TM_${mode}_trading_data.csv`,csv)}
-  function downloadTemplate(mode){downloadText(`TM_${mode}_template.csv`,csvHeader+'\n1,Buy,win,100,4000,3997.5,4010,2026-09-15,2026-09-15')}
-  document.querySelectorAll('[data-export]').forEach(b=>b.addEventListener('click',()=>exportMode(b.dataset.export)));
-  document.querySelectorAll('[data-template]').forEach(b=>b.addEventListener('click',()=>downloadTemplate(b.dataset.template)));
-  document.querySelectorAll('.summary-tabs button').forEach(btn=>btn.addEventListener('click',()=>{const wrap=btn.closest('.summary-tabs');wrap.querySelectorAll('button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');toastMessage(btn.textContent+' summary — siap dikembangkan ke analisis periode.') }));
-  loadCfg('backtest');loadCfg('forward');renderMode('backtest');renderMode('forward');
+  $('tradeForm')?.addEventListener('submit',e=>{e.preventDefault();updateAutoPL();const arr=read(store[activeMode],[]),c=getCfg();arr.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),instrument:$('tradeInstrument').value.trim(),direction:$('tradeDirection').value,result:$('tradeResult').value,lot:+c.lot||.01,entry:+$('tradeEntry').value||0,sl:+$('tradeSL').value||0,tp:+$('tradeTP').value||0,pl:+$('tradePL').value||0,date:$('tradeDate').value,exitDate:$('tradeExitDate').value});write(store[activeMode],arr);modal.close();render();toastMessage('Trade tersimpan. Statistik diperbarui otomatis.')});
+  document.addEventListener('click',e=>{const b=e.target.closest('.delete-trade');if(!b)return;const arr=read(store[activeMode],[]).filter(t=>t.id!==b.dataset.id);write(store[activeMode],arr);render();toastMessage('Trade dihapus.')});
+  render();
 })();
