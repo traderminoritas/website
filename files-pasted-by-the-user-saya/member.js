@@ -108,6 +108,46 @@ const videoFrameWrap=document.querySelector('.video-frame-wrap');
 let activeVideoId=null,videoPlayer=videoFrame,videoTimer=null;
 let videoPlaybackRate=1;
 let videoSpeedButton=null;
+let videoControlsHideTimer=null;
+
+// Auto-hide the custom player controls while the video is playing.
+(function setupAutoHideControls(){
+  if(!videoControls || document.getElementById('tmAutoHideVideoControls'))return;
+  const style=document.createElement('style');
+  style.id='tmAutoHideVideoControls';
+  style.textContent=`
+    #videoControls{opacity:1;transform:translateY(0);transition:opacity .22s ease,transform .22s ease;}
+    #videoControls.tm-controls-hidden{opacity:0;transform:translateY(10px);pointer-events:none;}
+    .video-frame-wrap{cursor:default;}
+    @media (prefers-reduced-motion:reduce){#videoControls{transition:none;}}
+  `;
+  document.head.appendChild(style);
+
+  const showControls=()=>{
+    videoControls.classList.remove('tm-controls-hidden');
+    clearTimeout(videoControlsHideTimer);
+    if(videoPlayer && !videoPlayer.paused){
+      videoControlsHideTimer=setTimeout(()=>videoControls.classList.add('tm-controls-hidden'),2500);
+    }
+  };
+  const hideControls=()=>{
+    clearTimeout(videoControlsHideTimer);
+    videoControlsHideTimer=null;
+    if(videoPlayer && !videoPlayer.paused)videoControls.classList.add('tm-controls-hidden');
+  };
+  const handleActivity=()=>showControls();
+  videoFrameWrap?.addEventListener('mousemove',handleActivity,{passive:true});
+  videoFrameWrap?.addEventListener('pointermove',handleActivity,{passive:true});
+  videoFrameWrap?.addEventListener('touchstart',handleActivity,{passive:true});
+  videoControls.addEventListener('mouseenter',()=>showControls());
+  videoControls.addEventListener('focusin',()=>showControls());
+  videoControls.addEventListener('mouseleave',()=>{if(videoPlayer&&!videoPlayer.paused)hideControls();});
+  videoControls.addEventListener('focusout',()=>{if(videoPlayer&&!videoPlayer.paused)showControls();});
+  videoPlayer?.addEventListener('play',showControls);
+  videoPlayer?.addEventListener('pause',()=>{clearTimeout(videoControlsHideTimer);videoControlsHideTimer=null;videoControls.classList.remove('tm-controls-hidden');});
+  videoPlayer?.addEventListener('ended',()=>{clearTimeout(videoControlsHideTimer);videoControlsHideTimer=null;videoControls.classList.remove('tm-controls-hidden');});
+  window.tmShowVideoControls=showControls;
+})();
 
 // Compact playback-speed control, injected into the existing custom player controls.
 if(videoControls && !document.getElementById('videoSpeed')){
@@ -153,6 +193,7 @@ async function getSignedVideoUrl(file){
 }
 async function createR2Player(file){
   if(!videoPlayer)return;
+  window.tmShowVideoControls?.();
   videoPlayer.pause();
   videoPlayer.removeAttribute('src');
   videoPlayer.load();
@@ -177,6 +218,9 @@ async function createR2Player(file){
   }
 }
 function closeVipVideo(){
+  clearTimeout(videoControlsHideTimer);
+  videoControlsHideTimer=null;
+  videoControls?.classList.remove('tm-controls-hidden');
   stopVideoTimer();
   if(videoPlayer){videoPlayer.pause();videoPlayer.removeAttribute('src');videoPlayer.load();}
   if(document.fullscreenElement)document.exitFullscreen?.().catch?.(()=>{});
