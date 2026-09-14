@@ -106,6 +106,28 @@ const videoVolume=document.getElementById('videoVolume');
 const videoFullscreen=document.getElementById('videoFullscreen');
 const videoFrameWrap=document.querySelector('.video-frame-wrap');
 let activeVideoId=null,videoPlayer=videoFrame,videoTimer=null;
+let videoPlaybackRate=1;
+let videoSpeedButton=null;
+
+// Compact playback-speed control, injected into the existing custom player controls.
+if(videoControls && !document.getElementById('videoSpeed')){
+  videoSpeedButton=document.createElement('button');
+  videoSpeedButton.type='button';
+  videoSpeedButton.id='videoSpeed';
+  videoSpeedButton.textContent='1×';
+  videoSpeedButton.setAttribute('aria-label','Kecepatan pemutaran 1×');
+  videoSpeedButton.title='Kecepatan pemutaran';
+  videoSpeedButton.style.cssText='min-width:42px;height:34px;padding:0 8px;border:1px solid rgba(212,175,55,.38);border-radius:7px;background:rgba(20,20,18,.92);color:#f1d27a;font:600 12px/1 Arial,sans-serif;cursor:pointer;';
+  const speedRates=[0.5,0.75,1,1.25,1.5,1.75,2];
+  videoSpeedButton.addEventListener('click',()=>{
+    const i=speedRates.indexOf(videoPlaybackRate);
+    videoPlaybackRate=speedRates[(i+1)%speedRates.length];
+    if(videoPlayer)videoPlayer.playbackRate=videoPlaybackRate;
+    videoSpeedButton.textContent=`${videoPlaybackRate}×`;
+    videoSpeedButton.setAttribute('aria-label',`Kecepatan pemutaran ${videoPlaybackRate}×`);
+  });
+  videoControls.insertBefore(videoSpeedButton,videoFullscreen||null);
+}
 
 function formatTime(sec){sec=Math.max(0,Math.floor(sec||0));const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=String(sec%60).padStart(2,'0');return h?`${h}:${String(m).padStart(2,'0')}:${s}`:`${m}:${s}`}
 function syncVideoControls(){
@@ -140,6 +162,7 @@ async function createR2Player(file){
     const signedUrl=await getSignedVideoUrl(file);
     if(activeVideoId!==file.replace(/\.mp4$/i,''))return;
     videoPlayer.src=signedUrl;
+    videoPlayer.playbackRate=videoPlaybackRate;
     videoPlayer.load();
     await videoPlayer.play().catch(()=>{});
     startVideoTimer();
