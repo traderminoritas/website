@@ -8,41 +8,7 @@ document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>openPage(b.dat
 const tool={lot:{type:'POSITION SIZING',title:'Lot Size Calculator',desc:'Tentukan posisi berdasarkan batas risiko Anda.',fields:[['Modal akun','balance',1000],['Risiko per transaksi (%)','risk',1],['Stop loss (pips)','sl',30]],calc:v=>[['RISIKO MAKSIMUM','$'+(v.balance*v.risk/100).toFixed(2)],['UKURAN POSISI',(v.balance*v.risk/100/(v.sl*10||1)).toFixed(2)+' lot']]},rr:{type:'RISK ANALYSIS',title:'Risk / Reward Calculator',desc:'Bandingkan potensi kerugian dan target sebelum entry.',fields:[['Entry price','entry',1.085],['Stop loss','stop',1.08],['Take profit','tp',1.0975]],calc:v=>[['RISIKO',Math.abs(v.entry-v.stop).toFixed(4)],['RISK : REWARD','1 : '+(Math.abs(v.tp-v.entry)/(Math.abs(v.entry-v.stop)||1)).toFixed(2)]]},comp:{type:'GROWTH PLAN',title:'Compounding Calculator',desc:'Visualisasikan pertumbuhan modal dengan target realistis.',fields:[['Modal awal','capital',1000],['Target per bulan (%)','rate',5],['Durasi (bulan)','months',12]],calc:v=>[['PROYEKSI MODAL','$'+(v.capital*Math.pow(1+v.rate/100,v.months)).toFixed(2)],['PERTUMBUHAN','$'+(v.capital*Math.pow(1+v.rate/100,v.months)-v.capital).toFixed(2)]]}};
 function render(type='lot'){let t=tool[type];
 
-vipVideos[0].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/01-introduction-class.jpg';
-vipVideos[1].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/02-forex-by-the-numbers.jpg';
-vipVideos[2].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/03-metode%26strategi-part1.jpg';
-vipVideos[3].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/04-backtest%26forwardtest.jpg';
-vipVideos[4].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/05-money-management.jpg';
-vipVideos[5].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/06-metode%26strategi-part2.jpg';
-vipVideos[6].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/07-ngosan.jpg';
-vipVideos[7].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/08-foundation.jpg';
-vipVideos[8].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/09-dow-theory-part1.jpg';
-vipVideos[9].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/10-dow-theory-part2.jpg';
-vipVideos[10].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/11-support-resistance.jpg';
-vipVideos[11].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/12-candlestick.jpg';
-vipVideos[12].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/13-chartpattern.jpg';
-vipVideos[13].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/14-divergence.jpg';
-vipVideos[14].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/15-bollingerbands.jpg';
-vipVideos[15].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/16-survival-first-profit-later.jpg';
-vipVideos[16].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/17-EA-Auto-TP-SL-Launching.jpg';
-vipVideos[17].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/18-ngosan.jpg';
-vipVideos[18].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/19-trading-psychology.jpg';
-vipVideos[19].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/20-ngosan.jpg';
-vipVideos[20].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/21-new-beginning.jpg';
-vipVideos[21].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/22-new-edge.jpg';
-vipVideos[22].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/23-new-edge-2.jpg';
-vipVideos[23].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/24-new-project.jpg';
-vipVideos[24].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/25-grand-launching-EA-global-auto-tp-sl.jpg';
-vipVideos[25].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/26-sharing-by-member-vip-darcey.jpg';
-vipVideos[26].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/27-breakout-omsis.jpg';
-vipVideos[27].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/28-sharing-by-member-bangtama.jpg';
-vipVideos[28].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/29-ngosan.jpg';
-vipVideos[29].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/30-wonders-of-the-world.jpg';
-vipVideos[30].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/31-anniversary-preparation.jpg';
-vipVideos[31].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/32-scalping-edge-sharing-61%25winrate-mr.tama.jpg';
-vipVideos[32].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/33-ngobrol-santai-berkualitas.jpg';
-vipVideos[33].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/34-grand-launching-chrono-heatmap.jpg';
-vipVideos[34].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/35-ngosan.jpg';document.getElementById('calcType').textContent=t.type;document.getElementById('calcTitle').textContent=t.title;document.getElementById('calcDesc').textContent=t.desc;let box=document.getElementById('calcForm');box.innerHTML='<div class="calc-fields">'+t.fields.map(f=>`<label>${f[0]}<input id="${f[1]}" type="number" step="any" value="${f[2]}"></label>`).join('')+'</div><div class="calc-result" id="resultBox"></div>';let update=()=>{let v=Object.fromEntries(t.fields.map(f=>[f[1],+document.getElementById(f[1]).value||0]));document.getElementById('resultBox').innerHTML=t.calc(v).map(r=>`<div><small>${r[0]}</small><b>${r[1]}</b></div>`).join('')};t.fields.forEach(f=>document.getElementById(f[1]).oninput=update);update()};document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{render(b.dataset.tool);document.querySelectorAll('.toolcards article').forEach(a=>a.classList.remove('selected'));b.closest('article').classList.add('selected')});render();
+document.getElementById('calcType').textContent=t.type;document.getElementById('calcTitle').textContent=t.title;document.getElementById('calcDesc').textContent=t.desc;let box=document.getElementById('calcForm');box.innerHTML='<div class="calc-fields">'+t.fields.map(f=>`<label>${f[0]}<input id="${f[1]}" type="number" step="any" value="${f[2]}"></label>`).join('')+'</div><div class="calc-result" id="resultBox"></div>';let update=()=>{let v=Object.fromEntries(t.fields.map(f=>[f[1],+document.getElementById(f[1]).value||0]));document.getElementById('resultBox').innerHTML=t.calc(v).map(r=>`<div><small>${r[0]}</small><b>${r[1]}</b></div>`).join('')};t.fields.forEach(f=>document.getElementById(f[1]).oninput=update);update()};document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{render(b.dataset.tool);document.querySelectorAll('.toolcards article').forEach(a=>a.classList.remove('selected'));b.closest('article').classList.add('selected')});render();
 const modal=document.getElementById('modal'),toast=document.getElementById('toast');document.getElementById('newTrade').onclick=()=>modal.showModal();document.getElementById('close').onclick=()=>modal.close();document.getElementById('tradeForm').onsubmit=e=>{e.preventDefault();modal.close();toast.textContent='Transaksi tersimpan di jurnal demo.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3000)};document.getElementById('profileForm').onsubmit=e=>e.preventDefault();document.getElementById('profileForm').querySelector('button').onclick=()=>{toast.textContent='Profile tersimpan di sesi demo.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3000)};
 
 
@@ -88,6 +54,42 @@ const vipVideos = [
   ['GRAND LAUNCHING - TRADER MINORITAS CHRONO HEATMAP','AJN-i0xh4h8'],
   ['Ngosan (Ngobrol Santai) - Update 6 September 2026','NJfw71NKDYE']
 ] .map(([title,id],i)=>({number:String(i+1).padStart(2,'0'),title,id}));
+vipVideos[0].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/01-introduction-class.jpg';
+vipVideos[1].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/02-forex-by-the-numbers.jpg';
+vipVideos[2].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/03-metode%26strategi-part1.jpg';
+vipVideos[3].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/04-backtest%26forwardtest.jpg';
+vipVideos[4].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/05-money-management.jpg';
+vipVideos[5].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/06-metode%26strategi-part2.jpg';
+vipVideos[6].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/07-ngosan.jpg';
+vipVideos[7].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/08-foundation.jpg';
+vipVideos[8].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/09-dow-theory-part1.jpg';
+vipVideos[9].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/10-dow-theory-part2.jpg';
+vipVideos[10].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/11-support-resistance.jpg';
+vipVideos[11].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/12-candlestick.jpg';
+vipVideos[12].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/13-chartpattern.jpg';
+vipVideos[13].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/14-divergence.jpg';
+vipVideos[14].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/15-bollingerbands.jpg';
+vipVideos[15].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/16-survival-first-profit-later.jpg';
+vipVideos[16].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/17-EA-Auto-TP-SL-Launching.jpg';
+vipVideos[17].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/18-ngosan.jpg';
+vipVideos[18].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/19-trading-psychology.jpg';
+vipVideos[19].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/20-ngosan.jpg';
+vipVideos[20].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/21-new-beginning.jpg';
+vipVideos[21].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/22-new-edge.jpg';
+vipVideos[22].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/23-new-edge-2.jpg';
+vipVideos[23].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/24-new-project.jpg';
+vipVideos[24].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/25-grand-launching-EA-global-auto-tp-sl.jpg';
+vipVideos[25].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/26-sharing-by-member-vip-darcey.jpg';
+vipVideos[26].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/27-breakout-omsis.jpg';
+vipVideos[27].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/28-sharing-by-member-bangtama.jpg';
+vipVideos[28].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/29-ngosan.jpg';
+vipVideos[29].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/30-wonders-of-the-world.jpg';
+vipVideos[30].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/31-anniversary-preparation.jpg';
+vipVideos[31].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/32-scalping-edge-sharing-61%25winrate-mr.tama.jpg';
+vipVideos[32].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/33-ngobrol-santai-berkualitas.jpg';
+vipVideos[33].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/34-grand-launching-chrono-heatmap.jpg';
+vipVideos[34].thumb='https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/35-ngosan.jpg';
+
 
 const videoLibrary=document.getElementById('videoLibrary');
 const videoModal=document.getElementById('videoModal');
