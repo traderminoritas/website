@@ -520,7 +520,7 @@ updateOverview();
   rows.push({num:rows.length+1,direction:'Sell',result:'',pl:''});
   $('edgeRows').innerHTML=rows.map((t,i)=>{
    const blank=i===rows.length-1;
-   const plText=state.mode==='fixed'?(t.result==='Win'?money(state.profit):t.result==='Loss'?money(state.loss):'—'):(blank?'':money(t.pl));
+   const plText=state.mode==='fixed'?(t.result==='Win'?money(Math.abs(Number(state.profit)||0)):t.result==='Loss'?money(-Math.abs(Number(state.loss)||0)):'—'):(blank?'':money(t.pl));
    const bal=blank?'—':money(t.balance),peak=blank?'—':money(t.peak),dd=blank?'—':money(t.dd);
    return `<tr><td>${t.num}</td>
     <td><select data-i="${i}" data-k="direction" aria-label="Buy/Sell"><option ${t.direction==='Buy'?'selected':''}>Buy</option><option ${t.direction==='Sell'?'selected':''}>Sell</option></select></td>
@@ -550,6 +550,14 @@ updateOverview();
   }else if(state.trades[i]){
    state.trades[i][k]=el.value;
   }else return;
+  if(state.mode==='manual' && state.trades[i] && k==='pl'){
+   const amount=Math.abs(Number(state.trades[i].pl)||0);
+   state.trades[i].pl=state.trades[i].result==='Loss'?-amount:state.trades[i].result==='Win'?amount:Number(state.trades[i].pl)||0;
+  }
+  if(state.mode==='manual' && state.trades[i] && k==='result' && ['Win','Loss'].includes(state.trades[i].result)){
+   const amount=Math.abs(Number(state.trades[i].pl)||0);
+   state.trades[i].pl=state.trades[i].result==='Loss'?-amount:amount;
+  }
   // Only count a transaction after Win/Loss is selected. In fixed mode result drives P/L.
   if(state.trades[i] && !state.trades[i].result && k!=='result' && !state.trades[i].entryDate && !state.trades[i].exitDate && !state.trades[i].pl){ /* retain editable draft */ }
   persist();render();
