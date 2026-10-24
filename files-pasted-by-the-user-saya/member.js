@@ -3,9 +3,8 @@ const VIP_TOKEN=sessionStorage.getItem('tmVipToken');
 if(!VIP_TOKEN)location.replace('index.html');
 const officialLogoStyles=document.createElement('style');officialLogoStyles.textContent="aside .brand>b{font-size:0!important;background:#111 url('https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/Trader%20MInoritas%20logo.png') center/90% auto no-repeat!important;border-color:rgba(216,180,94,.45)!important}";document.head.appendChild(officialLogoStyles);
 const pages=document.querySelectorAll('.page'),side=document.getElementById('side'),crumb=document.getElementById('crumb');
-function openPage(id){pages.forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));crumb.textContent='DASHBOARD / '+(id==='edge'?'TM EDGE LAB':id.toUpperCase().replace('LEARN','MODUL VIP'));side.classList.remove('open');scrollTo({top:0,behavior:'smooth'})}
-document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>openPage(b.dataset.page));document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>openPage(b.dataset.jump));
-document.getElementById('menu').onclick=()=>side.classList.toggle('open');document.getElementById('logout').onclick=()=>{sessionStorage.clear();location.href='index.html'};
+function openPage(id){pages.forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));crumb.textContent='DASHBOARD / '+id.toUpperCase().replace('LEARN','MODUL VIP').replace('JOURNAL','JOURNAL & BACKTEST');side.classList.remove('open');scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>openPage(b.dataset.page));document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>openPage(b.dataset.jump));document.getElementById('menu').onclick=()=>side.classList.toggle('open');document.getElementById('logout').onclick=()=>{sessionStorage.clear();location.href='index.html'};
 const tool={lot:{type:'POSITION SIZING',title:'Lot Size Calculator',desc:'Tentukan posisi berdasarkan batas risiko Anda.',fields:[['Modal akun','balance',1000],['Risiko per transaksi (%)','risk',1],['Stop loss (pips)','sl',30]],calc:v=>[['RISIKO MAKSIMUM','$'+(v.balance*v.risk/100).toFixed(2)],['UKURAN POSISI',(v.balance*v.risk/100/(v.sl*10||1)).toFixed(2)+' lot']]},rr:{type:'RISK ANALYSIS',title:'Risk / Reward Calculator',desc:'Bandingkan potensi kerugian dan target sebelum entry.',fields:[['Entry price','entry',1.085],['Stop loss','stop',1.08],['Take profit','tp',1.0975]],calc:v=>[['RISIKO',Math.abs(v.entry-v.stop).toFixed(4)],['RISK : REWARD','1 : '+(Math.abs(v.tp-v.entry)/(Math.abs(v.entry-v.stop)||1)).toFixed(2)]]},comp:{type:'GROWTH PLAN',title:'Compounding Calculator',desc:'Visualisasikan pertumbuhan modal dengan target realistis.',fields:[['Modal awal','capital',1000],['Target per bulan (%)','rate',5],['Durasi (bulan)','months',12]],calc:v=>[['PROYEKSI MODAL','$'+(v.capital*Math.pow(1+v.rate/100,v.months)).toFixed(2)],['PERTUMBUHAN','$'+(v.capital*Math.pow(1+v.rate/100,v.months)-v.capital).toFixed(2)]]}};
 function render(type='lot'){let t=tool[type];
 
@@ -463,74 +462,101 @@ updateOverview();
 
 
 
-/* =========================================================
-   JOURNAL / BACKTEST / FORWARD TEST — local workspace
-   ========================================================= */
+
+/* TM EDGE LAB spreadsheet backtest */
 (function(){
-  const store={journal:'tmJournalTrades',backtest:'tmBacktestTrades',forward:'tmForwardTrades'};
-  const configs={journal:'tmJournalConfig',backtest:'tmBacktestConfig',forward:'tmForwardConfig'};
-  let activeMode='journal';
-  const $=id=>document.getElementById(id);
-  const read=(key, fallback)=>{try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))}catch(_){return fallback}};
-  const write=(key,val)=>localStorage.setItem(key,JSON.stringify(val));
-  const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  const today=new Date().toISOString().slice(0,10);
-  const cfgDefaults={journal:{initial:100},backtest:{strategy:'',instrument:'XAUUSD',lot:.03,period:'',initial:100,rules:''},forward:{strategy:'',instrument:'XAUUSD',lot:.03,period:'',initial:100,notes:''}};
-  function getCfg(mode){return {...cfgDefaults[mode],...read(configs[mode],{})}}
-  function saveCfg(mode){
-    const c=getCfg(mode);
-    if(mode==='backtest')Object.assign(c,{strategy:$('btStrategy').value.trim(),instrument:$('btInstrument').value.trim(),lot:+$('btLot').value||0,period:$('btPeriod').value.trim(),initial:+$('btInitial').value||0,rules:$('btRules').value.trim()});
-    if(mode==='forward')Object.assign(c,{strategy:$('ftStrategy').value.trim(),instrument:$('ftInstrument').value.trim(),lot:+$('ftLot').value||0,period:$('ftPeriod').value.trim(),initial:+$('ftInitial').value||0,notes:$('ftNotes').value.trim()});
-    write(configs[mode],c);toastMessage('Konfigurasi test tersimpan.');renderMode(mode);
-  }
-  function loadCfg(mode){
-    const c=getCfg(mode);
-    if(mode==='backtest'){$('btStrategy').value=c.strategy||'';$('btInstrument').value=c.instrument||'XAUUSD';$('btLot').value=c.lot??.03;$('btPeriod').value=c.period||'';$('btInitial').value=c.initial??100;$('btRules').value=c.rules||''}
-    if(mode==='forward'){$('ftStrategy').value=c.strategy||'';$('ftInstrument').value=c.instrument||'XAUUSD';$('ftLot').value=c.lot??.03;$('ftPeriod').value=c.period||'';$('ftInitial').value=c.initial??100;$('ftNotes').value=c.notes||''}
-  }
-  function metrics(mode){
-    const trades=read(store[mode],[]), c=getCfg(mode), initial=+c.initial||100;
-    let balance=initial,peak=initial,maxDD=0,win=0,loss=0,be=0,buy=0,sell=0,winStreak=0,lossStreak=0,currentW=0,currentL=0,gp=0,gl=0,totalR=0,sumW=0,sumL=0;
-    const rows=trades.map((t,i)=>{
-      const pl=+t.pl||0,r=+t.r||0; balance+=pl; peak=Math.max(peak,balance); const dd=Math.max(0,peak-balance); maxDD=Math.max(maxDD,dd);
-      if(t.direction==='Buy')buy++;else sell++;
-      if(t.result==='win'){win++;currentW++;currentL=0;winStreak=Math.max(winStreak,currentW);gp+=Math.max(pl,0);sumW+=r}
-      else if(t.result==='loss'){loss++;currentL++;currentW=0;lossStreak=Math.max(lossStreak,currentL);gl+=Math.max(-pl,0);sumL+=Math.abs(r)}
-      else{be++;currentW=0;currentL=0}
-      totalR+=r;
-      return {...t,num:i+1,balance,peak,dd,winStreak:currentW,lossStreak:currentL};
-    });
-    return {trades,rows,initial,balance,peak,maxDD,win,loss,be,buy,sell,totalR,gp,gl,pf:gl?gp/gl:(gp?gp:0),winRate:trades.length?win/trades.length*100:0,conWins:winStreak,conLoss:lossStreak,recovery:maxDD?((balance-initial)/maxDD):0,avgWin:win?sumW/win:0,avgLoss:loss?sumL/loss:0,expectancy:trades.length?totalR/trades.length:0};
-  }
-  function money(n){return (n<0?'−':'')+'$'+Math.abs(n).toFixed(2)}
-  function pct(n){return n.toFixed(2)+'%'}
-  function r(n){return (n<0?'−':'')+Math.abs(n).toFixed(2)+'R'}
-  function statHTML(m){return `<b>NET R<strong class="${m.totalR<0?'loss':''}">${r(m.totalR)}</strong></b><b>WIN RATE<strong>${pct(m.winRate)}</strong></b><b>PROFIT FACTOR<strong>${m.pf.toFixed(2)}</strong></b><b>MAX DRAWDOWN<strong class="${m.maxDD?'loss':''}">${money(m.maxDD)}${m.initial?` <small>(${pct(m.maxDD/m.initial*100)})</small>`:''}</strong></b><b>INITIAL DEPOSIT<strong>${money(m.initial)}</strong></b><b>TOTAL TRADES<strong>${m.trades.length}</strong></b><b>TOTAL WIN<strong>${m.win}</strong></b><b>TOTAL LOSS<strong>${m.loss}</strong></b><b>TOTAL BUY<strong>${m.buy}</strong></b><b>TOTAL SELL<strong>${m.sell}</strong></b><b>CONSECUTIVE WINS<strong>${m.conWins}</strong></b><b>CONSECUTIVE LOSSES<strong>${m.conLoss}</strong></b><b>RECOVERY FACTOR<strong>${m.recovery.toFixed(2)}</strong></b><b>AVG WIN / LOSS<strong>${m.avgWin.toFixed(2)}R / ${m.avgLoss.toFixed(2)}R</strong></b>`}
-  function tableHTML(mode,m){
-    if(!m.rows.length)return `<div class="empty-state"><b>Belum ada trade.</b><span>Tambahkan trade pertama untuk mulai membangun data ${mode==='backtest'?'backtest':mode==='forward'?'forward test':'journal'} Anda.</span></div>`;
-    return `<div class="trade-table-scroll"><div class="trade-table"><div class="trade-row trade-head"><span>#</span><span>TRADE</span><span>TYPE</span><span>WIN/LOSS</span><span>LOT</span><span>P/L</span><span>BALANCE</span><span>PEAK</span><span>DRAWDOWN</span><span>WIN STREAK</span><span>LOSS STREAK</span><span>R</span><span></span></div>${m.rows.map(t=>`<div class="trade-row"><span>${t.num}</span><span><b>${esc(t.instrument||'—')}</b><small>${esc(t.date||'')}</small></span><span><i class="${t.direction==='Sell'?'sell':''}">${esc(t.direction||'—').toUpperCase()}</i></span><span><i class="${t.result==='loss'?'sell':t.result==='be'?'be':''}">${t.result==='be'?'BE':t.result.toUpperCase()}</i></span><span>${t.lot||'—'}</span><span class="${+t.pl<0?'loss':''}">${money(+t.pl||0)}</span><span>${money(t.balance)}</span><span>${money(t.peak)}</span><span class="${t.dd?'loss':''}">${money(t.dd)}</span><span>${t.winStreak}</span><span>${t.lossStreak}</span><strong class="${+t.r<0?'loss':''}">${r(+t.r||0)}</strong><button class="delete-trade" data-mode="${mode}" data-id="${esc(t.id)}" title="Hapus">×</button></div>`).join('')}</div></div>`;
-  }
-  function drawChart(mode,m){
-    const el=$(mode==='backtest'?'btChart':'ftChart');if(!el)return;const svg=el.querySelector('svg');const vals=[m.initial,...m.rows.map(x=>x.balance)];const W=600,H=220,pad=18,min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;const pts=vals.map((v,i)=>`${pad+(i/(Math.max(vals.length-1,1)))*(W-pad*2)},${H-pad-((v-min)/range)*(H-pad*2)}`).join(' ');svg.innerHTML=`<line x1="18" y1="202" x2="582" y2="202" class="chart-axis"/><polyline points="${pts}" class="chart-line"/>`}
-  function renderMode(mode){
-    const m=metrics(mode);
-    if(mode==='journal'){$('journalStats').innerHTML=statHTML(m);$('journalTable').innerHTML=tableHTML(mode,m)}
-    if(mode==='backtest'){$('btStats').innerHTML=statHTML(m);$('btTable').innerHTML=tableHTML(mode,m);$('btTradeCount').textContent=m.trades.length+' TRADES';drawChart(mode,m)}
-    if(mode==='forward'){$('ftStats').innerHTML=statHTML(m);$('ftTable').innerHTML=tableHTML(mode,m);$('ftTradeCount').textContent=m.trades.length+' TRADES';drawChart(mode,m)}
-  }
-  function openTrade(mode){activeMode=mode;const c=getCfg(mode);$('tradeModalKicker').textContent=mode==='backtest'?'BACKTEST TRADE':mode==='forward'?'FORWARD TEST TRADE':'JOURNAL TRADE';$('tradeModalTitle').textContent=mode==='backtest'?'Catat hasil backtest.':mode==='forward'?'Catat hasil forward test.':'Catat trade aktual.';$('tradeForm').reset();$('tradeInstrument').value=c.instrument||'';$('tradeLot').value=c.lot??.03;$('tradeDate').value=today;modal.showModal()}
-  ['journalAddTrade','backtestAddTrade','forwardAddTrade'].forEach((id,i)=>$(id)?.addEventListener('click',()=>openTrade(['journal','backtest','forward'][i])));
-  $('btSaveConfig')?.addEventListener('click',()=>saveCfg('backtest'));$('ftSaveConfig')?.addEventListener('click',()=>saveCfg('forward'));
-  $('tradeForm')?.addEventListener('submit',e=>{e.preventDefault();const mode=activeMode, arr=read(store[mode],[]);arr.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),instrument:$('tradeInstrument').value.trim(),direction:$('tradeDirection').value,result:$('tradeResult').value,lot:+$('tradeLot').value||0,entry:+$('tradeEntry').value||0,sl:+$('tradeSL').value||0,tp:+$('tradeTP').value||0,exit:+$('tradeExit').value||0,pl:+$('tradePL').value||0,r:+$('tradeR').value||0,date:$('tradeDate').value,exitDate:$('tradeExitDate').value});write(store[mode],arr);modal.close();renderMode(mode);toastMessage('Trade tersimpan. Statistik diperbarui otomatis.');});
-  document.addEventListener('click',e=>{const b=e.target.closest('.delete-trade');if(!b)return;const mode=b.dataset.mode;const arr=read(store[mode],[]).filter(t=>t.id!==b.dataset.id);write(store[mode],arr);renderMode(mode);toastMessage('Trade dihapus.')});
-  // Sheet-inspired utilities: CSV template + export for each workspace.
-  function downloadText(name,text,type='text/csv'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
-  const csvHeader='Trade,Direction,Result,Lot Size,Entry Price,Stop Loss,Take Profit,Exit Price,Profit/Loss,Result R,Entry Date,Exit Date';
-  function csvCell(v){return '"'+String(v??'').replaceAll('"','""')+'"'}
-  function exportMode(mode){const rows=read(store[mode],[]);const csv=[csvHeader,...rows.map((x,i)=>[i+1,x.direction,x.result,x.lot,x.entry,x.sl,x.tp,x.exit,x.pl,x.r,x.date,x.exitDate].map(csvCell).join(','))].join('\n');downloadText(`TM_${mode}_trading_data.csv`,csv)}
-  function downloadTemplate(mode){downloadText(`TM_${mode}_template.csv`,csvHeader+'\n1,Buy,win,0.03,4000,3997.5,4010,4010,10,2,2026-09-15,2026-09-15')}
-  document.querySelectorAll('[data-export]').forEach(b=>b.addEventListener('click',()=>exportMode(b.dataset.export)));
-  document.querySelectorAll('[data-template]').forEach(b=>b.addEventListener('click',()=>downloadTemplate(b.dataset.template)));
-  document.querySelectorAll('.summary-tabs button').forEach(btn=>btn.addEventListener('click',()=>{const wrap=btn.closest('.summary-tabs');wrap.querySelectorAll('button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');toastMessage(btn.textContent+' summary — siap dikembangkan ke analisis periode.')}));
-  loadCfg('backtest');renderMode('backtest');
+ const $=id=>document.getElementById(id);
+ const KEY='tmEdgeLabSpreadsheetV1';
+ const defaults={mode:'fixed',lot:.01,initial:1000,profit:10,loss:-10,explanation:'Mengambil posisi sell setiap harinya 16.23 WIB atau 12.23 Jam Broker. TP SL 50 points',rr:'1:1',symbol:'XAUUSD - M1',period:'1 Jan 2024 s/d 31 Des 2026',trades:[]};
+ let state;
+ try{state={...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')};}catch(e){state={...defaults};}
+ if(!Array.isArray(state.trades))state.trades=[];
+ const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+ const money=n=>'$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+ function persist(){localStorage.setItem(KEY,JSON.stringify(state));}
+ function initInputs(){
+  $('edgeMode').value=state.mode;$('edgeLot').value=state.lot;$('edgeInitial').value=state.initial;
+  $('edgeProfit').value=state.profit;$('edgeLoss').value=state.loss;$('edgeExplanation').value=state.explanation;
+  $('edgeRR').value=state.rr;$('edgeSymbol').value=state.symbol;$('edgePeriod').value=state.period;
+  syncMode();
+ }
+ function syncMode(){
+  state.mode=$('edgeMode').value;
+  $('edgeFixedValues').hidden=state.mode==='manual';
+  $('edgeManualValues').hidden=state.mode!=='manual';
+  persist();render();
+ }
+ function stats(){
+  let balance=Number(state.initial)||0,peak=balance,maxDD=0,wins=0,losses=0,buy=0,sell=0,gp=0,gl=0,cw=0,cl=0,mw=0,ml=0;
+  let rows=state.trades.map((t,i)=>{
+   const result=t.result||'',dir=t.direction||'';
+   let pl=0;
+   if(state.mode==='fixed') pl=result==='Win'?(Number(state.profit)||0):result==='Loss'?(Number(state.loss)||0):0;
+   else pl=Number(t.pl)||0;
+   if(result==='Win'){wins++;cw++;cl=0;mw=Math.max(mw,cw);gp+=Math.max(pl,0);}
+   else if(result==='Loss'){losses++;cl++;cw=0;ml=Math.max(ml,cl);gl+=Math.abs(Math.min(pl,0));}
+   if(dir==='Buy')buy++;if(dir==='Sell')sell++;
+   balance+=pl;peak=Math.max(peak,balance);const dd=peak-balance;maxDD=Math.max(maxDD,dd);
+   return {...t,num:i+1,pl,balance,peak,dd,winStreak:cw,lossStreak:cl};
+  });
+  const net=balance-(Number(state.initial)||0);
+  return {rows,balance,peak,maxDD,wins,losses,buy,sell,gp,gl,pf:gl?gp/gl:(gp?gp:0),winrate:rows.length?wins/rows.length*100:0,net,mw,ml,recovery:maxDD?net/maxDD:0};
+ }
+ function renderRows(){
+  const m=stats(), rows=m.rows.slice();
+  // Keep a spreadsheet-like blank row at the bottom for immediate entry.
+  rows.push({num:rows.length+1,direction:'Sell',result:'',pl:''});
+  $('edgeRows').innerHTML=rows.map((t,i)=>{
+   const blank=i===rows.length-1;
+   const plText=state.mode==='fixed'?(t.result==='Win'?money(state.profit):t.result==='Loss'?money(state.loss):'—'):(blank?'':money(t.pl));
+   const bal=blank?'—':money(t.balance),peak=blank?'—':money(t.peak),dd=blank?'—':money(t.dd);
+   return `<tr><td>${t.num}</td>
+    <td><select data-i="${i}" data-k="direction" aria-label="Buy/Sell"><option ${t.direction==='Buy'?'selected':''}>Buy</option><option ${t.direction==='Sell'?'selected':''}>Sell</option></select></td>
+    <td><select data-i="${i}" data-k="result" aria-label="Win/Loss"><option value="">—</option><option ${t.result==='Win'?'selected':''}>Win</option><option ${t.result==='Loss'?'selected':''}>Loss</option></select></td>
+    <td>${state.mode==='manual'?`<input data-i="${i}" data-k="pl" type="number" step="any" placeholder="Profit + / Loss -" value="${blank?'':esc(t.pl??'')}" aria-label="Profit/Loss dolar">`:`<span class="calculated ${t.pl<0?'negative':'positive'}">${blank?'—':plText}</span>`}</td>
+    <td><span class="calculated">${bal}</span></td><td><span class="calculated">${peak}</span></td><td><span class="calculated ${!blank&&t.dd?'negative':''}">${dd}</span></td>
+    <td><span class="calculated">${blank?'—':t.winStreak}</span></td><td><span class="calculated">${blank?'—':t.lossStreak}</span></td>
+    <td><input data-i="${i}" data-k="entryDate" type="date" value="${esc(t.entryDate||'')}" aria-label="Entry date (optional)"></td>
+    <td><input data-i="${i}" data-k="exitDate" type="date" value="${esc(t.exitDate||'')}" aria-label="Exit date (optional)"></td></tr>`;
+  }).join('');
+ }
+ function renderStats(){
+  const m=stats();
+  const items=[['Total Net Profit/Loss',money(m.net)],['Total Trades',m.rows.length],['Total Win',m.wins],['Total Loss',m.losses],['Winrate',m.winrate.toFixed(2)+'%'],['Profit Factor',m.pf.toFixed(2)],['Max Drawdown',money(m.maxDD)],['Max Drawdown %',(Number(state.initial)?(m.maxDD/Number(state.initial)*100):0).toFixed(2)+'%'],['Consecutive Wins',m.mw],['Consecutive Losses',m.ml],['Recovery Factor',m.recovery.toFixed(2)],['Total Buy',m.buy],['Total Sell',m.sell],['Current Balance',money(m.balance)]];
+  $('edgeStats').innerHTML=items.map(([k,v])=>`<div class="edge-stat"><span>${k}</span><strong>${v}</strong></div>`).join('');
+  const svg=$('edgeChart'), vals=[Number(state.initial)||0,...m.rows.map(t=>t.balance)], W=600,H=220,p=16,min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;
+  const pts=vals.map((v,i)=>`${p+i/Math.max(vals.length-1,1)*(W-p*2)},${H-p-(v-min)/range*(H-p*2)}`).join(' ');
+  svg.innerHTML=`<line x1="16" y1="204" x2="584" y2="204" class="edge-axis"/><polyline points="${pts}" class="edge-line"/>`;
+ }
+ function render(){renderRows();renderStats();}
+ function commitCell(el){
+  const i=Number(el.dataset.i),k=el.dataset.k;
+  if(i===state.trades.length){
+   const t={direction:'Sell',result:'',pl:0,entryDate:'',exitDate:''};
+   t[k]=el.value;
+   if(k==='direction'&&t.direction==='')t.direction='Sell';
+   state.trades.push(t);
+  }else if(state.trades[i]){
+   state.trades[i][k]=el.value;
+  }else return;
+  // Only count a transaction after Win/Loss is selected. In fixed mode result drives P/L.
+  if(state.trades[i] && !state.trades[i].result && k!=='result' && !state.trades[i].entryDate && !state.trades[i].exitDate && !state.trades[i].pl){ /* retain editable draft */ }
+  persist();render();
+ }
+ document.addEventListener('change',e=>{const el=e.target;if(!el.matches('#edgeRows [data-k]'))return;commitCell(el);});
+ ['edgeLot','edgeInitial','edgeProfit','edgeLoss','edgeExplanation','edgeRR','edgeSymbol','edgePeriod'].forEach(id=>$(id)?.addEventListener('change',()=>{
+  const map={edgeLot:'lot',edgeInitial:'initial',edgeProfit:'profit',edgeLoss:'loss',edgeExplanation:'explanation',edgeRR:'rr',edgeSymbol:'symbol',edgePeriod:'period'};
+  const key=map[id];state[key]=id==='edgeLot'||id==='edgeInitial'||id==='edgeProfit'||id==='edgeLoss'?Number($(id).value)||0:$(id).value;persist();render();
+ }));
+ $('edgeMode')?.addEventListener('change',syncMode);
+ $('edgeExport')?.addEventListener('click',()=>{
+  const header=['Trade','Buy/Sell','Win/Loss','Profit/Loss USD','Balance USD','Peak USD','Drawdown USD','Win Streak','Loss Streak','Entry Date','Exit Date'];
+  const m=stats();const lines=[header,...m.rows.map(t=>[t.num,t.direction||'',t.result||'',t.pl,t.balance,t.peak,t.dd,t.winStreak,t.lossStreak,t.entryDate||'',t.exitDate||''])].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines],{type:'text/csv;charset=utf-8'}));a.download='TM_EDGE_LAB_Backtest.csv';a.click();URL.revokeObjectURL(a.href);
+ });
+ $('edgeImport')?.addEventListener('click',()=>$('edgeCsvFile').click());
+ $('edgeCsvFile')?.addEventListener('change',async e=>{
+  const f=e.target.files?.[0];if(!f)return;const txt=await f.text();const lines=txt.split(/\r?\n/).filter(Boolean);const parsed=lines.slice(1).map(line=>{const a=line.split(',').map(x=>x.replace(/^"|"$/g,''));return {direction:a[1]==='Buy'?'Buy':'Sell',result:a[2]==='Win'?'Win':a[2]==='Loss'?'Loss':'',pl:Number(a[3])||0,entryDate:a[9]||'',exitDate:a[10]||''};});state.trades=parsed;persist();render();e.target.value='';
+ });
+ initInputs();render();
 })();
