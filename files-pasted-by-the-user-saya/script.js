@@ -21,6 +21,14 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
   error.textContent = '';
   if (submit) { submit.disabled = true; submit.dataset.originalText = submit.innerHTML; submit.innerHTML = 'Memeriksa akses…'; }
   try {
+    // Temporary admin access. This is a client-side bypass and is not secure for public production.
+    if (email === 'admin' && password === 'admin') {
+      sessionStorage.setItem('tmVipToken', 'temporary-admin-session');
+      sessionStorage.setItem('tmDemoMember', 'Admin');
+      window.location.href = 'member.html';
+      return;
+    }
+
     const response = await fetch(`${TM_VIDEO_WORKER}/auth`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
