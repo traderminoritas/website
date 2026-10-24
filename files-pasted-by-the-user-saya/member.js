@@ -481,6 +481,14 @@ updateOverview();
  const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
  const money=n=>'$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
  function persist(){localStorage.setItem(KEY,JSON.stringify(state));}
+ function resizeExplanation(){
+  const el=$('edgeExplanation');
+  if(!el)return;
+  el.style.height='44px';
+  el.style.height=Math.max(44,el.scrollHeight)+'px';
+ }
+ $('edgeExplanation')?.addEventListener('input',resizeExplanation);
+ window.addEventListener('resize',resizeExplanation);
  function initInputs(){
   $('edgeMode').value=state.mode;$('edgeLot').value=state.lot;$('edgeInitial').value=state.initial;
   $('edgeProfit').value=state.profit;$('edgeLoss').value=Math.abs(Number(state.loss)||0);$('edgeExplanation').value=state.explanation;
@@ -580,7 +588,7 @@ updateOverview();
  $('edgeCsvFile')?.addEventListener('change',async e=>{
   const f=e.target.files?.[0];if(!f)return;const txt=await f.text();const lines=txt.split(/\r?\n/).filter(Boolean);const parsed=lines.slice(1).map(line=>{const a=line.split(',').map(x=>x.replace(/^"|"$/g,''));return {direction:a[1]==='Buy'?'Buy':'Sell',result:a[2]==='Win'?'Win':a[2]==='Loss'?'Loss':'',pl:Number(a[3])||0};});state.trades=parsed;persist();render();e.target.value='';
  });
- initInputs();render();
+ initInputs();resizeExplanation();render();
 })();
 
 

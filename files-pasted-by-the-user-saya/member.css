@@ -160,3 +160,19 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
 .edge-pl-config.is-unavailable label{color:#8a8d94!important}
 .edge-pl-config.is-unavailable .edge-loss-hint{color:#777e88!important}
 .edge-pl-config.is-unavailable p{color:#858b95!important}
+
+/* Explanation: multiline with automatic height growth */
+.edge-explanation-label{min-width:0}
+.edge-explanation-input{
+  display:block;
+  width:100%;
+  min-height:44px;
+  height:44px;
+  line-height:1.5;
+  resize:none;
+  overflow:hidden;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  font:inherit;
+}
+.edge-explanation-input:focus{outline:2px solid #3984ed;outline-offset:1px}
