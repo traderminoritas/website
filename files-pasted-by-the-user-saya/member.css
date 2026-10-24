@@ -316,15 +316,15 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
   #backtest .edge-layout{grid-template-columns:minmax(0,1.45fr) minmax(300px,.8fr)}
 }
 
-/* Keep the explanation next to the profit/loss mode selector */
+/* Mode explanation sits directly beneath the selector so the distinction is clear */
 .edge-mode-description{
   display:block;
+  margin-top:2px;
+  max-width:42ch;
+  color:var(--muted,#85827a);
   font-size:11px;
   font-weight:400;
   line-height:1.55;
-  color:var(--muted,#85827a);
-  margin-top:1px;
-  max-width:42ch;
 }
 @media(max-width:760px){
   .edge-mode-description{font-size:12px;max-width:none}

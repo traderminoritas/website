@@ -517,8 +517,8 @@ updateOverview();
   $('edgeManualValues').hidden=!manual;
   const modeDescription=$('edgeModeDescription');
   if(modeDescription)modeDescription.textContent=manual
-    ?'Isi Profit/Loss secara langsung pada tabel Backtest. Nilai Profit per Win dan Loss per Loss di bawah tidak digunakan.'
-    :'Profit/Loss otomatis memakai nilai Profit per Win dan Loss per Loss di bawah. Lot Size menjadi konfigurasi backtest.';
+    ?'Isi nilai Profit/Loss langsung pada tabel Backtest. Profit per Win dan Loss per Loss di bagian pengaturan tidak digunakan.'
+    :'Profit/Loss otomatis dihitung berdasarkan nilai Profit per Win dan Loss per Loss. Lot Size menjadi konfigurasi backtest.';
   persist();render();
  }
  function stats(){
