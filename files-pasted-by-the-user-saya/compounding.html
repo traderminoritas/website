@@ -27,29 +27,45 @@ button,input{font:inherit}
 button{cursor:pointer}
 .layout{min-height:100vh;display:flex}
 .sidebar{
-  width:240px;flex-shrink:0;background:#11110f;
-  border-right:1px solid #292822;padding:28px 18px;
-  display:flex;flex-direction:column;
+  width:230px;flex-shrink:0;background:#191917;
+  border-right:1px solid #302f2a;padding:25px 16px;
+  display:flex;flex-direction:column;position:fixed;left:0;top:0;
+  height:100vh;z-index:5;overflow-y:auto;
 }
 .brand{
-  color:var(--gold2);font-size:16px;font-weight:900;
-  letter-spacing:2px;line-height:1.4;padding:4px 12px 45px;
+  display:flex;gap:10px;align-items:center;color:var(--text);
+  text-decoration:none;font-size:9px;line-height:1.1;font-weight:800;
+  letter-spacing:1.4px;margin:0 7px;padding:0 0 0;
 }
-.brand span{display:block;color:#fff;font-size:11px;letter-spacing:3px}
+.brand b{
+  border:1px solid var(--gold);color:var(--gold);
+  font:700 13px Georgia,serif;padding:7px 5px;letter-spacing:-2px;
+}
+.brand span{display:block;color:#fff;font-size:9px;letter-spacing:1.4px}
 .nav-label{
-  color:#77766e;font-size:10px;letter-spacing:2px;
-  padding:0 12px;margin-bottom:14px;margin-top:10px
+  color:#77736a;font-size:9px;letter-spacing:1.4px;
+  padding:0 8px;margin-bottom:9px;margin-top:42px
 }
+.sidebar nav{display:grid;gap:3px}
 .nav{
-  display:block;padding:13px 12px;border-radius:7px;
-  color:#b8b6ad;text-decoration:none;font-size:13px;margin-bottom:5px;
+  display:block;padding:10px 8px;border-radius:0;
+  color:#aaa69d;text-decoration:none;font-size:11px;margin-bottom:0;
+  font-weight:500;border-left:0;background:transparent;
 }
+.nav:hover{background:#25241f;color:#eee}
 .nav.active{
-  color:var(--gold2);background:rgba(212,175,55,.13);
-  border-left:3px solid var(--gold);
+  color:#e7c875;background:#312d22;border-left:3px solid var(--gold);
 }
-.side-bottom{margin-top:auto;padding:22px 12px 0;color:#aaa;font-size:12px}
-.main{flex:1;min-width:0;padding:38px clamp(18px,4vw,58px) 30px}
+.side-bottom{
+  border-top:1px solid #35342f;margin-top:auto;padding:15px 5px 0;
+  color:#aaa;font-size:10px;line-height:1.5
+}
+.side-bottom b{
+  display:inline-grid;place-items:center;border-radius:50%;background:#ac8d44;
+  color:#171510;width:28px;height:28px;font-size:10px;margin-right:8px;
+}
+.side-bottom em{display:block;font-size:8px;font-style:normal;color:#88847b}
+.main{flex:1;min-width:0;margin-left:230px;width:calc(100% - 230px);padding:38px clamp(18px,4vw,58px) 30px}
 .topline{color:var(--gold);font-size:11px;letter-spacing:3px;font-weight:800}
 h1{font-size:clamp(30px,4vw,48px);letter-spacing:-1.5px;margin:12px 0}
 h1 span{color:var(--gold2)}
@@ -138,13 +154,14 @@ td{color:#ddd}
 .disclaimer p{font-size:11px;color:#aaa99f;line-height:1.8;margin:0}
 .footer{text-align:center;color:#5e5d56;font-size:10px;padding:22px 0 0;letter-spacing:1px}
 @media(max-width:1100px){
-  .sidebar{width:190px}
+  .sidebar{width:190px}.main{margin-left:190px;width:calc(100% - 190px)}
   .input-grid{grid-template-columns:1fr 1fr}
   .metrics{grid-template-columns:1fr 1fr}
 }
 @media(max-width:760px){
   .layout{display:block}
-  .sidebar{width:100%;padding:12px 16px;display:block;border-right:0;border-bottom:1px solid #292822}
+  .sidebar{position:relative;width:100%;height:auto;padding:12px 16px;display:block;border-right:0;border-bottom:1px solid #292822}
+  .main{margin-left:0;width:100%}
   .brand{padding:5px 4px 12px;font-size:13px}
   .brand span{display:inline;margin-left:5px;font-size:10px}
   .nav-label,.side-bottom{display:none}
@@ -168,15 +185,23 @@ td{color:#ddd}
 <body>
 <div class="layout">
   <aside class="sidebar">
-    <div class="brand">TM <span>TRADER MINORITAS</span></div>
+    <a class="brand" href="member.html"><b>TM</b><span>TRADER<br>MINORITAS</span></a>
     <div class="nav-label">WORKSPACE</div>
     <nav>
-      <a class="nav" href="index.html">⌂ Overview</a>
-      <a class="nav" href="member.html">▤ Member Area</a>
-      <a class="nav active" href="compounding.html">⌘ Trading Tools</a>
-      <a class="nav" href="TM_Chrono_Heatmap.html">◇ Chrono Heatmap</a>
+      <a class="nav" href="member.html">⌂ Overview</a>
+      <a class="nav" href="member.html">◫ Modul VIP <i>35</i></a>
+      <a class="nav" href="member.html">◫ TM EDGE LAB</a>
+      <a class="nav" href="member.html">⌘ Trading Tools</a>
+      <a class="nav active" href="compounding.html">↗ Compounding Calculator</a>
+      <a class="nav" href="TM_Chrono_Heatmap.html">◈ Chrono Heatmap</a>
+      <a class="nav" href="member.html">◌ Webinar &amp; Event <i>2</i></a>
     </nav>
-    <div class="side-bottom">TRADER MINORITAS<br><br>Minoritas di Jumlah,<br>Mayoritas di Profit.</div>
+    <div class="nav-label">AKUN</div>
+    <nav>
+      <a class="nav" href="member.html">◎ Profile Saya</a>
+      <a class="nav" href="index.html">↗ Kembali ke website</a>
+    </nav>
+    <div class="side-bottom"><b>AM</b> Andi Mahendra<em>VIP Member</em></div>
   </aside>
 
   <main class="main">
