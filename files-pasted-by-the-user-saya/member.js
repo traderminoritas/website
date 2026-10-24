@@ -466,10 +466,8 @@ updateOverview();
 /* TM EDGE LAB spreadsheet backtest */
 (function(){
  const $=id=>document.getElementById(id);
- const KEY='tmEdgeLabSpreadsheetV1';
  const defaults={mode:'fixed',lot:.01,initial:1000,profit:10,loss:-10,explanation:'Mengambil posisi sell setiap harinya 16.23 WIB atau 12.23 Jam Broker. TP SL 50 points',rr:'1:1',symbol:'XAUUSD',timeframe:'M1',period:'1 Jan 2024 s/d 31 Des 2026',trades:[]};
- let state;
- try{state={...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')};}catch(e){state={...defaults};}
+ let state={...defaults};
  if(!Array.isArray(state.trades))state.trades=[];
  // Migrate the previous combined Symbol / Timeframe value.
  if(typeof state.symbol==='string' && state.symbol.includes(' - ')){
@@ -480,7 +478,8 @@ updateOverview();
  if(!state.timeframe)state.timeframe='M1';
  const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
  const money=n=>'$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
- function persist(){localStorage.setItem(KEY,JSON.stringify(state));}
+ // Backtest data stays in memory for this browser tab/session only. Use JSON Export to keep it.
+ function persist(){}
  function initInputs(){
   $('edgeMode').value=state.mode;$('edgeLot').value=state.lot;$('edgeInitial').value=state.initial;
   $('edgeProfit').value=state.profit;$('edgeLoss').value=state.loss;$('edgeExplanation').value=state.explanation;
@@ -562,21 +561,6 @@ updateOverview();
   a.href=href;a.download=filename;document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(href),1000);
  }
- $('edgeExport')?.addEventListener('click',()=>{
-  const header=['Trade','Buy/Sell','Win/Loss','Profit/Loss USD','Balance USD','Peak USD','Drawdown USD','Win Streak','Loss Streak'];
-  const m=stats();const lines=[header,...m.rows.map(t=>[t.num,t.direction||'',t.result||'',t.pl,t.balance,t.peak,t.dd,t.winStreak,t.lossStreak])].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\\r\\n');
-  downloadFile('TM_EDGE_LAB_Backtest.csv','\\uFEFF'+lines,'text/csv;charset=utf-8');
- });
- $('edgeImport')?.addEventListener('click',()=>$('edgeCsvFile').click());
- $('edgeCsvFile')?.addEventListener('change',async e=>{
-  const f=e.target.files?.[0];if(!f)return;
-  try{
-   const txt=await f.text();const lines=txt.split(/\\r?\\n/).filter(Boolean);
-   const parsed=lines.slice(1).map(line=>{const a=line.split(',').map(x=>x.replace(/^"|"$/g,''));return {direction:a[1]==='Buy'?'Buy':'Sell',result:a[2]==='Win'?'Win':a[2]==='Loss'?'Loss':'',pl:Number(a[3])||0};});
-   state.trades=parsed;persist();render();toastMessage('CSV berhasil diimpor.');
-  }catch(err){toastMessage('File CSV tidak dapat dibaca.');}
-  e.target.value='';
- });
  $('edgeProjectExport')?.addEventListener('click',()=>{
   const payload={format:'TM_EDGE_LAB_PROJECT',version:1,exportedAt:new Date().toISOString(),project:{
    mode:state.mode,lot:state.lot,initial:state.initial,profit:state.profit,loss:state.loss,
