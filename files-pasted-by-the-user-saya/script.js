@@ -21,25 +21,26 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
   error.textContent = '';
   if (submit) { submit.disabled = true; submit.dataset.originalText = submit.innerHTML; submit.innerHTML = 'Memeriksa akses…'; }
   try {
-    // Temporary admin access. This is a client-side bypass and is not secure for public production.
-    if (email === 'admin' && password === 'admin') {
-      sessionStorage.setItem('tmVipToken', 'temporary-admin-session');
-      sessionStorage.setItem('tmDemoMember', 'Admin');
-      window.location.href = 'member.html';
-      return;
-    }
+    // Temporary admin shortcut for development: authenticate through the Worker
+    // so the video player receives a valid signed session token.
+    const loginUsername = (email === 'admin' && password === 'admin')
+      ? 'admin'
+      : email;
+    const loginPassword = (email === 'admin' && password === 'admin')
+      ? 'admin'
+      : password;
 
     const response = await fetch(`${TM_VIDEO_WORKER}/auth`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: email, password })
+      body: JSON.stringify({ username: loginUsername, password: loginPassword })
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.success || !data.token) {
       throw new Error('Email atau password tidak sesuai.');
     }
     sessionStorage.setItem('tmVipToken', data.token);
-    sessionStorage.setItem('tmDemoMember', 'Andi Mahendra');
+    sessionStorage.setItem('tmDemoMember', (email === 'admin' && password === 'admin') ? 'Admin' : 'Andi Mahendra');
     window.location.href = 'member.html';
   } catch (err) {
     error.textContent = err.message || 'Login gagal. Silakan coba lagi.';
