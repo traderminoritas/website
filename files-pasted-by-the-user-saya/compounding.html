@@ -5,10 +5,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Compounding Calculator | Trader Minoritas</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="member.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root {
@@ -29,14 +25,56 @@ body{
 }
 button,input{font:inherit}
 button{cursor:pointer}
-.compound-main{min-width:0;padding:0}
-.compound-content{max-width:1600px;margin:0 auto;padding:38px clamp(18px,4vw,58px) 30px}
-.compound-heading{display:flex;justify-content:space-between;align-items:center;gap:25px;margin-bottom:28px}
-.compound-topline{color:var(--gold);font-size:11px;letter-spacing:3px;font-weight:800}
-.compound-subtitle{color:#aaa99f;line-height:1.7;max-width:700px;font-size:14px}
-.compound-mark{font-size:75px;filter:drop-shadow(0 0 25px #8a672a);opacity:.8}
-.compound-content h1{font-size:clamp(30px,4vw,48px);letter-spacing:-1.5px;margin:12px 0;color:var(--text);line-height:1.1;font-weight:700}
-.compound-content h1 span{color:var(--gold2)}
+.layout{min-height:100vh;display:flex}
+.sidebar{
+  width:230px;flex-shrink:0;background:#191917;
+  border-right:1px solid #302f2a;padding:25px 16px;
+  display:flex;flex-direction:column;position:fixed;left:0;top:0;
+  height:100vh;z-index:5;overflow-y:auto;
+}
+.brand{
+  display:flex;gap:10px;align-items:center;color:var(--text);
+  text-decoration:none;font-size:9px;line-height:1.1;font-weight:800;
+  letter-spacing:1.4px;margin:0 7px;padding:0 0 0;
+}
+.brand b{
+  border:1px solid var(--gold);color:var(--gold);
+  font:700 13px Georgia,serif;padding:7px 5px;letter-spacing:-2px;
+}
+.brand span{display:block;color:#fff;font-size:9px;letter-spacing:1.4px}
+.nav-label{
+  color:#77736a;font-size:9px;letter-spacing:1.4px;
+  padding:0 8px;margin-bottom:9px;margin-top:42px
+}
+.sidebar nav{display:grid;gap:3px}
+.nav{
+  display:block;padding:10px 8px;border-radius:0;
+  color:#aaa69d;text-decoration:none;font-size:11px;margin-bottom:0;
+  font-weight:500;border-left:0;background:transparent;
+}
+.nav:hover{background:#25241f;color:#eee}
+.nav.active{
+  color:#e7c875;background:#312d22;border-left:3px solid var(--gold);
+}
+.side-bottom{
+  border-top:1px solid #35342f;margin-top:auto;padding:15px 5px 0;
+  color:#aaa;font-size:10px;line-height:1.5
+}
+.side-bottom b{
+  display:inline-grid;place-items:center;border-radius:50%;background:#ac8d44;
+  color:#171510;width:28px;height:28px;font-size:10px;margin-right:8px;
+}
+.side-bottom em{display:block;font-size:8px;font-style:normal;color:#88847b}
+.main{flex:1;min-width:0;margin-left:230px;width:calc(100% - 230px);padding:38px clamp(18px,4vw,58px) 30px}
+.topline{color:var(--gold);font-size:11px;letter-spacing:3px;font-weight:800}
+h1{font-size:clamp(30px,4vw,48px);letter-spacing:-1.5px;margin:12px 0}
+h1 span{color:var(--gold2)}
+.subtitle{color:#aaa99f;line-height:1.7;max-width:700px;font-size:14px}
+.header{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:25px;margin-bottom:28px
+}
+.header-mark{font-size:75px;filter:drop-shadow(0 0 25px #8a672a);opacity:.8}
 .panel{
   background:linear-gradient(145deg,#171714,#10100e);
   border:1px solid var(--border);border-radius:16px;
@@ -116,13 +154,22 @@ td{color:#ddd}
 .disclaimer p{font-size:11px;color:#aaa99f;line-height:1.8;margin:0}
 .footer{text-align:center;color:#5e5d56;font-size:10px;padding:22px 0 0;letter-spacing:1px}
 @media(max-width:1100px){
+  .sidebar{width:190px}.main{margin-left:190px;width:calc(100% - 190px)}
   .input-grid{grid-template-columns:1fr 1fr}
   .metrics{grid-template-columns:1fr 1fr}
 }
 @media(max-width:760px){
-  .compound-content{padding:25px 14px}
-  .compound-mark{display:none}
-  .compound-heading{margin-bottom:22px}
+  .layout{display:block}
+  .sidebar{position:relative;width:100%;height:auto;padding:12px 16px;display:block;border-right:0;border-bottom:1px solid #292822}
+  .main{margin-left:0;width:100%}
+  .brand{padding:5px 4px 12px;font-size:13px}
+  .brand span{display:inline;margin-left:5px;font-size:10px}
+  .nav-label,.side-bottom{display:none}
+  .sidebar nav{display:flex;gap:6px;overflow-x:auto}
+  .nav{white-space:nowrap;padding:10px;font-size:11px;margin:0}
+  .main{padding:25px 14px}
+  .header-mark{display:none}
+  .header{margin-bottom:22px}
   .panel{padding:17px}
   .input-grid{grid-template-columns:1fr;gap:20px}
   .action-row .primary{width:100%}
@@ -136,37 +183,40 @@ td{color:#ddd}
 </style>
 </head>
 <body>
-<div class="app">
-  <aside id="side">
+<div class="layout">
+  <aside class="sidebar">
     <a class="brand" href="member.html"><b>TM</b><span>TRADER<br>MINORITAS</span></a>
-    <small>WORKSPACE</small>
+    <div class="nav-label">WORKSPACE</div>
     <nav>
-      <a href="member.html">⌂ Overview</a>
-      <a href="member.html">◫ Modul VIP <i>35</i></a>
-      <a href="member.html">◫ TM EDGE LAB</a>
-      <a href="member.html">⌘ Trading Tools</a>
-      <a class="active" href="compounding.html">↗ Compounding Calculator</a>
-      <a href="TM_Chrono_Heatmap.html">◈ Chrono Heatmap</a>
-      <a href="member.html">◌ Webinar &amp; Event <i>2</i></a>
+      <a class="nav" href="member.html">⌂ Overview</a>
+      <a class="nav" href="member.html">◫ Modul VIP <i>35</i></a>
+      <a class="nav" href="member.html">◫ TM EDGE LAB</a>
+      <a class="nav" href="member.html">⌘ Trading Tools</a>
+      <a class="nav active" href="compounding.html">↗ Compounding Calculator</a>
+      <a class="nav" href="TM_Chrono_Heatmap.html">◈ Chrono Heatmap</a>
+      <a class="nav" href="member.html">◌ Webinar &amp; Event <i>2</i></a>
     </nav>
-    <small>AKUN</small>
+    <div class="nav-label">AKUN</div>
     <nav>
-      <a href="member.html">◎ Profile Saya</a>
-      <a href="index.html">↗ Kembali ke website</a>
+      <a class="nav" href="member.html">◎ Profile Saya</a>
+      <a class="nav" href="index.html">↗ Kembali ke website</a>
     </nav>
-    <footer><b>AM</b><span>Andi Mahendra<em>VIP Member</em></span><button id="logout" type="button" aria-label="Keluar">↪</button></footer>
+    <div class="side-bottom"><b>AM</b> Andi Mahendra<em>VIP Member</em></div>
   </aside>
-  <main class="compound-main">
-    <header class="tm-topbar"><button id="menu" type="button" aria-label="Buka menu">☰</button><span>DASHBOARD / TRADING TOOLS / COMPOUNDING</span><span class="live">● MARKET OPEN <time>09:41 WIB</time></span></header>
-    <div class="compound-content">
-      <div class="compound-heading">
-        <div>
-          <div class="compound-topline">TRADING TOOLS / WEALTH PLANNER</div>
-          <h1>Compounding <span>Calculator</span></h1>
-          <div class="compound-subtitle">Simulasikan potensi pertumbuhan modal melalui compounding dan penambahan modal berkala. Ubah asumsi untuk membandingkan berbagai skenario.</div>
+
+  <main class="main">
+    <header class="header">
+      <div>
+        <div class="topline">TRADING TOOLS / WEALTH PLANNER</div>
+        <h1>Compounding <span>Calculator</span></h1>
+        <div class="subtitle">
+          Simulasikan potensi pertumbuhan modal melalui compounding dan
+          penambahan modal berkala. Ubah asumsi untuk membandingkan berbagai skenario.
         </div>
-        <div class="compound-mark" aria-hidden="true">↗</div>
       </div>
+      <div class="header-mark" aria-hidden="true">↗</div>
+    </header>
+
     <section class="panel">
       <div class="input-grid">
         <div class="field">
@@ -254,7 +304,6 @@ td{color:#ddd}
       </div>
     </section>
     <div class="footer">TRADER MINORITAS · MINORITAS DI JUMLAH, MAYORITAS DI PROFIT</div>
-    </div>
   </main>
 </div>
 
@@ -397,17 +446,7 @@ $("yrs").addEventListener("input", () => {
 $("calculate").addEventListener("click", calc);
 ["modal","dca"].forEach(id => $(id).addEventListener("change", calc));
 
-window.addEventListener("DOMContentLoaded", () => {
-  calc();
-  const menu = document.getElementById("menu");
-  const side = document.getElementById("side");
-  if (menu && side) menu.addEventListener("click", () => side.classList.toggle("open"));
-  document.addEventListener("click", event => {
-    if (window.innerWidth <= 600 && side && menu && side.classList.contains("open") && !side.contains(event.target) && !menu.contains(event.target)) side.classList.remove("open");
-  });
-  const logout = document.getElementById("logout");
-  if (logout) logout.addEventListener("click", () => { window.location.href = "member.html"; });
-});
+window.addEventListener("DOMContentLoaded", calc);
 </script>
 </body>
 </html>
