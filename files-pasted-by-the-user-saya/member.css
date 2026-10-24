@@ -176,3 +176,58 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
   font:inherit;
 }
 .edge-explanation-input:focus{outline:2px solid #3984ed;outline-offset:1px}
+
+
+/* Unified visual system for every TM EDGE LAB configuration control */
+.edge-config .edge-config-grid input,
+.edge-config .edge-config-grid select,
+.edge-config .edge-config-grid textarea,
+.edge-config .edge-config-grid .edge-period-button,
+.edge-pl-config input{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  min-height:44px;
+  border:1px solid #b7d6ff;
+  border-radius:7px;
+  background:#eaf3ff;
+  color:#172235;
+  padding:10px 12px;
+  font-family:Manrope,Arial,sans-serif;
+  font-size:13px;
+  font-weight:600;
+  line-height:1.5;
+  box-shadow:none;
+}
+.edge-config .edge-config-grid textarea{
+  height:44px;
+  resize:none;
+  overflow:hidden;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+.edge-config .edge-config-grid .edge-period-button{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  text-align:left;
+  cursor:pointer;
+}
+.edge-config .edge-config-grid input:focus,
+.edge-config .edge-config-grid select:focus,
+.edge-config .edge-config-grid textarea:focus,
+.edge-config .edge-config-grid .edge-period-button:focus-visible,
+.edge-pl-config input:focus{
+  outline:none;
+  border-color:#3984ed;
+  box-shadow:0 0 0 2px #3984ed33;
+}
+.edge-config .edge-config-grid input:disabled,
+.edge-config .edge-config-grid select:disabled,
+.edge-pl-config input:disabled{
+  background:#d9dce1!important;
+  color:#858b95!important;
+  border-color:#b7bdc7!important;
+  cursor:not-allowed!important;
+  opacity:.72;
+}
