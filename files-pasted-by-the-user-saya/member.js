@@ -489,8 +489,24 @@ updateOverview();
  }
  function syncMode(){
   state.mode=$('edgeMode').value;
-  $('edgeFixedValues').hidden=state.mode==='manual';
-  $('edgeManualValues').hidden=state.mode!=='manual';
+  const fixedValues=$('edgeFixedValues');
+  const manual=state.mode==='manual';
+  fixedValues.hidden=false;
+  fixedValues.classList.toggle('is-unavailable',manual);
+  $('edgeProfit').disabled=manual;
+  $('edgeLoss').disabled=manual;
+  if(manual){
+    $('edgeProfit').value=0;
+    $('edgeLoss').value=0;
+    state.profit=0;
+    state.loss=0;
+  }else{
+    if(!(Number(state.profit)>0))state.profit=10;
+    if(!(Math.abs(Number(state.loss))>0))state.loss=-10;
+    $('edgeProfit').value=state.profit;
+    $('edgeLoss').value=Math.abs(Number(state.loss));
+  }
+  $('edgeManualValues').hidden=!manual;
   persist();render();
  }
  function stats(){

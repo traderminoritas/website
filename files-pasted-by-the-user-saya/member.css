@@ -148,3 +148,15 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
   font-weight:700;
 }
 .edge-sheet td:nth-child(7) .calculated.negative{color:#c4321d;}
+
+/* Fixed profit/loss inputs are disabled in Manual mode */
+.edge-pl-config.is-unavailable input{
+  background:#d9dce1!important;
+  color:#858b95!important;
+  border-color:#b7bdc7!important;
+  cursor:not-allowed!important;
+  opacity:.72;
+}
+.edge-pl-config.is-unavailable label{color:#8a8d94!important}
+.edge-pl-config.is-unavailable .edge-loss-hint{color:#777e88!important}
+.edge-pl-config.is-unavailable p{color:#858b95!important}
