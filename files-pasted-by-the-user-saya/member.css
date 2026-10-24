@@ -78,3 +78,24 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
 /* v2 — sheet-inspired trading workspace */
 .config-head-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}.ghost-action{border:1px solid var(--line);background:transparent;color:#aaa69d;padding:7px 9px;font:8px Manrope;cursor:pointer}.ghost-action:hover{border-color:#665635;color:#d9bb6c}.test-config .section-head{padding-bottom:15px}.journal-stats{border-radius:2px;overflow:hidden}.journal-stats>b{background:linear-gradient(180deg,#1d1c19,#191917);min-height:74px}.journal-stats>b:nth-child(-n+4){background:linear-gradient(180deg,#24221d,#1b1a17)}.journal-stats strong{display:block;margin-top:8px;font:500 21px 'DM Mono';color:#d9bb6c}.journal-stats b:nth-child(2) strong{color:#9bd49a}.journal-stats b:nth-child(3) strong{color:#9bd49a}.journal-stats b:nth-child(4) strong{color:#e0a09a}.summary-tabs{display:flex;gap:0;margin:16px 0 0;border-bottom:1px solid var(--line)}.summary-tabs button{border:0;border-bottom:2px solid transparent;background:none;color:#77736a;padding:10px 24px;font:9px Manrope;cursor:pointer}.summary-tabs button.active{color:var(--gold);border-bottom-color:var(--gold)}.equity-panel{min-height:280px}.equity-panel .mini-chart{border:1px solid #2d2b26;padding:5px;background:repeating-linear-gradient(0deg,transparent,transparent 53px,#2b2925 54px)}.journal-review{background:linear-gradient(180deg,#1d1c19,#171715)}.review-points div{background:rgba(255,255,255,.015);padding-left:8px;padding-right:8px}.test-config .secondary{min-width:180px}.trade-modal{background:#1b1b18;color:#e7e2d7;border:1px solid #4a453b}.trade-modal::backdrop{background:rgba(0,0,0,.72)}.trade-modal #close{background:none;border:0;color:#8f8a80;font-size:25px;cursor:pointer}.trade-modal input,.trade-modal select,.trade-modal textarea{background:#11110f;border-color:#403d35;color:#eee}.trade-modal input:focus,.trade-modal select:focus,.trade-modal textarea:focus{outline:1px solid #806c40;border-color:#806c40}
 @media(max-width:600px){.config-head-actions{justify-content:flex-start}.summary-tabs button{padding:10px 14px}.ghost-action{padding:7px 8px}.journal-stats strong{font-size:17px}}
+
+
+/* TM EDGE LAB: unified workspace with internal modes */
+.edge-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:24px}
+.edge-heading h1{margin:0;font-size:39px;line-height:1.05;font-weight:500;letter-spacing:-2px}
+.edge-heading h1 em{font-family:Georgia,serif;font-weight:normal}
+.edge-heading>div>p:last-child{color:var(--muted);font-size:12px;margin:9px 0 0}
+.edge-label{font:9px 'DM Mono',monospace;letter-spacing:1.1px;color:var(--gold);border:1px solid var(--line);padding:10px 12px;white-space:nowrap}
+.edge-mode-tabs{display:flex;gap:5px;flex-wrap:wrap;padding:6px;border:1px solid var(--line);background:var(--surface);width:max-content;max-width:100%;margin:0 0 24px}
+.edge-mode-tabs button{border:1px solid transparent;background:transparent;color:var(--muted);padding:12px 15px;font:700 11px Manrope,Arial,sans-serif;cursor:pointer}
+.edge-mode-tabs button:hover{color:var(--text);background:#292821}
+.edge-mode-tabs button.active{background:var(--gold);color:#171510}
+.edge-mode-panel{display:none}
+.edge-mode-panel.active{display:block}
+.edge-mode-panel>.intro{margin-top:0}
+@media(max-width:800px){
+  .edge-heading{align-items:flex-start;flex-direction:column;gap:14px}
+  .edge-heading h1{font-size:32px}
+  .edge-mode-tabs{display:grid;grid-template-columns:1fr;width:100%}
+  .edge-mode-tabs button{text-align:left}
+}

@@ -3,8 +3,19 @@ const VIP_TOKEN=sessionStorage.getItem('tmVipToken');
 if(!VIP_TOKEN)location.replace('index.html');
 const officialLogoStyles=document.createElement('style');officialLogoStyles.textContent="aside .brand>b{font-size:0!important;background:#111 url('https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/Trader%20MInoritas%20logo.png') center/90% auto no-repeat!important;border-color:rgba(216,180,94,.45)!important}";document.head.appendChild(officialLogoStyles);
 const pages=document.querySelectorAll('.page'),side=document.getElementById('side'),crumb=document.getElementById('crumb');
-function openPage(id){pages.forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));crumb.textContent='DASHBOARD / '+id.toUpperCase().replace('LEARN','MODUL VIP').replace('JOURNAL','JOURNAL & BACKTEST');side.classList.remove('open');scrollTo({top:0,behavior:'smooth'})}
-document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>openPage(b.dataset.page));document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>openPage(b.dataset.jump));document.getElementById('menu').onclick=()=>side.classList.toggle('open');document.getElementById('logout').onclick=()=>{sessionStorage.clear();location.href='index.html'};
+function openPage(id){pages.forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));crumb.textContent='DASHBOARD / '+(id==='edge'?'TM EDGE LAB':id.toUpperCase().replace('LEARN','MODUL VIP'));side.classList.remove('open');scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>openPage(b.dataset.page));document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>openPage(b.dataset.jump));
+document.querySelectorAll('[data-edge-mode]').forEach(btn=>btn.addEventListener('click',()=>{
+  const mode=btn.dataset.edgeMode;
+  document.querySelectorAll('[data-edge-mode]').forEach(tab=>{
+    const active=tab===btn;
+    tab.classList.toggle('active',active);
+    tab.setAttribute('aria-selected',String(active));
+  });
+  document.querySelectorAll('[data-edge-panel]').forEach(panel=>panel.classList.toggle('active',panel.dataset.edgePanel===mode));
+  renderMode(mode);
+}));
+document.getElementById('menu').onclick=()=>side.classList.toggle('open');document.getElementById('logout').onclick=()=>{sessionStorage.clear();location.href='index.html'};
 const tool={lot:{type:'POSITION SIZING',title:'Lot Size Calculator',desc:'Tentukan posisi berdasarkan batas risiko Anda.',fields:[['Modal akun','balance',1000],['Risiko per transaksi (%)','risk',1],['Stop loss (pips)','sl',30]],calc:v=>[['RISIKO MAKSIMUM','$'+(v.balance*v.risk/100).toFixed(2)],['UKURAN POSISI',(v.balance*v.risk/100/(v.sl*10||1)).toFixed(2)+' lot']]},rr:{type:'RISK ANALYSIS',title:'Risk / Reward Calculator',desc:'Bandingkan potensi kerugian dan target sebelum entry.',fields:[['Entry price','entry',1.085],['Stop loss','stop',1.08],['Take profit','tp',1.0975]],calc:v=>[['RISIKO',Math.abs(v.entry-v.stop).toFixed(4)],['RISK : REWARD','1 : '+(Math.abs(v.tp-v.entry)/(Math.abs(v.entry-v.stop)||1)).toFixed(2)]]},comp:{type:'GROWTH PLAN',title:'Compounding Calculator',desc:'Visualisasikan pertumbuhan modal dengan target realistis.',fields:[['Modal awal','capital',1000],['Target per bulan (%)','rate',5],['Durasi (bulan)','months',12]],calc:v=>[['PROYEKSI MODAL','$'+(v.capital*Math.pow(1+v.rate/100,v.months)).toFixed(2)],['PERTUMBUHAN','$'+(v.capital*Math.pow(1+v.rate/100,v.months)-v.capital).toFixed(2)]]}};
 function render(type='lot'){let t=tool[type];
 
