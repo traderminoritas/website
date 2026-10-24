@@ -79,35 +79,37 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
 .config-head-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}.ghost-action{border:1px solid var(--line);background:transparent;color:#aaa69d;padding:7px 9px;font:8px Manrope;cursor:pointer}.ghost-action:hover{border-color:#665635;color:#d9bb6c}.test-config .section-head{padding-bottom:15px}.journal-stats{border-radius:2px;overflow:hidden}.journal-stats>b{background:linear-gradient(180deg,#1d1c19,#191917);min-height:74px}.journal-stats>b:nth-child(-n+4){background:linear-gradient(180deg,#24221d,#1b1a17)}.journal-stats strong{display:block;margin-top:8px;font:500 21px 'DM Mono';color:#d9bb6c}.journal-stats b:nth-child(2) strong{color:#9bd49a}.journal-stats b:nth-child(3) strong{color:#9bd49a}.journal-stats b:nth-child(4) strong{color:#e0a09a}.summary-tabs{display:flex;gap:0;margin:16px 0 0;border-bottom:1px solid var(--line)}.summary-tabs button{border:0;border-bottom:2px solid transparent;background:none;color:#77736a;padding:10px 24px;font:9px Manrope;cursor:pointer}.summary-tabs button.active{color:var(--gold);border-bottom-color:var(--gold)}.equity-panel{min-height:280px}.equity-panel .mini-chart{border:1px solid #2d2b26;padding:5px;background:repeating-linear-gradient(0deg,transparent,transparent 53px,#2b2925 54px)}.journal-review{background:linear-gradient(180deg,#1d1c19,#171715)}.review-points div{background:rgba(255,255,255,.015);padding-left:8px;padding-right:8px}.test-config .secondary{min-width:180px}.trade-modal{background:#1b1b18;color:#e7e2d7;border:1px solid #4a453b}.trade-modal::backdrop{background:rgba(0,0,0,.72)}.trade-modal #close{background:none;border:0;color:#8f8a80;font-size:25px;cursor:pointer}.trade-modal input,.trade-modal select,.trade-modal textarea{background:#11110f;border-color:#403d35;color:#eee}.trade-modal input:focus,.trade-modal select:focus,.trade-modal textarea:focus{outline:1px solid #806c40;border-color:#806c40}
 @media(max-width:600px){.config-head-actions{justify-content:flex-start}.summary-tabs button{padding:10px 14px}.ghost-action{padding:7px 8px}.journal-stats strong{font-size:17px}}
 
-/* TM EDGE LAB — research identity and improved test-entry controls */
-.edge-lab-brand{margin:0 0 22px;padding:22px 24px;border:1px solid #51462f;background:linear-gradient(135deg,#24221d,#171715);border-radius:4px}
-.edge-lab-brand .edge-lab-kicker{margin:0 0 8px;color:var(--gold);font:9px 'DM Mono';letter-spacing:2px}
-.edge-lab-brand h2{margin:0 0 10px;color:#e8dfca;font-size:24px;line-height:1.25}
-.edge-lab-brand p:not(.edge-lab-kicker){max-width:850px;margin:0 0 12px;color:#aaa69e;font-size:12px;line-height:1.8}
-.edge-lab-brand em{color:#d9bb6c;font-size:11px;font-style:normal;letter-spacing:.2px}
-.config-grid input[type="date"]{min-height:38px;color-scheme:dark}
-.wide-field textarea.auto-grow{height:auto;min-height:90px;max-height:480px;resize:vertical;overflow-y:hidden;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
-.trade-entry-card{min-width:0;margin:0 0 14px;padding:16px;border:1px solid #403d35;border-radius:4px}
-.trade-entry-card legend{padding:0 8px;color:var(--gold);font:10px 'DM Mono';letter-spacing:1px}
-.trade-entry-card .modal-grid{margin-top:4px}
-.trade-entry-card label{display:block;color:#aaa69e;font-size:10px;font-weight:700}
-.trade-entry-card input,.trade-entry-card select{display:block;width:100%;margin-top:6px;min-width:0;padding:10px;background:#11110f;border:1px solid #403d35;border-radius:2px;color:#eee;font:11px Manrope}
-.trade-entry-card input:focus,.trade-entry-card select:focus{outline:1px solid #806c40;border-color:#806c40}
-.trade-modal-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:8px}
-.trade-modal-actions .secondary,.trade-modal-actions .primary{margin-top:0;min-height:38px}
-.remove-trade-entry{margin-top:12px;border:0;background:transparent;color:#e19a92;padding:6px 0;font:10px Manrope;cursor:pointer}
-@media(max-width:600px){.edge-lab-brand{padding:18px 16px;margin-bottom:16px}.edge-lab-brand h2{font-size:20px}.edge-lab-brand p:not(.edge-lab-kicker){font-size:11px}.trade-entry-card{padding:12px}.trade-modal-actions{display:grid;grid-template-columns:1fr}.trade-modal-actions button{width:100%}}
 
-
-/* TM EDGE LAB — resilient form styling */
-#backtest .test-config,#forward .test-config{color:var(--text)}
-#backtest .config-grid,#forward .config-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:20px}
-#backtest .config-grid label,#forward .config-grid label{display:block;min-width:0;color:var(--muted);font-size:10px;font-weight:700;line-height:1.5}
-#backtest .config-grid input,#forward .config-grid input,#backtest .wide-field textarea,#forward .wide-field textarea{display:block;width:100%;max-width:100%;box-sizing:border-box;margin-top:7px;padding:11px 12px;border:1px solid var(--line);border-radius:3px;background:#11110f;color:var(--text);font:12px Manrope,Arial}
-#backtest input[type=date],#forward input[type=date]{min-height:40px;color-scheme:dark}
-#backtest .wide-field,#forward .wide-field{display:block;margin-top:16px;color:var(--muted);font-size:10px;font-weight:700}
-#backtest .wide-field textarea,#forward .wide-field textarea{min-height:90px;line-height:1.7;resize:vertical;overflow-wrap:anywhere}
-#backtest .edge-lab-brand,#forward .edge-lab-brand{max-width:100%}
-#backtest button,#forward button{cursor:pointer}
-@media(max-width:850px){#backtest .config-grid,#forward .config-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:600px){#backtest .config-grid,#forward .config-grid{grid-template-columns:minmax(0,1fr)}}
+/* TM EDGE LAB spreadsheet interface */
+.edge-config{padding:22px;margin-bottom:18px}
+.edge-config-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px}
+.edge-config label,.edge-pl-config label{display:flex;flex-direction:column;gap:7px;font-size:12px;font-weight:700;color:var(--muted,#777)}
+.edge-config input,.edge-config select{width:100%;min-width:0;border:1px solid #b7d6ff;border-radius:7px;background:#eaf3ff;color:#172235;padding:10px 11px;font:inherit;font-size:13px;outline:none}
+.edge-config input:focus,.edge-config select:focus{border-color:#3984ed;box-shadow:0 0 0 2px #3984ed22}
+.edge-pl-config{display:grid;grid-template-columns:repeat(2,minmax(150px,220px));gap:12px;margin-top:15px;padding-top:15px;border-top:1px solid var(--line,#ddd)}
+.edge-pl-config p{grid-column:1/-1;margin:0;font-size:12px;color:var(--muted,#777)}
+.edge-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,.8fr);gap:18px;align-items:start}
+.edge-table-panel,.edge-stats-panel{padding:18px;min-width:0}
+.edge-table-actions{display:flex;gap:8px;flex-wrap:wrap}
+.edge-hint{font-size:12px;color:var(--muted,#777);line-height:1.6;margin:0 0 12px}
+.edge-sheet{border-collapse:separate;border-spacing:0;width:100%;font-size:12px;white-space:nowrap}
+.edge-sheet th{background:#f0f2f5;color:#505b6a;font-weight:800;text-align:left;padding:10px 9px;border-bottom:1px solid #d8dde5;position:sticky;top:0;z-index:1}
+.edge-sheet td{padding:0;border-bottom:1px solid #e6e9ee;border-right:1px solid #edf0f4;background:#fff}
+.edge-sheet td:first-child{padding:9px;text-align:center;color:#6c7480;background:#f7f8fa}
+.edge-sheet input,.edge-sheet select{border:0;border-radius:0;background:#eaf3ff;color:#172235;width:100%;min-width:84px;padding:9px 8px;font:inherit;font-size:12px;outline:none}
+.edge-sheet select{min-width:90px}
+.edge-sheet input:focus,.edge-sheet select:focus{box-shadow:inset 0 0 0 2px #3984ed}
+.edge-sheet .calculated{padding:9px 8px;display:block;text-align:right;font-variant-numeric:tabular-nums}
+.edge-sheet .negative{color:#bb321f}
+.edge-sheet .positive{color:#087a44}
+.edge-sheet-scroll{overflow:auto}
+.edge-stats{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.edge-stat{display:flex;justify-content:space-between;gap:8px;padding:11px 0;border-bottom:1px solid var(--line,#e7e7e7);font-size:12px}
+.edge-stat span{color:var(--muted,#777)}
+.edge-stat strong{font-variant-numeric:tabular-nums;text-align:right}
+.edge-chart-wrap{margin-top:22px}
+#edgeChart{width:100%;height:210px;overflow:visible}
+#edgeChart .edge-line{fill:none;stroke:#3984ed;stroke-width:3}
+#edgeChart .edge-axis{stroke:#d9dee7;stroke-width:1}
+@media(max-width:1100px){.edge-config-grid{grid-template-columns:repeat(2,minmax(130px,1fr))}.edge-layout{grid-template-columns:1fr}}
+@media(max-width:600px){.edge-config-grid{grid-template-columns:1fr 1fr}.edge-pl-config{grid-template-columns:1fr 1fr}.edge-table-panel,.edge-stats-panel{padding:12px}.edge-stats{grid-template-columns:1fr 1fr}}
