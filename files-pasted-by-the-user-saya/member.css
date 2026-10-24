@@ -99,3 +99,8 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
   .edge-mode-tabs{display:grid;grid-template-columns:1fr;width:100%}
   .edge-mode-tabs button{text-align:left}
 }
+
+/* TM EDGE LAB — single-purpose backtest workspace */
+.edge-heading{margin-bottom:26px}
+.edge-label{white-space:normal}
+.edge-mode-panel.active{display:block}
