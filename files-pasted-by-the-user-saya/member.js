@@ -467,17 +467,24 @@ updateOverview();
 (function(){
  const $=id=>document.getElementById(id);
  const KEY='tmEdgeLabSpreadsheetV1';
- const defaults={mode:'fixed',lot:.01,initial:1000,profit:10,loss:-10,explanation:'Mengambil posisi sell setiap harinya 16.23 WIB atau 12.23 Jam Broker. TP SL 50 points',rr:'1:1',symbol:'XAUUSD - M1',period:'1 Jan 2024 s/d 31 Des 2026',trades:[]};
+ const defaults={mode:'fixed',lot:.01,initial:1000,profit:10,loss:-10,explanation:'Mengambil posisi sell setiap harinya 16.23 WIB atau 12.23 Jam Broker. TP SL 50 points',rr:'1:1',symbol:'XAUUSD',timeframe:'M1',period:'1 Jan 2024 s/d 31 Des 2026',trades:[]};
  let state;
  try{state={...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')};}catch(e){state={...defaults};}
  if(!Array.isArray(state.trades))state.trades=[];
+ // Migrate the previous combined Symbol / Timeframe value.
+ if(typeof state.symbol==='string' && state.symbol.includes(' - ')){
+   const parts=state.symbol.split(' - ');
+   state.symbol=parts[0]||'XAUUSD';
+   if(!state.timeframe && parts[1])state.timeframe=parts[1];
+ }
+ if(!state.timeframe)state.timeframe='M1';
  const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
  const money=n=>'$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
  function persist(){localStorage.setItem(KEY,JSON.stringify(state));}
  function initInputs(){
   $('edgeMode').value=state.mode;$('edgeLot').value=state.lot;$('edgeInitial').value=state.initial;
   $('edgeProfit').value=state.profit;$('edgeLoss').value=state.loss;$('edgeExplanation').value=state.explanation;
-  $('edgeRR').value=state.rr;$('edgeSymbol').value=state.symbol;const periodLabel=$('edgePeriodLabel');if(periodLabel)periodLabel.textContent=state.period;
+  $('edgeRR').value=state.rr;$('edgeSymbol').value=state.symbol;$('edgeTimeframe').value=state.timeframe;const periodLabel=$('edgePeriodLabel');if(periodLabel)periodLabel.textContent=state.period;
   syncMode();
  }
  function syncMode(){
@@ -544,8 +551,8 @@ updateOverview();
   persist();render();
  }
  document.addEventListener('change',e=>{const el=e.target;if(!el.matches('#edgeRows [data-k]'))return;commitCell(el);});
- ['edgeLot','edgeInitial','edgeProfit','edgeLoss','edgeExplanation','edgeRR','edgeSymbol','edgePeriodButton'].forEach(id=>$(id)?.addEventListener('change',()=>{
-  const map={edgeLot:'lot',edgeInitial:'initial',edgeProfit:'profit',edgeLoss:'loss',edgeExplanation:'explanation',edgeRR:'rr',edgeSymbol:'symbol',edgePeriodButton:'period'};
+ ['edgeLot','edgeInitial','edgeProfit','edgeLoss','edgeExplanation','edgeRR','edgeSymbol','edgeTimeframe','edgePeriodButton'].forEach(id=>$(id)?.addEventListener('change',()=>{
+  const map={edgeLot:'lot',edgeInitial:'initial',edgeProfit:'profit',edgeLoss:'loss',edgeExplanation:'explanation',edgeRR:'rr',edgeSymbol:'symbol',edgeTimeframe:'timeframe',edgePeriodButton:'period'};
   const key=map[id];state[key]=id==='edgeLot'||id==='edgeInitial'||id==='edgeProfit'||id==='edgeLoss'?Number($(id).value)||0:(id==='edgePeriodButton'?$('edgePeriodLabel').textContent:$(id).value);persist();render();
  }));
  $('edgeMode')?.addEventListener('change',syncMode);

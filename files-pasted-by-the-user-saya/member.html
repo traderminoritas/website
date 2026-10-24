@@ -15,7 +15,13 @@
     <label>Reward to Risk<input id="edgeRR" class="blue-input" value="1:1"></label>
     <label>Mode profit/loss<select id="edgeMode" class="blue-input"><option value="fixed">Fixed Lot</option><option value="manual">Manual</option></select></label>
     <label>Lot Size<input id="edgeLot" class="blue-input" type="number" min="0.01" step="0.01" value="0.01"></label>
-    <label>Symbol / Timeframe<input id="edgeSymbol" class="blue-input" value="XAUUSD - M1"></label>
+    <label>Symbol<input id="edgeSymbol" class="blue-input" value="XAUUSD" placeholder="Contoh: XAUUSD"></label>
+    <label>Timeframe<select id="edgeTimeframe" class="blue-input">
+      <option>M1</option><option>M2</option><option>M3</option><option>M4</option><option>M5</option>
+      <option>M6</option><option>M10</option><option>M12</option><option>M15</option><option>M20</option><option>M30</option>
+      <option>H1</option><option>H2</option><option>H3</option><option>H4</option><option>H6</option><option>H8</option><option>H12</option>
+      <option>D1</option><option>W1</option><option>MN1</option>
+    </select></label>
     <label>Period
       <div class="edge-period-control">
         <button type="button" id="edgePeriodButton" class="blue-input edge-period-button" aria-haspopup="dialog" aria-controls="edgePeriodPicker">
