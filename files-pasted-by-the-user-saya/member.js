@@ -467,9 +467,12 @@ updateOverview();
 (function(){
  const $=id=>document.getElementById(id);
  const KEY='tmEdgeLabSpreadsheetV1';
- const defaults={mode:'fixed',lot:.01,initial:1000,profit:10,loss:-10,explanation:'Mengambil posisi sell setiap harinya 16.23 WIB atau 12.23 Jam Broker. TP SL 50 points',rr:'1:1',symbol:'XAUUSD',timeframe:'M1',period:'1 Jan 2024 s/d 31 Des 2026',trades:[]};
+ const defaults={mode:'fixed',lot:.01,initial:1000,profit:10,loss:-10,explanation:'',rr:'',symbol:'XAUUSD',timeframe:'M1',period:'1 Jan 2024 s/d 31 Des 2026',trades:[]};
  let state;
- try{state={...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')};}catch(e){state={...defaults};}
+ try{state={...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')};
+ if(state.explanation==='Mengambil posisi sell setiap harinya 16.23 WIB atau 12.23 Jam Broker. TP SL 50 points')state.explanation='';
+ if(state.rr==='1:1')state.rr='';
+}catch(e){state={...defaults};}
  if(!Array.isArray(state.trades))state.trades=[];
  // Migrate the previous combined Symbol / Timeframe value.
  if(typeof state.symbol==='string' && state.symbol.includes(' - ')){
