@@ -8,7 +8,7 @@ document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>openPage(b.dat
 const tool={lot:{type:'POSITION SIZING',title:'Lot Size Calculator',desc:'Tentukan posisi berdasarkan batas risiko Anda.',fields:[['Modal akun','balance',1000],['Risiko per transaksi (%)','risk',1],['Stop loss (pips)','sl',30]],calc:v=>[['RISIKO MAKSIMUM','$'+(v.balance*v.risk/100).toFixed(2)],['UKURAN POSISI',(v.balance*v.risk/100/(v.sl*10||1)).toFixed(2)+' lot']]},rr:{type:'RISK ANALYSIS',title:'Risk / Reward Calculator',desc:'Bandingkan potensi kerugian dan target sebelum entry.',fields:[['Entry price','entry',1.085],['Stop loss','stop',1.08],['Take profit','tp',1.0975]],calc:v=>[['RISIKO',Math.abs(v.entry-v.stop).toFixed(4)],['RISK : REWARD','1 : '+(Math.abs(v.tp-v.entry)/(Math.abs(v.entry-v.stop)||1)).toFixed(2)]]},comp:{type:'GROWTH PLAN',title:'Compounding Calculator',desc:'Visualisasikan pertumbuhan modal dengan target realistis.',fields:[['Modal awal','capital',1000],['Target per bulan (%)','rate',5],['Durasi (bulan)','months',12]],calc:v=>[['PROYEKSI MODAL','$'+(v.capital*Math.pow(1+v.rate/100,v.months)).toFixed(2)],['PERTUMBUHAN','$'+(v.capital*Math.pow(1+v.rate/100,v.months)-v.capital).toFixed(2)]]}};
 function render(type='lot'){let t=tool[type];
 
-document.getElementById('calcType').textContent=t.type;document.getElementById('calcTitle').textContent=t.title;document.getElementById('calcDesc').textContent=t.desc;let box=document.getElementById('calcForm');box.innerHTML='<div class="calc-fields">'+t.fields.map(f=>`<label>${f[0]}<input id="${f[1]}" type="number" step="any" value="${f[2]}"></label>`).join('')+'</div><div class="calc-result" id="resultBox"></div>';let update=()=>{let v=Object.fromEntries(t.fields.map(f=>[f[1],+document.getElementById(f[1]).value||0]));document.getElementById('resultBox').innerHTML=t.calc(v).map(r=>`<div><small>${r[0]}</small><b>${r[1]}</b></div>`).join('')};t.fields.forEach(f=>document.getElementById(f[1]).oninput=update);update()};document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{render(b.dataset.tool);document.querySelectorAll('.toolcards article').forEach(a=>a.classList.remove('selected'));b.closest('article').classList.add('selected')});render();
+document.getElementById('calcType').textContent=t.type;document.getElementById('calcTitle').textContent=t.title;document.getElementById('calcDesc').textContent=t.desc;let box=document.getElementById('calcForm');box.innerHTML='<div class="calc-fields">'+t.fields.map(f=>`<label>${f[0]}<input id="${f[1]}" type="number" step="any" value="${f[2]}"></label>`).join('')+'</div><div class="calc-result" id="resultBox"></div>';let update=()=>{let v=Object.fromEntries(t.fields.map(f=>[f[1],+document.getElementById(f[1]).value||0]));document.getElementById('resultBox').innerHTML=t.calc(v).map(r=>`<div><small>${r[0]}</small><b>${r[1]}</b></div>`).join('')};t.fields.forEach(f=>document.getElementById(f[1]).oninput=update);update()};document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{render(b.dataset.tool);document.querySelectorAll('.toolcards article').forEach(a=>a.classList.remove('selected'));b.closest('article').classList.add('selected')});if (document.getElementById('calcType') && document.getElementById('calcTitle') && document.getElementById('calcDesc') && document.getElementById('calcForm')) render();
 const modal=document.getElementById('modal'),toast=document.getElementById('toast');if(document.getElementById('close'))document.getElementById('close').onclick=()=>modal.close();document.getElementById('profileForm').onsubmit=e=>e.preventDefault();document.getElementById('profileForm').querySelector('button').onclick=()=>{toastMessage('Profile tersimpan di sesi demo.')};
 
 
@@ -107,48 +107,6 @@ const videoFullscreen=document.getElementById('videoFullscreen');
 const videoFrameWrap=document.querySelector('.video-frame-wrap');
 let activeVideoId=null,videoPlayer=videoFrame,videoTimer=null;
 let videoPlaybackRate=1;
-
-let lastPositionSaveAt=0;
-
-function getVideoPositionKey(id){
-  return 'tmVipPosition_'+id;
-}
-
-function saveCurrentVideoPosition(){
-  if(!videoPlayer || !activeVideoId) return;
-
-  const current=videoPlayer.currentTime;
-  const duration=videoPlayer.duration;
-
-  if(!Number.isFinite(current) || current<0) return;
-
-  const key=getVideoPositionKey(activeVideoId);
-
-  // Jika video hampir selesai, mulai lagi dari awal
-  // saat dibuka kembali.
-  if(Number.isFinite(duration) && duration>0 && current>=duration-2){
-    localStorage.removeItem(key);
-    return;
-  }
-
-  localStorage.setItem(key,String(Math.floor(current)));
-  lastPositionSaveAt=current;
-}
-
-// Simpan posisi berkala, saat pause, dan saat video selesai.
-videoPlayer?.addEventListener('timeupdate',()=>{
-  if(videoPlayer.currentTime-lastPositionSaveAt>=5){
-    saveCurrentVideoPosition();
-  }
-});
-
-videoPlayer?.addEventListener('pause',saveCurrentVideoPosition);
-videoPlayer?.addEventListener('ended',()=>{
-  if(activeVideoId){
-    localStorage.removeItem(getVideoPositionKey(activeVideoId));
-  }
-});
-
 let videoSpeedButton=null;
 let videoControlsHideTimer=null;
 
@@ -233,6 +191,17 @@ async function getSignedVideoUrl(file){
   if(!data.success||!data.url)throw new Error('Signed video URL tidak tersedia.');
   return data.url;
 }
+function readVideoProgress(id){
+  try{return JSON.parse(localStorage.getItem('tmVipVideoProgress')||'{}')[id]||0;}catch(_){return 0;}
+}
+function saveVideoProgress(){
+  if(!videoPlayer||!activeVideoId||!Number.isFinite(videoPlayer.currentTime))return;
+  try{
+    const all=JSON.parse(localStorage.getItem('tmVipVideoProgress')||'{}');
+    all[activeVideoId]=videoPlayer.ended?0:Math.floor(videoPlayer.currentTime);
+    localStorage.setItem('tmVipVideoProgress',JSON.stringify(all));
+  }catch(_){}
+}
 async function createR2Player(file){
   if(!videoPlayer)return;
   window.tmShowVideoControls?.();
@@ -244,35 +213,20 @@ async function createR2Player(file){
   try{
     const signedUrl=await getSignedVideoUrl(file);
     if(activeVideoId!==file.replace(/\.mp4$/i,''))return;
-
-const positionKey=getVideoPositionKey(activeVideoId);
-const savedPosition=Number(localStorage.getItem(positionKey)||0);
-
-lastPositionSaveAt=0;
-
-// Pasang listener sebelum video dimuat agar posisi
-// bisa dipulihkan setelah durasi video diketahui.
-videoPlayer.addEventListener('loadedmetadata',function restorePosition(){
-  if(!videoPlayer || !activeVideoId) return;
-
-  const duration=videoPlayer.duration;
-
-  if(
-    Number.isFinite(duration) &&
-    savedPosition>0 &&
-    savedPosition<duration-2
-  ){
-    videoPlayer.currentTime=savedPosition;
-  }
-
-  lastPositionSaveAt=savedPosition;
-},{once:true});
-
-videoPlayer.src=signedUrl;
-videoPlayer.playbackRate=videoPlaybackRate;
-videoPlayer.load();
-await videoPlayer.play().catch(()=>{});
-
+    videoPlayer.src=signedUrl;
+    videoPlayer.playbackRate=videoPlaybackRate;
+    videoPlayer.load();
+    const saved=readVideoProgress(activeVideoId);
+    const resumeAt=Math.max(0,Number(saved)||0);
+    const onReady=()=>{
+      videoPlayer.removeEventListener('loadedmetadata',onReady);
+      if(resumeAt>5 && (!videoPlayer.duration || resumeAt < videoPlayer.duration-3)){
+        try{videoPlayer.currentTime=resumeAt;}catch(_){}
+      }
+      syncVideoControls();
+    };
+    videoPlayer.addEventListener('loadedmetadata',onReady);
+    await videoPlayer.play().catch(()=>{});
     startVideoTimer();
     syncVideoControls();
   }catch(err){
@@ -285,10 +239,10 @@ await videoPlayer.play().catch(()=>{});
   }
 }
 function closeVipVideo(){
+  saveVideoProgress();
   clearTimeout(videoControlsHideTimer);
   videoControlsHideTimer=null;
   videoControls?.classList.remove('tm-controls-hidden');
-   saveCurrentVideoPosition();
   stopVideoTimer();
   if(videoPlayer){videoPlayer.pause();videoPlayer.removeAttribute('src');videoPlayer.load();}
   if(document.fullscreenElement)document.exitFullscreen?.().catch?.(()=>{});
@@ -361,6 +315,9 @@ document.addEventListener('fullscreenchange',()=>{
 });
 if(videoPlayer){
   ['loadedmetadata','timeupdate','durationchange','play','pause','volumechange','ended'].forEach(ev=>videoPlayer.addEventListener(ev,syncVideoControls));
+  videoPlayer.addEventListener('timeupdate',saveVideoProgress);
+  videoPlayer.addEventListener('pause',saveVideoProgress);
+  window.addEventListener('beforeunload',saveVideoProgress);
 }
 
 function toastMessage(message){const t=document.getElementById('toast');if(!t)return;t.textContent=message;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
@@ -370,307 +327,100 @@ const overviewVideos = [
 ['Introduction Class','qu_wCOW0wNI'],['Forex by The Numbers: Rahasia Menghitung Pip, Profit & Resiko Seperti Pro','X3PwOoXoOSk'],['Metode/Strategi Part 1','xoq6ayL8ntM'],['Backtest & Forward Test','aAimxdsn9aE'],['Money Management','3SGEVLCbivc'],['Metode/Strategi Part 2','MzTC-A4bKkY'],['Ngosan (Ngobrol Santai) - 21 September 2025','Lu4tYAVNDyk'],['Foundation - 28 September 2025','NET4ByGlbbI'],['Dow Theory Part 1 - 5 Oktober 2025','Lr5y2XsXCqU'],['Dow Theory Part 2 - 12 Oktober 2025','8I9SWn_tYEU'],['Support & Resistance - 19 Oktober 2025','tNn2_2NaJ_Y'],['Candlestick - 26 Oktober 2025','1AmBp9nKQBU'],['Chart Pattern - 9 November 2025','d6H62mJjeck'],['Trader Minoritas - Divergence - 16 November 2025','UkNXZPl4PBY'],['Trader Minoritas - Bollinger Bands - 30 November 2025','n4rdoF146d4'],['Trader Minoritas - Survival First, Profit Later: Blueprint Anti-MC - 7 Desember 2025','n6sy7LXEX_w'],['Trader Minoritas - EA AUTO TP & SL (LAUNCHING) - 21 Desember 2025','DBoUe1w4ACs'],['Trader Minoritas - Ngosan 4 Januari 2026','RTEy6_KfF6I'],['Trader Minoritas - Trading Psychology 11 Januari 2026','PNPABTuDkOE'],['Trader Minoritas - Ngosan 25 Januari 2026','--0qQtLqQTo'],['New Beginning (OMEGA MINORITAS LAUNCHING) 1 Februari 2026','OWpD4OcAtuA'],['New EDGE - 22 February 2026','S68M4VIktUo'],['NEW EDGE 2 - 15 Maret 2026','PeA1MhlfO70'],['New Project - Trader Minoritas 29 Maret 2026','DQCk-V-lVRs'],['GRAND LAUNCHING EA GLOBAL AUTO TP & SL','vYLmWhyN-QQ'],['Sharing by Member VIP Trader Minoritas - Darcey','v1Q2my4ZHHU'],['Breakout Trading Strategy - Om Sis','ocYXHDNQO6E'],['Sharing by Member (Bang Tama) - 24 Mei 2026 - Trader Minoritas','Y89ranVJFUM'],['Ngosan - 7 Juni 2026 (Trader Minoritas)','1CWNqNPVPu4'],['Wonders of the World - Trader Minoritas 21 Juni 2026','snhCfyWgJeo'],['Anniversary Preparation - 5 July 2026','-Y6rFugbCyc'],['Scalping Edge Sharing 61% winrate by Member (Mr. Tama) & Announcement','wI1G9lRvTeQ'],['Ngobrol Santai Berkualitas, Review Strategy, Update EA, dll - 9 Agustus 2026','7VynpmhQZgQ'],['GRAND LAUNCHING - TRADER MINORITAS CHRONO HEATMAP','AJN-i0xh4h8'],['Ngosan (Ngobrol Santai) - Update 6 September 2026','NJfw71NKDYE']
 ];
 
-
 function updateOverview(){
  const done=JSON.parse(localStorage.getItem('tmVipCompleted')||'[]');
  const last=localStorage.getItem('tmVipLast')||'';
- const total=overviewVideos.length;
-
- // Hitung progress berdasarkan video yang benar-benar ada di daftar
- const completed=overviewVideos.filter(v=>done.includes(v[1])).length;
- const pct=total?Math.round(completed/total*100):0;
-
- const a=document.getElementById('progressCount');
- const b=document.getElementById('progressPercent');
- const bar=document.getElementById('progressBar');
- const label=document.getElementById('progressLabel');
-
- if(a)a.textContent=completed+' / '+total;
- if(b)b.textContent=pct+'%';
- if(bar)bar.style.width=pct+'%';
-
- // Prioritaskan video terakhir yang dibuka jika belum selesai.
- // Jika sudah selesai, cari video pertama yang belum selesai.
- let next=overviewVideos.find(v=>v[1]===last&&!done.includes(v[1]));
-
- if(!next){
-   next=overviewVideos.find(v=>!done.includes(v[1]));
- }
-
- const contTitle=document.getElementById('continueTitle');
- const contMeta=document.getElementById('continueMeta');
- const btn=document.getElementById('continueButton');
-
- if(next){
-   const idx=overviewVideos.findIndex(v=>v[1]===next[1]);
-
-   if(contTitle)contTitle.textContent=next[0];
-   if(contMeta)contMeta.textContent=
-     'Materi '+String(idx+1).padStart(2,'0')+
-     ' · Modul VIP Trader Minoritas';
-
-   if(btn){
-     btn.textContent='Lanjutkan Belajar →';
-     btn.onclick=()=>{
-       openPage('learn');
-
-       // Buka video yang dipilih setelah halaman Modul VIP ditampilkan
-       setTimeout(()=>{
-         const videoButton=document.querySelector(
-           `[data-video-id="${next[1]}"]`
-         );
-
-         if(videoButton)videoButton.click();
-       },100);
-     };
-   }
-
-   if(label){
-     label.textContent=completed
-       ? `Anda sudah menyelesaikan ${completed} dari ${total} video. Lanjutkan materi berikutnya.`
-       : 'Mulai belajar dari materi pertama yang belum selesai.';
-   }
- }else{
-   if(contTitle)contTitle.textContent='Semua modul selesai!';
-   if(contMeta)contMeta.textContent=
-     'Selamat! Anda telah menyelesaikan seluruh materi Modul VIP.';
-   if(btn){
-     btn.textContent='Lihat Semua Modul →';
-     btn.onclick=()=>openPage('learn');
-   }
-   if(label){
-     label.textContent='Luar biasa! Anda telah menyelesaikan semua '+total+' video.';
-   }
- }
-
+ const count=done.length,total=overviewVideos.length,pct=Math.round(count/total*100);
+ const a=document.getElementById('progressCount'),b=document.getElementById('progressPercent'),bar=document.getElementById('progressBar'),label=document.getElementById('progressLabel');
+ if(a)a.textContent=count+' / '+total;b&&(b.textContent=pct+'%');bar&&(bar.style.width=pct+'%');
+ if(label)label.textContent=count?`Anda sudah menyelesaikan ${count} dari ${total} video. Lanjutkan satu materi berikutnya.`:'Mulai dari satu materi, lalu lanjutkan secara konsisten.';
+ const idx=overviewVideos.findIndex(v=>v[1]===last), contTitle=document.getElementById('continueTitle'),contMeta=document.getElementById('continueMeta'),btn=document.getElementById('continueButton');
+ if(idx>=0){const saved=(()=>{try{return JSON.parse(localStorage.getItem('tmVipVideoProgress')||'{}')[last]||0}catch(_){return 0}})();contTitle.textContent=overviewVideos[idx][0];contMeta.textContent='Materi '+String(idx+1).padStart(2,'0')+' · Modul VIP Trader Minoritas'+(saved>0?' · Lanjut dari '+formatTime(saved):'');btn.textContent=saved>0?'Lanjutkan menonton →':'Buka video →';btn.onclick=()=>{openPage('learn');const target=[...document.querySelectorAll('[data-video-id]')].find(el=>el.dataset.videoId===last);if(target){target.click()}else{toastMessage('Video terakhir tidak ditemukan di library.')}}}
  const recent=document.getElementById('recentMaterials');
-
- if(recent){
-   recent.innerHTML=overviewVideos.slice(-3).reverse().map((v,i)=>
-     `<div class="recent-item">
-       <div>
-         <b>${v[0]}</b>
-         <small>VIDEO ${total-i}</small>
-       </div>
-       <span>▶</span>
-     </div>`
-   ).join('');
- }
+ if(recent)recent.innerHTML=overviewVideos.slice(-3).reverse().map((v,i)=>`<div class="recent-item"><div><b>${v[0]}</b><small>VIDEO ${total-i}</small></div><span>▶</span></div>`).join('');
 }
-
 updateOverview();
 
 
-
-
-/* TM EDGE LAB spreadsheet backtest */
+/* =========================================================
+   JOURNAL / BACKTEST / FORWARD TEST — local workspace
+   ========================================================= */
 (function(){
- const $=id=>document.getElementById(id);
- const defaults={mode:'fixed',lot:.01,initial:1000,profit:10,loss:10,explanation:'',rr:'',symbol:'XAUUSD',timeframe:'M1',period:'1 Jan 2024 s/d 31 Des 2026',trades:[]};
- let state={...defaults};
- if(!Array.isArray(state.trades))state.trades=[];
- // Migrate the previous combined Symbol / Timeframe value.
- if(typeof state.symbol==='string' && state.symbol.includes(' - ')){
-   const parts=state.symbol.split(' - ');
-   state.symbol=parts[0]||'XAUUSD';
-   if(!state.timeframe && parts[1])state.timeframe=parts[1];
- }
- if(!state.timeframe)state.timeframe='M1';
- const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
- const money=n=>'$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
- // Backtest data stays in memory for this browser tab/session only. Use JSON Export to keep it.
- function persist(){}
- function initInputs(){
-  $('edgeMode').value=state.mode;$('edgeLot').value=state.lot;$('edgeInitial').value=state.initial;
-  $('edgeProfit').value=state.profit;$('edgeLoss').value=Math.abs(Number(state.loss)||0);$('edgeExplanation').value=state.explanation||'';
-  $('edgeRR').value=state.rr||'';$('edgeSymbol').value=state.symbol;$('edgeTimeframe').value=state.timeframe;const periodLabel=$('edgePeriodLabel');if(periodLabel)periodLabel.textContent=state.period;
-  syncMode();
- }
- function syncMode(){
-  state.mode=$('edgeMode').value;
-  $('edgeFixedValues').hidden=state.mode==='manual';
-  $('edgeManualValues').hidden=state.mode!=='manual';
-  const modeDescription=$('edgeModeDescription');
-  if(modeDescription){
-   modeDescription.textContent=state.mode==='fixed'
-    ?'Fixed Lot: Profit/Loss otomatis dihitung dari nilai Profit per Win dan Loss per Loss di atas.'
-    :'Manual: isi Profit/Loss tiap transaksi secara langsung di tabel backtest; profit gunakan angka positif dan loss angka negatif.';
+  const store={journal:'tmJournalTrades',backtest:'tmBacktestTrades',forward:'tmForwardTrades'};
+  const configs={journal:'tmJournalConfig',backtest:'tmBacktestConfig',forward:'tmForwardConfig'};
+  let activeMode='journal';
+  const $=id=>document.getElementById(id);
+  const read=(key, fallback)=>{try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))}catch(_){return fallback}};
+  const write=(key,val)=>localStorage.setItem(key,JSON.stringify(val));
+  const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const today=new Date().toISOString().slice(0,10);
+  const cfgDefaults={journal:{initial:100},backtest:{strategy:'',instrument:'XAUUSD',lot:.03,periodFrom:'',periodTo:'',initial:100,rules:''},forward:{strategy:'',instrument:'XAUUSD',lot:.03,periodFrom:'',periodTo:'',initial:100,notes:''}};
+  function getCfg(mode){return {...cfgDefaults[mode],...read(configs[mode],{})}}
+  function saveCfg(mode){
+    const c=getCfg(mode);
+    if(mode==='backtest')Object.assign(c,{strategy:$('btStrategy').value.trim(),instrument:$('btInstrument').value.trim(),lot:+$('btLot').value||0,periodFrom:$('btPeriodFrom').value,periodTo:$('btPeriodTo').value,initial:+$('btInitial').value||0,rules:$('btRules').value.trim()});
+    if(mode==='forward')Object.assign(c,{strategy:$('ftStrategy').value.trim(),instrument:$('ftInstrument').value.trim(),lot:+$('ftLot').value||0,periodFrom:$('ftPeriodFrom').value,periodTo:$('ftPeriodTo').value,initial:+$('ftInitial').value||0,notes:$('ftNotes').value.trim()});
+    write(configs[mode],c);toastMessage('Konfigurasi test tersimpan.');renderMode(mode);
   }
-  persist();render();
- }
- function stats(){
-  let balance=Number(state.initial)||0,peak=balance,maxDD=0,wins=0,losses=0,buy=0,sell=0,gp=0,gl=0,cw=0,cl=0,mw=0,ml=0;
-  let rows=state.trades.map((t,i)=>{
-   const result=t.result||'',dir=t.direction||'';
-   let pl=0;
-   if(state.mode==='fixed') pl=result==='Win'?(Number(state.profit)||0):result==='Loss'?-Math.abs(Number(state.loss)||0):0;
-   else pl=Number(t.pl)||0;
-   if(result==='Win'){wins++;cw++;cl=0;mw=Math.max(mw,cw);gp+=Math.max(pl,0);}
-   else if(result==='Loss'){losses++;cl++;cw=0;ml=Math.max(ml,cl);gl+=Math.abs(Math.min(pl,0));}
-   if(dir==='Buy')buy++;if(dir==='Sell')sell++;
-   balance+=pl;peak=Math.max(peak,balance);const dd=peak-balance;maxDD=Math.max(maxDD,dd);
-   return {...t,num:i+1,pl,balance,peak,dd,winStreak:cw,lossStreak:cl};
-  });
-  const net=balance-(Number(state.initial)||0);
-  return {rows,balance,peak,maxDD,wins,losses,buy,sell,gp,gl,pf:gl?gp/gl:(gp?gp:0),winrate:rows.length?wins/rows.length*100:0,net,mw,ml,recovery:maxDD?net/maxDD:0};
- }
- function renderRows(){
-  const m=stats(), rows=m.rows.slice();
-  // Keep a spreadsheet-like blank row at the bottom for immediate entry.
-  rows.push({num:rows.length+1,direction:'Sell',result:'',pl:''});
-  $('edgeRows').innerHTML=rows.map((t,i)=>{
-   const blank=i===rows.length-1;
-   const plText=state.mode==='fixed'?(t.result==='Win'?money(Math.abs(Number(state.profit)||0)):t.result==='Loss'?money(-Math.abs(Number(state.loss)||0)):'—'):(blank?'':money(t.pl));
-   const bal=blank?'—':money(t.balance),peak=blank?'—':money(t.peak),dd=blank?'—':money(t.dd);
-   return `<tr><td>${t.num}</td>
-    <td><select data-i="${i}" data-k="direction" aria-label="Buy/Sell"><option ${t.direction==='Buy'?'selected':''}>Buy</option><option ${t.direction==='Sell'?'selected':''}>Sell</option></select></td>
-    <td><select data-i="${i}" data-k="result" aria-label="Win/Loss"><option value="">—</option><option ${t.result==='Win'?'selected':''}>Win</option><option ${t.result==='Loss'?'selected':''}>Loss</option></select></td>
-    <td>${state.mode==='manual'?`<input data-i="${i}" data-k="pl" type="number" step="any" placeholder="Profit + / Loss -" value="${blank?'':esc(t.pl??'')}" aria-label="Profit/Loss dolar">`:`<span class="calculated ${t.pl<0?'negative':'positive'}">${blank?'—':plText}</span>`}</td>
-    <td><span class="calculated">${bal}</span></td><td><span class="calculated">${peak}</span></td><td><span class="calculated ${!blank&&t.dd?'negative':''}">${dd}</span></td>
-    <td><span class="calculated">${blank?'—':t.winStreak}</span></td><td><span class="calculated">${blank?'—':t.lossStreak}</span></td>
-    </tr>`;
-  }).join('');
- }
- function renderStats(){
-  const m=stats();
-  const items=[['Total Net Profit/Loss',money(m.net)],['Total Trades',m.rows.length],['Total Win',m.wins],['Total Loss',m.losses],['Winrate',m.winrate.toFixed(2)+'%'],['Profit Factor',m.pf.toFixed(2)],['Max Drawdown',money(m.maxDD)],['Max Drawdown %',(Number(state.initial)?(m.maxDD/Number(state.initial)*100):0).toFixed(2)+'%'],['Consecutive Wins',m.mw],['Consecutive Losses',m.ml],['Recovery Factor',m.recovery.toFixed(2)],['Total Buy',m.buy],['Total Sell',m.sell],['Current Balance',money(m.balance)]];
-  $('edgeStats').innerHTML=items.map(([k,v])=>`<div class="edge-stat"><span>${k}</span><strong>${v}</strong></div>`).join('');
-  const svg=$('edgeChart'), vals=[Number(state.initial)||0,...m.rows.map(t=>t.balance)], W=600,H=220,p=16,min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;
-  const pts=vals.map((v,i)=>`${p+i/Math.max(vals.length-1,1)*(W-p*2)},${H-p-(v-min)/range*(H-p*2)}`).join(' ');
-  svg.innerHTML=`<line x1="16" y1="204" x2="584" y2="204" class="edge-axis"/><polyline points="${pts}" class="edge-line"/>`;
- }
- function render(){renderRows();renderStats();}
- function commitCell(el){
-  const i=Number(el.dataset.i),k=el.dataset.k;
-  if(i===state.trades.length){
-   const t={direction:'Sell',result:'',pl:0,entryDate:'',exitDate:''};
-   t[k]=el.value;
-   if(k==='direction'&&t.direction==='')t.direction='Sell';
-   state.trades.push(t);
-  }else if(state.trades[i]){
-   state.trades[i][k]=el.value;
-  }else return;
-  if(state.mode==='manual' && state.trades[i] && k==='pl'){
-   const amount=Math.abs(Number(state.trades[i].pl)||0);
-   state.trades[i].pl=state.trades[i].result==='Loss'?-amount:state.trades[i].result==='Win'?amount:Number(state.trades[i].pl)||0;
+  function loadCfg(mode){
+    const c=getCfg(mode);
+    if(mode==='backtest'){$('btStrategy').value=c.strategy||'';$('btInstrument').value=c.instrument||'XAUUSD';$('btLot').value=c.lot??.03;$('btPeriodFrom').value=c.periodFrom||'';$('btPeriodTo').value=c.periodTo||'';$('btInitial').value=c.initial??100;$('btRules').value=c.rules||''}
+    if(mode==='forward'){$('ftStrategy').value=c.strategy||'';$('ftInstrument').value=c.instrument||'XAUUSD';$('ftLot').value=c.lot??.03;$('ftPeriodFrom').value=c.periodFrom||'';$('ftPeriodTo').value=c.periodTo||'';$('ftInitial').value=c.initial??100;$('ftNotes').value=c.notes||''}
   }
-  if(state.mode==='manual' && state.trades[i] && k==='result' && ['Win','Loss'].includes(state.trades[i].result)){
-   const amount=Math.abs(Number(state.trades[i].pl)||0);
-   state.trades[i].pl=state.trades[i].result==='Loss'?-amount:amount;
+  function metrics(mode){
+    const trades=read(store[mode],[]), c=getCfg(mode), initial=+c.initial||100;
+    let balance=initial,peak=initial,maxDD=0,win=0,loss=0,be=0,buy=0,sell=0,winStreak=0,lossStreak=0,currentW=0,currentL=0,gp=0,gl=0,totalR=0,sumW=0,sumL=0;
+    const rows=trades.map((t,i)=>{
+      const pl=+t.pl||0,r=+t.r||0; balance+=pl; peak=Math.max(peak,balance); const dd=Math.max(0,peak-balance); maxDD=Math.max(maxDD,dd);
+      if(t.direction==='Buy')buy++;else sell++;
+      if(t.result==='win'){win++;currentW++;currentL=0;winStreak=Math.max(winStreak,currentW);gp+=Math.max(pl,0);sumW+=r}
+      else if(t.result==='loss'){loss++;currentL++;currentW=0;lossStreak=Math.max(lossStreak,currentL);gl+=Math.max(-pl,0);sumL+=Math.abs(r)}
+      else{be++;currentW=0;currentL=0}
+      totalR+=r;
+      return {...t,num:i+1,balance,peak,dd,winStreak:currentW,lossStreak:currentL};
+    });
+    return {trades,rows,initial,balance,peak,maxDD,win,loss,be,buy,sell,totalR,gp,gl,pf:gl?gp/gl:(gp?gp:0),winRate:trades.length?win/trades.length*100:0,conWins:winStreak,conLoss:lossStreak,recovery:maxDD?((balance-initial)/maxDD):0,avgWin:win?sumW/win:0,avgLoss:loss?sumL/loss:0,expectancy:trades.length?totalR/trades.length:0};
   }
-  // Only count a transaction after Win/Loss is selected. In fixed mode result drives P/L.
-  if(state.trades[i] && !state.trades[i].result && k!=='result' && !state.trades[i].entryDate && !state.trades[i].exitDate && !state.trades[i].pl){ /* retain editable draft */ }
-  persist();render();
- }
- document.addEventListener('change',e=>{const el=e.target;if(!el.matches('#edgeRows [data-k]'))return;commitCell(el);});
- ['edgeLot','edgeInitial','edgeProfit','edgeLoss','edgeExplanation','edgeRR','edgeSymbol','edgeTimeframe','edgePeriodButton'].forEach(id=>$(id)?.addEventListener('change',()=>{
-  const map={edgeLot:'lot',edgeInitial:'initial',edgeProfit:'profit',edgeLoss:'loss',edgeExplanation:'explanation',edgeRR:'rr',edgeSymbol:'symbol',edgeTimeframe:'timeframe',edgePeriodButton:'period'};
-  const key=map[id];state[key]=id==='edgeLot'||id==='edgeInitial'||id==='edgeProfit'||id==='edgeLoss'?Number($(id).value)||0:(id==='edgePeriodButton'?$('edgePeriodLabel').textContent:$(id).value);persist();render();
- }));
- $('edgeMode')?.addEventListener('change',syncMode);
- function downloadFile(filename, content, type){
-  const blob=new Blob([content],{type});
-  const href=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=href;a.download=filename;document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(href),1000);
- }
- $('edgeProjectExport')?.addEventListener('click',()=>{
-  const payload={format:'TM_EDGE_LAB_PROJECT',version:1,exportedAt:new Date().toISOString(),project:{
-   mode:state.mode,lot:state.lot,initial:state.initial,profit:state.profit,loss:Math.abs(Number(state.loss)||0),
-   explanation:state.explanation,rr:state.rr,symbol:state.symbol,timeframe:state.timeframe,
-   period:state.period,trades:state.trades
-  }};
-  const safeSymbol=String(state.symbol||'Backtest').replace(/[^a-z0-9_-]+/gi,'_');
-  downloadFile(`TM_EDGE_LAB_${safeSymbol}.json`,JSON.stringify(payload,null,2),'application/json;charset=utf-8');
-  toastMessage('Project berhasil diexport.');
- });
- $('edgeNewProject')?.addEventListener('click',()=>{
-  if(!confirm('Mulai project baru? Semua transaksi dan pengaturan backtest saat ini akan dikosongkan. Export JSON terlebih dahulu jika ingin menyimpannya.'))return;
-  state={...defaults,trades:[]};
-  initInputs();render();
-  toastMessage('Project baru siap. Data backtest sebelumnya dikosongkan.');
- });
- $('edgeProjectImport')?.addEventListener('click',()=>$('edgeProjectFile')?.click());
- $('edgeProjectFile')?.addEventListener('change',async e=>{
-  const file=e.target.files?.[0];if(!file)return;
-  try{
-   const imported=JSON.parse(await file.text());
-   const project=imported?.format==='TM_EDGE_LAB_PROJECT' ? imported.project : imported?.project;
-   const required=['mode','lot','initial','profit','loss','explanation','rr','symbol','timeframe','period','trades'];
-   if(!project||!required.every(k=>Object.prototype.hasOwnProperty.call(project,k))||!Array.isArray(project.trades)){
-    throw new Error('Invalid project');
-   }
-   if(!['fixed','manual'].includes(project.mode))throw new Error('Invalid mode');
-   if(project.trades.length>100000)throw new Error('Too many trades');
-   state={...defaults,...project,loss:Math.abs(Number(project.loss)||0),trades:project.trades.map(t=>({
-    direction:t?.direction==='Buy'?'Buy':'Sell',
-    result:['Win','Loss'].includes(t?.result)?t.result:'',
-    pl:Number(t?.pl)||0,
-    entryDate:String(t?.entryDate||''),
-    exitDate:String(t?.exitDate||'')
-   }))};
-   persist();initInputs();render();
-   toastMessage('Project berhasil diimport.');
-  }catch(err){
-   toastMessage('File project tidak valid. Pilih file JSON hasil Export TM EDGE LAB.');
+  function money(n){return (n<0?'−':'')+'$'+Math.abs(n).toFixed(2)}
+  function pct(n){return n.toFixed(2)+'%'}
+  function r(n){return (n<0?'−':'')+Math.abs(n).toFixed(2)+'R'}
+  function statHTML(m){return `<b>NET R<strong class="${m.totalR<0?'loss':''}">${r(m.totalR)}</strong></b><b>WIN RATE<strong>${pct(m.winRate)}</strong></b><b>PROFIT FACTOR<strong>${m.pf.toFixed(2)}</strong></b><b>MAX DRAWDOWN<strong class="${m.maxDD?'loss':''}">${money(m.maxDD)}${m.initial?` <small>(${pct(m.maxDD/m.initial*100)})</small>`:''}</strong></b><b>INITIAL DEPOSIT<strong>${money(m.initial)}</strong></b><b>TOTAL TRADES<strong>${m.trades.length}</strong></b><b>TOTAL WIN<strong>${m.win}</strong></b><b>TOTAL LOSS<strong>${m.loss}</strong></b><b>TOTAL BUY<strong>${m.buy}</strong></b><b>TOTAL SELL<strong>${m.sell}</strong></b><b>CONSECUTIVE WINS<strong>${m.conWins}</strong></b><b>CONSECUTIVE LOSSES<strong>${m.conLoss}</strong></b><b>RECOVERY FACTOR<strong>${m.recovery.toFixed(2)}</strong></b><b>AVG WIN / LOSS<strong>${m.avgWin.toFixed(2)}R / ${m.avgLoss.toFixed(2)}R</strong></b>`}
+  function tableHTML(mode,m){
+    if(!m.rows.length)return `<div class="empty-state"><b>Belum ada trade.</b><span>Tambahkan trade pertama untuk mulai membangun data ${mode==='backtest'?'backtest':mode==='forward'?'forward test':'journal'} Anda.</span></div>`;
+    return `<div class="trade-table-scroll"><div class="trade-table"><div class="trade-row trade-head"><span>#</span><span>TRADE</span><span>TYPE</span><span>WIN/LOSS</span><span>LOT</span><span>P/L</span><span>BALANCE</span><span>PEAK</span><span>DRAWDOWN</span><span>WIN STREAK</span><span>LOSS STREAK</span><span>R</span><span></span></div>${m.rows.map(t=>`<div class="trade-row"><span>${t.num}</span><span><b>${esc(t.instrument||'—')}</b><small>${esc(t.timeframe||'')}</small></span><span><i class="${t.direction==='Sell'?'sell':''}">${esc(t.direction||'—').toUpperCase()}</i></span><span><i class="${t.result==='loss'?'sell':t.result==='be'?'be':''}">${t.result==='be'?'BE':t.result.toUpperCase()}</i></span><span>${t.lot||'—'}</span><span class="${+t.pl<0?'loss':''}">${money(+t.pl||0)}</span><span>${money(t.balance)}</span><span>${money(t.peak)}</span><span class="${t.dd?'loss':''}">${money(t.dd)}</span><span>${t.winStreak}</span><span>${t.lossStreak}</span><strong class="${+t.r<0?'loss':''}">${r(+t.r||0)}</strong><button class="delete-trade" data-mode="${mode}" data-id="${esc(t.id)}" title="Hapus">×</button></div>`).join('')}</div></div>`;
   }
-  e.target.value='';
- });
- initInputs();render();
-})();
-
-
-/* TM EDGE LAB calendar period picker */
-(function setupEdgePeriodPicker(){
-  const button=document.getElementById('edgePeriodButton');
-  const label=document.getElementById('edgePeriodLabel');
-  const picker=document.getElementById('edgePeriodPicker');
-  const start=document.getElementById('edgePeriodStart');
-  const end=document.getElementById('edgePeriodEnd');
-  const apply=document.getElementById('edgePeriodApply');
-  const cancel=document.getElementById('edgePeriodCancel');
-  if(!button||!label||!picker||!start||!end||!apply||!cancel)return;
-
-  const formatDate=value=>{
-    if(!value)return '';
-    const [y,m,d]=value.split('-').map(Number);
-    const months=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-    return `${d} ${months[m-1]} ${y}`;
-  };
-  const displayRange=()=>`${formatDate(start.value)} s/d ${formatDate(end.value)}`;
-
-  function openPicker(){
-    // Sync the popup fields with the currently applied range before editing.
-    const text=label.textContent.trim();
-    const match=text.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})\s+s\/d\s+(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/);
-    if(match){
-      const months={'Jan':'01','Feb':'02','Mar':'03','Apr':'04','Mei':'05','May':'05','Jun':'06','Jul':'07','Agu':'08','Aug':'08','Sep':'09','Okt':'10','Oct':'10','Nov':'11','Des':'12','Dec':'12'};
-      const a=months[match[2]],b=months[match[5]];
-      if(a)start.value=`${match[3]}-${a}-${match[1].padStart(2,'0')}`;
-      if(b)end.value=`${match[6]}-${b}-${match[4].padStart(2,'0')}`;
-    }
-    picker.hidden=false;
-    button.setAttribute('aria-expanded','true');
+  function drawChart(mode,m){
+    const el=$(mode==='backtest'?'btChart':'ftChart');if(!el)return;const svg=el.querySelector('svg');const vals=[m.initial,...m.rows.map(x=>x.balance)];const W=600,H=220,pad=18,min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;const pts=vals.map((v,i)=>`${pad+(i/(Math.max(vals.length-1,1)))*(W-pad*2)},${H-pad-((v-min)/range)*(H-pad*2)}`).join(' ');svg.innerHTML=`<line x1="18" y1="202" x2="582" y2="202" class="chart-axis"/><polyline points="${pts}" class="chart-line"/>`}
+  function renderMode(mode){
+    const m=metrics(mode);
+    if(mode==='journal'){$('journalStats').innerHTML=statHTML(m);$('journalTable').innerHTML=tableHTML(mode,m)}
+    if(mode==='backtest'){$('btStats').innerHTML=statHTML(m);$('btTable').innerHTML=tableHTML(mode,m);$('btTradeCount').textContent=m.trades.length+' TRADES';drawChart(mode,m)}
+    if(mode==='forward'){$('ftStats').innerHTML=statHTML(m);$('ftTable').innerHTML=tableHTML(mode,m);$('ftTradeCount').textContent=m.trades.length+' TRADES';drawChart(mode,m)}
   }
-  function closePicker(){
-    picker.hidden=true;
-    button.setAttribute('aria-expanded','false');
+  const timeframes=[['M1','M1 · 1 minute'],['M2','M2 · 2 minutes'],['M3','M3 · 3 minutes'],['M4','M4 · 4 minutes'],['M5','M5 · 5 minutes'],['M6','M6 · 6 minutes'],['M10','M10 · 10 minutes'],['M12','M12 · 12 minutes'],['M15','M15 · 15 minutes'],['M20','M20 · 20 minutes'],['M30','M30 · 30 minutes'],['H1','H1 · 1 hour'],['H2','H2 · 2 hours'],['H3','H3 · 3 hours'],['H4','H4 · 4 hours'],['H6','H6 · 6 hours'],['H8','H8 · 8 hours'],['H12','H12 · 12 hours'],['D1','D1 · Daily'],['W1','W1 · Weekly'],['MN1','M1 · Monthly']];
+  function tradeCardHTML(n,mode){
+    const c=getCfg(mode),symbol=c.instrument||'XAUUSD',lot=c.lot??.03;
+    return `<fieldset class="trade-entry-card" data-trade-entry="${n}"><legend>TRADE ${n}</legend><div class="modal-grid"><label>Symbol<input data-field="instrument" value="${esc(symbol)}" placeholder="XAUUSD" required></label><label>Timeframe<select data-field="timeframe">${timeframes.map(([v,l])=>`<option value="${v}" ${v==='M1'?'selected':''}>${l}</option>`).join('')}</select></label><label>Buy / Sell<select data-field="direction"><option>Buy</option><option>Sell</option></select></label><label>Win / Loss<select data-field="result"><option value="win">Win</option><option value="loss">Loss</option><option value="be">Break Even</option></select></label><label>Lot Size<input data-field="lot" type="number" step="any" value="${lot}" placeholder="0.03"></label><label>Entry Price<input data-field="entry" type="number" step="any" placeholder="4000.00"></label><label>Stop Loss<input data-field="sl" type="number" step="any" placeholder="3997.50"></label><label>Take Profit<input data-field="tp" type="number" step="any" placeholder="4010.00"></label><label>Exit Price<input data-field="exit" type="number" step="any" placeholder="4010.00"></label><label>Profit / Loss<input data-field="pl" type="number" step="any" placeholder="10" required></label><label>Result (R)<input data-field="r" type="number" step="any" placeholder="1.5" required></label></div><button class="remove-trade-entry" type="button" data-remove-entry="${n}" ${n===1?'hidden':''}>Hapus trade ${n}</button></fieldset>`;
   }
-  button.addEventListener('click',()=>picker.hidden?openPicker():closePicker());
-  cancel.addEventListener('click',closePicker);
-  apply.addEventListener('click',()=>{
-    if(!start.value||!end.value){toastMessage('Pilih tanggal mulai dan selesai.');return;}
-    if(start.value>end.value){toastMessage('Tanggal selesai harus sama atau setelah tanggal mulai.');return;}
-    label.textContent=displayRange();
-    closePicker();
-    // Trigger the same persistence mechanism as other config fields, if present.
-    button.dispatchEvent(new Event('change',{bubbles:true}));
-  });
-  document.addEventListener('click',event=>{
-    if(!picker.hidden&&!picker.contains(event.target)&&!button.contains(event.target))closePicker();
-  });
-  document.addEventListener('keydown',event=>{
-    if(event.key==='Escape'&&!picker.hidden)closePicker();
-  });
+  let tradeEntryCount=1;
+  function refreshAddTradeLabel(){const b=$('addTradeEntry');if(b)b.textContent=`+ Tambah trade ${tradeEntryCount+1}`;document.querySelectorAll('[data-remove-entry]').forEach(btn=>{btn.hidden=document.querySelectorAll('[data-trade-entry]').length<=1})}
+  function addTradeCard(){tradeEntryCount++;$('tradeEntries').insertAdjacentHTML('beforeend',tradeCardHTML(tradeEntryCount,activeMode));refreshAddTradeLabel()}
+  function openTrade(mode){activeMode=mode;const c=getCfg(mode);$('tradeModalKicker').textContent=mode==='backtest'?'BACKTEST TRADE':mode==='forward'?'FORWARD TEST TRADE':'JOURNAL TRADE';$('tradeModalTitle').textContent=mode==='backtest'?'Catat hasil backtest.':mode==='forward'?'Catat hasil forward test.':'Catat trade aktual.';tradeEntryCount=1;$('tradeEntries').innerHTML=tradeCardHTML(1,mode);refreshAddTradeLabel();modal.showModal()}
+  ['journalAddTrade','backtestAddTrade','forwardAddTrade'].forEach((id,i)=>$(id)?.addEventListener('click',()=>openTrade(['journal','backtest','forward'][i])));
+  $('btSaveConfig')?.addEventListener('click',()=>saveCfg('backtest'));$('ftSaveConfig')?.addEventListener('click',()=>saveCfg('forward'));
+  $('addTradeEntry')?.addEventListener('click',addTradeCard);
+  $('tradeEntries')?.addEventListener('click',e=>{const b=e.target.closest('[data-remove-entry]');if(!b)return;const card=b.closest('[data-trade-entry]');card?.remove();document.querySelectorAll('[data-trade-entry]').forEach((el,i)=>{const n=i+1;el.dataset.tradeEntry=n;el.querySelector('legend').textContent=`TRADE ${n}`;const rm=el.querySelector('[data-remove-entry]');if(rm){rm.dataset.removeEntry=n;rm.textContent=`Hapus trade ${n}`}});tradeEntryCount=document.querySelectorAll('[data-trade-entry]').length;refreshAddTradeLabel()});
+  $('tradeForm')?.addEventListener('submit',e=>{e.preventDefault();const mode=activeMode,arr=read(store[mode],[]);const cards=[...document.querySelectorAll('[data-trade-entry]')];for(const card of cards){const get=k=>card.querySelector(`[data-field="${k}"]`);arr.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),instrument:get('instrument').value.trim(),timeframe:get('timeframe').value,direction:get('direction').value,result:get('result').value,lot:+get('lot').value||0,entry:+get('entry').value||0,sl:+get('sl').value||0,tp:+get('tp').value||0,exit:+get('exit').value||0,pl:+get('pl').value||0,r:+get('r').value||0});}write(store[mode],arr);modal.close();renderMode(mode);toastMessage(`${cards.length} trade tersimpan. Statistik diperbarui otomatis.`)});
+  document.querySelectorAll('.auto-grow').forEach(el=>{const resize=()=>{el.style.height='auto';el.style.height=Math.max(el.scrollHeight,90)+'px'};el.addEventListener('input',resize);resize()});
+  document.addEventListener('click',e=>{const b=e.target.closest('.delete-trade');if(!b)return;const mode=b.dataset.mode;const arr=read(store[mode],[]).filter(t=>t.id!==b.dataset.id);write(store[mode],arr);renderMode(mode);toastMessage('Trade dihapus.')});
+  // Sheet-inspired utilities: CSV template + export for each workspace.
+  function downloadText(name,text,type='text/csv'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+  const csvHeader='Trade,Symbol,Timeframe,Direction,Result,Lot Size,Entry Price,Stop Loss,Take Profit,Exit Price,Profit/Loss,Result R';
+  function csvCell(v){return '"'+String(v??'').replaceAll('"','""')+'"'}
+  function exportMode(mode){const rows=read(store[mode],[]);const csv=[csvHeader,...rows.map((x,i)=>[i+1,x.instrument,x.timeframe,x.direction,x.result,x.lot,x.entry,x.sl,x.tp,x.exit,x.pl,x.r].map(csvCell).join(','))].join('\n');downloadText(`TM_${mode}_trading_data.csv`,csv)}
+  function downloadTemplate(mode){downloadText(`TM_${mode}_template.csv`,csvHeader+'\n1,XAUUSD,M1,Buy,win,0.03,4000,3997.5,4010,4010,10,2')}
+  document.querySelectorAll('[data-export]').forEach(b=>b.addEventListener('click',()=>exportMode(b.dataset.export)));
+  document.querySelectorAll('[data-template]').forEach(b=>b.addEventListener('click',()=>downloadTemplate(b.dataset.template)));
+  document.querySelectorAll('.summary-tabs button').forEach(btn=>btn.addEventListener('click',()=>{const wrap=btn.closest('.summary-tabs');wrap.querySelectorAll('button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');toastMessage(btn.textContent+' summary — siap dikembangkan ke analisis periode.')}));
+  loadCfg('backtest');loadCfg('forward');renderMode('journal');renderMode('backtest');renderMode('forward');
 })();
