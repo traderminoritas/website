@@ -231,3 +231,52 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
   cursor:not-allowed!important;
   opacity:.72;
 }
+
+
+/* Mobile-first cleanup for TM EDGE LAB: stack fields instead of squeezing them */
+@media (max-width: 760px){
+  #backtest.page{padding:24px 12px 40px}
+  #backtest .intro{margin-bottom:22px}
+  #backtest .intro h1{font-size:clamp(30px,8vw,39px);letter-spacing:-1.4px}
+  #backtest .edge-config{padding:16px 14px}
+  #backtest .edge-config-grid{
+    grid-template-columns:minmax(0,1fr);
+    gap:14px;
+  }
+  #backtest .edge-config-grid > label{width:100%;min-width:0}
+  #backtest .edge-config-grid input,
+  #backtest .edge-config-grid select,
+  #backtest .edge-config-grid textarea,
+  #backtest .edge-config-grid .edge-period-button{
+    width:100%;
+    min-width:0;
+    min-height:46px;
+    font-size:16px;
+  }
+  #backtest .edge-config-grid textarea{
+    height:46px;
+    line-height:1.45;
+  }
+  #backtest .edge-pl-config{
+    grid-template-columns:minmax(0,1fr);
+    gap:14px;
+  }
+  #backtest .edge-pl-config label{width:100%;min-width:0}
+  #backtest .edge-pl-config input{min-height:46px;font-size:16px}
+  #backtest .edge-pl-config p{grid-column:1}
+  #backtest .edge-period-picker{width:min(100%,calc(100vw - 54px))}
+  #backtest .edge-period-fields{grid-template-columns:minmax(0,1fr)}
+  #backtest .edge-layout{grid-template-columns:minmax(0,1fr);gap:12px}
+  #backtest .edge-table-panel,#backtest .edge-stats-panel{padding:13px;min-width:0}
+  #backtest .section-head{gap:12px;align-items:flex-start;flex-wrap:wrap}
+  #backtest .edge-table-actions{width:100%;display:flex;flex-wrap:wrap}
+  #backtest .edge-table-actions button{flex:1 1 120px;min-height:38px}
+  #backtest .edge-hint{line-height:1.6}
+}
+@media (min-width: 520px) and (max-width: 760px){
+  #backtest .edge-config-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #backtest .edge-config-grid > label:first-child{grid-column:1/-1}
+  #backtest .edge-config-grid > label:nth-child(7){grid-column:1/-1}
+  #backtest .edge-pl-config{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #backtest .edge-pl-config p{grid-column:1/-1}
+}
