@@ -160,3 +160,158 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
 .edge-pl-config.is-unavailable label{color:#8a8d94!important}
 .edge-pl-config.is-unavailable .edge-loss-hint{color:#777e88!important}
 .edge-pl-config.is-unavailable p{color:#858b95!important}
+
+/* Explanation: multiline with automatic height growth */
+.edge-explanation-label{min-width:0}
+.edge-explanation-input{
+  display:block;
+  width:100%;
+  min-height:44px;
+  height:44px;
+  line-height:1.5;
+  resize:none;
+  overflow:hidden;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  font:inherit;
+}
+.edge-explanation-input:focus{outline:2px solid #3984ed;outline-offset:1px}
+
+
+/* Unified visual system for every TM EDGE LAB configuration control */
+.edge-config .edge-config-grid input,
+.edge-config .edge-config-grid select,
+.edge-config .edge-config-grid textarea,
+.edge-config .edge-config-grid .edge-period-button,
+.edge-pl-config input{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  min-height:44px;
+  border:1px solid #b7d6ff;
+  border-radius:7px;
+  background:#eaf3ff;
+  color:#172235;
+  padding:10px 12px;
+  font-family:Manrope,Arial,sans-serif;
+  font-size:13px;
+  font-weight:600;
+  line-height:1.5;
+  box-shadow:none;
+}
+.edge-config .edge-config-grid textarea{
+  height:44px;
+  resize:none;
+  overflow:hidden;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+.edge-config .edge-config-grid .edge-period-button{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  text-align:left;
+  cursor:pointer;
+}
+.edge-config .edge-config-grid input:focus,
+.edge-config .edge-config-grid select:focus,
+.edge-config .edge-config-grid textarea:focus,
+.edge-config .edge-config-grid .edge-period-button:focus-visible,
+.edge-pl-config input:focus{
+  outline:none;
+  border-color:#3984ed;
+  box-shadow:0 0 0 2px #3984ed33;
+}
+.edge-config .edge-config-grid input:disabled,
+.edge-config .edge-config-grid select:disabled,
+.edge-pl-config input:disabled{
+  background:#d9dce1!important;
+  color:#858b95!important;
+  border-color:#b7bdc7!important;
+  cursor:not-allowed!important;
+  opacity:.72;
+}
+
+
+/* Mobile-first cleanup for TM EDGE LAB: stack fields instead of squeezing them */
+@media (max-width: 760px){
+  #backtest.page{padding:24px 12px 40px}
+  #backtest .intro{margin-bottom:22px}
+  #backtest .intro h1{font-size:clamp(30px,8vw,39px);letter-spacing:-1.4px}
+  #backtest .edge-config{padding:16px 14px}
+  #backtest .edge-config-grid{
+    grid-template-columns:minmax(0,1fr);
+    gap:14px;
+  }
+  #backtest .edge-config-grid > label{width:100%;min-width:0}
+  #backtest .edge-config-grid input,
+  #backtest .edge-config-grid select,
+  #backtest .edge-config-grid textarea,
+  #backtest .edge-config-grid .edge-period-button{
+    width:100%;
+    min-width:0;
+    min-height:46px;
+    font-size:16px;
+  }
+  #backtest .edge-config-grid textarea{
+    height:46px;
+    line-height:1.45;
+  }
+  #backtest .edge-pl-config{
+    grid-template-columns:minmax(0,1fr);
+    gap:14px;
+  }
+  #backtest .edge-pl-config label{width:100%;min-width:0}
+  #backtest .edge-pl-config input{min-height:46px;font-size:16px}
+  #backtest .edge-pl-config p{grid-column:1}
+  #backtest .edge-period-picker{width:min(100%,calc(100vw - 54px))}
+  #backtest .edge-period-fields{grid-template-columns:minmax(0,1fr)}
+  #backtest .edge-layout{grid-template-columns:minmax(0,1fr);gap:12px}
+  #backtest .edge-table-panel,#backtest .edge-stats-panel{padding:13px;min-width:0}
+  #backtest .section-head{gap:12px;align-items:flex-start;flex-wrap:wrap}
+  #backtest .edge-table-actions{width:100%;display:flex;flex-wrap:wrap}
+  #backtest .edge-table-actions button{flex:1 1 120px;min-height:38px}
+  #backtest .edge-hint{line-height:1.6}
+}
+@media (min-width: 520px) and (max-width: 760px){
+  #backtest .edge-config-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #backtest .edge-config-grid > label:first-child{grid-column:1/-1}
+  #backtest .edge-config-grid > label:nth-child(7){grid-column:1/-1}
+  #backtest .edge-pl-config{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #backtest .edge-pl-config p{grid-column:1/-1}
+}
+
+
+/* Desktop/tablet layout refinement: prioritize readable field widths */
+@media (min-width: 761px){
+  #backtest .edge-config{padding:24px}
+  #backtest .edge-config-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:16px;
+    align-items:start;
+  }
+  #backtest .edge-config-grid > .edge-explanation-label{
+    grid-column:1/-1;
+  }
+  #backtest .edge-explanation-input{
+    min-height:46px;
+    font-size:14px;
+  }
+  #backtest .edge-config-grid input,
+  #backtest .edge-config-grid select,
+  #backtest .edge-config-grid .edge-period-button{
+    min-height:46px;
+  }
+  #backtest .edge-pl-config{
+    grid-template-columns:repeat(2,minmax(0,260px));
+    gap:16px;
+  }
+}
+@media (min-width:761px) and (max-width:1050px){
+  #backtest .edge-config-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #backtest .edge-config-grid > .edge-explanation-label{grid-column:1/-1}
+  #backtest .edge-layout{grid-template-columns:minmax(0,1fr)}
+}
+@media (min-width:1051px){
+  #backtest .edge-layout{grid-template-columns:minmax(0,1.45fr) minmax(300px,.8fr)}
+}
