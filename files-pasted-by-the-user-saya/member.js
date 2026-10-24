@@ -483,7 +483,7 @@ updateOverview();
  function persist(){localStorage.setItem(KEY,JSON.stringify(state));}
  function initInputs(){
   $('edgeMode').value=state.mode;$('edgeLot').value=state.lot;$('edgeInitial').value=state.initial;
-  $('edgeProfit').value=state.profit;$('edgeLoss').value=state.loss;$('edgeExplanation').value=state.explanation;
+  $('edgeProfit').value=state.profit;$('edgeLoss').value=Math.abs(Number(state.loss)||0);$('edgeExplanation').value=state.explanation;
   $('edgeRR').value=state.rr;$('edgeSymbol').value=state.symbol;$('edgeTimeframe').value=state.timeframe;const periodLabel=$('edgePeriodLabel');if(periodLabel)periodLabel.textContent=state.period;
   syncMode();
  }
@@ -552,7 +552,7 @@ updateOverview();
  document.addEventListener('change',e=>{const el=e.target;if(!el.matches('#edgeRows [data-k]'))return;commitCell(el);});
  ['edgeLot','edgeInitial','edgeProfit','edgeLoss','edgeExplanation','edgeRR','edgeSymbol','edgeTimeframe','edgePeriodButton'].forEach(id=>$(id)?.addEventListener('change',()=>{
   const map={edgeLot:'lot',edgeInitial:'initial',edgeProfit:'profit',edgeLoss:'loss',edgeExplanation:'explanation',edgeRR:'rr',edgeSymbol:'symbol',edgeTimeframe:'timeframe',edgePeriodButton:'period'};
-  const key=map[id];state[key]=id==='edgeLot'||id==='edgeInitial'||id==='edgeProfit'||id==='edgeLoss'?Number($(id).value)||0:(id==='edgePeriodButton'?$('edgePeriodLabel').textContent:$(id).value);persist();render();
+  const key=map[id];state[key]=id==='edgeLoss'?-Math.abs(Number($(id).value)||0):(id==='edgeLot'||id==='edgeInitial'||id==='edgeProfit'?Number($(id).value)||0:(id==='edgePeriodButton'?$('edgePeriodLabel').textContent:$(id).value));persist();render();
  }));
  $('edgeMode')?.addEventListener('change',syncMode);
  $('edgeExport')?.addEventListener('click',()=>{
