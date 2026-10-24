@@ -97,3 +97,17 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
 .trade-modal-actions .secondary,.trade-modal-actions .primary{margin-top:0;min-height:38px}
 .remove-trade-entry{margin-top:12px;border:0;background:transparent;color:#e19a92;padding:6px 0;font:10px Manrope;cursor:pointer}
 @media(max-width:600px){.edge-lab-brand{padding:18px 16px;margin-bottom:16px}.edge-lab-brand h2{font-size:20px}.edge-lab-brand p:not(.edge-lab-kicker){font-size:11px}.trade-entry-card{padding:12px}.trade-modal-actions{display:grid;grid-template-columns:1fr}.trade-modal-actions button{width:100%}}
+
+
+/* TM EDGE LAB — resilient form styling */
+#backtest .test-config,#forward .test-config{color:var(--text)}
+#backtest .config-grid,#forward .config-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:20px}
+#backtest .config-grid label,#forward .config-grid label{display:block;min-width:0;color:var(--muted);font-size:10px;font-weight:700;line-height:1.5}
+#backtest .config-grid input,#forward .config-grid input,#backtest .wide-field textarea,#forward .wide-field textarea{display:block;width:100%;max-width:100%;box-sizing:border-box;margin-top:7px;padding:11px 12px;border:1px solid var(--line);border-radius:3px;background:#11110f;color:var(--text);font:12px Manrope,Arial}
+#backtest input[type=date],#forward input[type=date]{min-height:40px;color-scheme:dark}
+#backtest .wide-field,#forward .wide-field{display:block;margin-top:16px;color:var(--muted);font-size:10px;font-weight:700}
+#backtest .wide-field textarea,#forward .wide-field textarea{min-height:90px;line-height:1.7;resize:vertical;overflow-wrap:anywhere}
+#backtest .edge-lab-brand,#forward .edge-lab-brand{max-width:100%}
+#backtest button,#forward button{cursor:pointer}
+@media(max-width:850px){#backtest .config-grid,#forward .config-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){#backtest .config-grid,#forward .config-grid{grid-template-columns:minmax(0,1fr)}}

@@ -191,6 +191,17 @@ async function getSignedVideoUrl(file){
   if(!data.success||!data.url)throw new Error('Signed video URL tidak tersedia.');
   return data.url;
 }
+function readVideoProgress(id){
+  try{return JSON.parse(localStorage.getItem('tmVipVideoProgress')||'{}')[id]||0;}catch(_){return 0;}
+}
+function saveVideoProgress(){
+  if(!videoPlayer||!activeVideoId||!Number.isFinite(videoPlayer.currentTime))return;
+  try{
+    const all=JSON.parse(localStorage.getItem('tmVipVideoProgress')||'{}');
+    all[activeVideoId]=videoPlayer.ended?0:Math.floor(videoPlayer.currentTime);
+    localStorage.setItem('tmVipVideoProgress',JSON.stringify(all));
+  }catch(_){}
+}
 async function createR2Player(file){
   if(!videoPlayer)return;
   window.tmShowVideoControls?.();
@@ -205,6 +216,16 @@ async function createR2Player(file){
     videoPlayer.src=signedUrl;
     videoPlayer.playbackRate=videoPlaybackRate;
     videoPlayer.load();
+    const saved=readVideoProgress(activeVideoId);
+    const resumeAt=Math.max(0,Number(saved)||0);
+    const onReady=()=>{
+      videoPlayer.removeEventListener('loadedmetadata',onReady);
+      if(resumeAt>5 && (!videoPlayer.duration || resumeAt < videoPlayer.duration-3)){
+        try{videoPlayer.currentTime=resumeAt;}catch(_){}
+      }
+      syncVideoControls();
+    };
+    videoPlayer.addEventListener('loadedmetadata',onReady);
     await videoPlayer.play().catch(()=>{});
     startVideoTimer();
     syncVideoControls();
@@ -218,6 +239,7 @@ async function createR2Player(file){
   }
 }
 function closeVipVideo(){
+  saveVideoProgress();
   clearTimeout(videoControlsHideTimer);
   videoControlsHideTimer=null;
   videoControls?.classList.remove('tm-controls-hidden');
@@ -293,6 +315,9 @@ document.addEventListener('fullscreenchange',()=>{
 });
 if(videoPlayer){
   ['loadedmetadata','timeupdate','durationchange','play','pause','volumechange','ended'].forEach(ev=>videoPlayer.addEventListener(ev,syncVideoControls));
+  videoPlayer.addEventListener('timeupdate',saveVideoProgress);
+  videoPlayer.addEventListener('pause',saveVideoProgress);
+  window.addEventListener('beforeunload',saveVideoProgress);
 }
 
 function toastMessage(message){const t=document.getElementById('toast');if(!t)return;t.textContent=message;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
@@ -310,7 +335,7 @@ function updateOverview(){
  if(a)a.textContent=count+' / '+total;b&&(b.textContent=pct+'%');bar&&(bar.style.width=pct+'%');
  if(label)label.textContent=count?`Anda sudah menyelesaikan ${count} dari ${total} video. Lanjutkan satu materi berikutnya.`:'Mulai dari satu materi, lalu lanjutkan secara konsisten.';
  const idx=overviewVideos.findIndex(v=>v[1]===last), contTitle=document.getElementById('continueTitle'),contMeta=document.getElementById('continueMeta'),btn=document.getElementById('continueButton');
- if(idx>=0){contTitle.textContent=overviewVideos[idx][0];contMeta.textContent='Materi '+String(idx+1).padStart(2,'0')+' · Modul VIP Trader Minoritas';btn.textContent='Buka Modul VIP →';btn.onclick=()=>openPage('learn')}
+ if(idx>=0){const saved=(()=>{try{return JSON.parse(localStorage.getItem('tmVipVideoProgress')||'{}')[last]||0}catch(_){return 0}})();contTitle.textContent=overviewVideos[idx][0];contMeta.textContent='Materi '+String(idx+1).padStart(2,'0')+' · Modul VIP Trader Minoritas'+(saved>0?' · Lanjut dari '+formatTime(saved):'');btn.textContent=saved>0?'Lanjutkan menonton →':'Buka video →';btn.onclick=()=>{openPage('learn');const target=[...document.querySelectorAll('[data-video-id]')].find(el=>el.dataset.videoId===last);if(target){target.click()}else{toastMessage('Video terakhir tidak ditemukan di library.')}}}
  const recent=document.getElementById('recentMaterials');
  if(recent)recent.innerHTML=overviewVideos.slice(-3).reverse().map((v,i)=>`<div class="recent-item"><div><b>${v[0]}</b><small>VIDEO ${total-i}</small></div><span>▶</span></div>`).join('');
 }
