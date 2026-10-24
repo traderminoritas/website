@@ -93,7 +93,135 @@
 }
 </style>
 
-</head><body><div class="app"><aside id="side"><a class="brand" href="index.html"><b>TM</b><span>TRADER<br>MINORITAS</span></a><small>WORKSPACE</small><nav><button class="active" data-page="dash">⌂ Overview</button><button data-page="learn">◫ Modul VIP <i>35</i></button><button data-page="backtest">◫ TM EDGE LAB</button><button data-page="tools">⌘ Trading Tools</button><a href="compounding.html">↗ Compounding Calculator</a><button data-page="chrono">◈ Chrono Heatmap</button><button data-page="event">◌ Webinar & Event <i>2</i></button></nav><small>AKUN</small><nav><button data-page="profile">◎ Profile Saya</button><a href="index.html">↗ Kembali ke website</a></nav><footer><b>AM</b><span>Andi Mahendra<em>VIP Member</em></span><button id="logout">↪</button></footer></aside><main><header><button id="menu">☰</button><span id="crumb">DASHBOARD / OVERVIEW</span><span class="live">● MARKET OPEN <time>09:41 WIB</time></span></header>
+<style id="tm-compounding-integrated">
+
+:root {
+  --bg:#0b0b0a;
+  --panel:#141412;
+  --panel2:#1b1a17;
+  --gold:#d4af37;
+  --gold2:#f3d77a;
+  --text:#f6f4ee;
+  --muted:#9b9a93;
+  --green:#35d49a;
+  --border:rgba(212,175,55,.17);
+}
+*{box-sizing:border-box}
+#compoundingPage{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:Inter,"Segoe UI",Arial,sans-serif;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.compound-main{min-width:0;padding:0}
+.compound-content{max-width:1600px;margin:0 auto;padding:38px clamp(18px,4vw,58px) 30px}
+.compound-heading{display:flex;justify-content:space-between;align-items:center;gap:25px;margin-bottom:28px}
+.compound-topline{color:var(--gold);font-size:11px;letter-spacing:3px;font-weight:800}
+.compound-subtitle{color:#aaa99f;line-height:1.7;max-width:700px;font-size:14px}
+.compound-mark{font-size:75px;filter:drop-shadow(0 0 25px #8a672a);opacity:.8}
+.compound-content h1{font-size:clamp(30px,4vw,48px);letter-spacing:-1.5px;margin:12px 0;color:var(--text);line-height:1.1;font-weight:700}
+.compound-content h1 span{color:var(--gold2)}
+#compoundingPage .panel{
+  background:linear-gradient(145deg,#171714,#10100e);
+  border:1px solid var(--border);border-radius:16px;
+  padding:24px;margin-bottom:20px;
+  box-shadow:0 14px 40px rgba(0,0,0,.15)
+}
+#compoundingPage .input-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+#compoundingPage .field label{display:block;font-size:12px;font-weight:700;margin-bottom:10px}
+#compoundingPage .input-wrap{
+  display:flex;align-items:center;border:1px solid #37352c;
+  background:#0c0c0b;border-radius:9px;overflow:hidden
+}
+#compoundingPage .currency{padding-left:13px;color:var(--gold2);font-size:13px}
+#compoundingPage input[type=number]{
+  width:100%;min-width:0;background:transparent;color:white;
+  border:0;outline:none;padding:14px 12px;font-size:15px
+}
+#compoundingPage input[type=range]{width:100%;accent-color:var(--gold);cursor:pointer}
+#compoundingPage .range-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#compoundingPage .range-value{
+  border:1px solid #6b5521;background:rgba(212,175,55,.12);
+  color:var(--gold2);border-radius:8px;padding:7px 10px;
+  font-size:13px;font-weight:800;white-space:nowrap
+}
+#compoundingPage .range-labels{display:flex;justify-content:space-between;color:#77766e;font-size:10px}
+#compoundingPage .action-row{display:flex;justify-content:flex-end;margin-top:24px}
+#compoundingPage .primary{
+  border:0;border-radius:9px;padding:15px 25px;
+  background:var(--gold);color:#17130a;font-size:13px;
+  font-weight:900;letter-spacing:1px;transition:.2s
+}
+.primary:hover{background:var(--gold2);transform:translateY(-1px)}
+#compoundingPage .metrics{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;margin-bottom:20px
+}
+#compoundingPage .metric{
+  background:linear-gradient(145deg,#181816,#11110f);
+  border:1px solid #2d2b24;border-radius:13px;padding:20px;
+  min-width:0
+}
+#compoundingPage .metric.featured{border-color:#9e7e2a;box-shadow:0 0 25px rgba(212,175,55,.07)}
+#compoundingPage .metric-label{font-size:10px;color:#aaa99f;letter-spacing:1px;font-weight:700}
+#compoundingPage .metric-value{font-size:clamp(18px,2vw,25px);font-weight:900;margin-top:13px;overflow-wrap:anywhere}
+#compoundingPage .metric-note{font-size:11px;color:#77766e;margin-top:9px;line-height:1.5}
+#compoundingPage .gold{color:var(--gold2)}
+#compoundingPage .green{color:var(--green)}
+#compoundingPage .results-grid{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(270px,1fr);gap:20px}
+#compoundingPage .section-title{font-size:12px;font-weight:800;letter-spacing:1.5px;margin:0 0 20px}
+.section-title span{color:var(--gold);margin-right:8px}
+#compoundingPage .chart-box{height:350px;position:relative}
+#compoundingPage .target-list{display:flex;flex-direction:column;gap:11px}
+#compoundingPage .target{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:#1a1916;border:1px solid #302e26;border-radius:10px;padding:15px
+}
+#compoundingPage .target-name{font-size:12px;color:#bdbbb2}
+#compoundingPage .target-amount{font-weight:800;margin-top:5px;font-size:14px}
+#compoundingPage .target-time{
+  color:var(--gold2);font-weight:800;text-align:center;
+  background:rgba(212,175,55,.1);border:1px solid #5d4a21;
+  padding:10px;border-radius:8px;min-width:95px;font-size:12px
+}
+#compoundingPage .table-wrap{overflow-x:auto}
+#compoundingPage table{border-collapse:collapse;width:100%;font-size:12px}
+#compoundingPage th,td{padding:13px 12px;border-bottom:1px solid #2c2a24;text-align:right;white-space:nowrap}
+#compoundingPage th{color:var(--gold2);font-weight:700}
+th:first-child,td:first-child{text-align:left}
+#compoundingPage td{color:#ddd}
+#compoundingPage .disclaimer{
+  display:flex;gap:15px;align-items:flex-start;
+  background:rgba(212,175,55,.055);border:1px solid #4c3c1e;
+  border-radius:12px;padding:20px;margin-top:20px
+}
+#compoundingPage .disclaimer-icon{color:var(--gold2);font-size:23px}
+#compoundingPage .disclaimer h3{font-size:11px;letter-spacing:2px;color:var(--gold2);margin:3px 0 8px}
+#compoundingPage .disclaimer p{font-size:11px;color:#aaa99f;line-height:1.8;margin:0}
+#compoundingPage .footer{text-align:center;color:#5e5d56;font-size:10px;padding:22px 0 0;letter-spacing:1px}
+@media(max-width:1100px){
+
+#compoundingPage .input-grid{grid-template-columns:1fr 1fr}
+#compoundingPage .metrics{grid-template-columns:1fr 1fr}
+}
+@media(max-width:760px){
+  .compound-content{padding:25px 14px}
+  .compound-mark{display:none}
+  .compound-heading{margin-bottom:22px}
+#compoundingPage .panel{padding:17px}
+#compoundingPage .input-grid{grid-template-columns:1fr;gap:20px}
+  .action-row .primary{width:100%}
+#compoundingPage .results-grid{grid-template-columns:1fr}
+#compoundingPage .chart-box{height:270px}
+#compoundingPage .metrics{gap:9px}
+#compoundingPage .metric{padding:14px}
+#compoundingPage .metric-value{font-size:19px}
+#compoundingPage .target{padding:12px}
+}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head><body><div class="app"><aside id="side"><a class="brand" href="index.html"><b>TM</b><span>TRADER<br>MINORITAS</span></a><small>WORKSPACE</small><nav><button class="active" data-page="dash">⌂ Overview</button><button data-page="learn">◫ Modul VIP <i>35</i></button><button data-page="backtest">◫ TM EDGE LAB</button><button data-page="tools">⌘ Trading Tools</button><button data-page="comp">↗ Compounding Calculator</button><button data-page="chrono">◈ Chrono Heatmap</button><button data-page="event">◌ Webinar & Event <i>2</i></button></nav><small>AKUN</small><nav><button data-page="profile">◎ Profile Saya</button><a href="index.html">↗ Kembali ke website</a></nav><footer><b>AM</b><span>Andi Mahendra<em>VIP Member</em></span><button id="logout">↪</button></footer></aside><main><header><button id="menu">☰</button><span id="crumb">DASHBOARD / OVERVIEW</span><span class="live">● MARKET OPEN <time>09:41 WIB</time></span></header>
 
 <section id="dash" class="page active"><div class="welcome"><div><p class="kicker" id="overviewDate">MEMBER AREA</p><h1>Selamat datang, <em>Andi.</em></h1><p>Semua yang Anda butuhkan untuk terus belajar, terhubung, dan berkembang.</p></div></div><div class="overview-progress panel"><div><p class="kicker">LEARNING PROGRESS</p><h2><span id="progressCount">0 / 35</span> video selesai.</h2><p id="progressLabel">Mulai dari satu materi, lalu lanjutkan secara konsisten.</p></div><strong id="progressPercent">0%</strong><div class="overview-progress-bar"><i id="progressBar"></i></div></div><div class="overview-grid"><article class="panel continue-card"><div><p class="kicker">LANJUTKAN BELAJAR</p><h2 id="continueTitle">Belum ada video yang dibuka.</h2><p id="continueMeta">Pilih materi dari Modul VIP untuk mulai belajar.</p></div><button class="primary" data-jump="learn" id="continueButton">Buka Modul VIP →</button></article><article class="panel announcement-card"><p class="kicker">ANNOUNCEMENT</p><h2>Library Modul VIP tersedia.</h2><p>Semua rekaman pembelajaran dan sesi komunitas tersimpan di satu tempat. Buka Modul VIP untuk melanjutkan dari materi pilihan Anda.</p><button class="link" data-jump="learn">Lihat semua materi →</button></article></div><div class="overview-grid quick-grid"><article class="panel quick-card"><p class="kicker">QUICK ACCESS</p><h2>Akses cepat.</h2><div class="quick-links"><button data-jump="learn"><b>◫</b><span>Modul VIP<small>35 video</small></span><i>→</i></button><button data-jump="backtest"><b>◫</b><span>TM EDGE LAB<small>Backtest strategi</small></span><i>→</i></button><button data-jump="tools"><b>⌘</b><span>Trading Tools<small>3 calculator</small></span><i>→</i></button><button data-jump="event"><b>◌</b><span>Webinar & Event<small>Sesi komunitas</small></span><i>→</i></button></div></article><article class="panel recent-card"><p class="kicker">MATERI TERBARU</p><h2>Terakhir di library.</h2><div id="recentMaterials"></div><button class="link" data-jump="learn">Buka Modul VIP →</button></article></div></section>
 
@@ -172,6 +300,262 @@
 
 <section id="tools" class="page"><div class="intro"><p class="kicker">TRADING TOOLS</p><h1>Hitung dulu.<br><em>Eksekusi kemudian.</em></h1><p>Alat praktis untuk membantu Anda patuh pada rencana.</p></div><div class="toolcards"><article class="selected"><span>↗</span><p class="kicker">POSITION SIZING</p><h2>Lot Size Calculator</h2><p>Pastikan risiko setiap trade selaras dengan ukuran akun Anda.</p><button data-tool="lot">Buka tool →</button></article><article><span>◫</span><p class="kicker">RISK ANALYSIS</p><h2>Risk / Reward</h2><p>Ukur potensi hasil dan risiko sebelum menekan tombol order.</p><button data-tool="rr">Buka tool →</button></article><article><span>⌁</span><p class="kicker">GROWTH PLAN</p><h2>Compounding</h2><p>Visualisasikan pertumbuhan modal dengan target realistis.</p><button data-tool="comp">Buka tool →</button></article></div><div class="panel calculator"><div><p class="kicker" id="calcType">POSITION SIZING</p><h2 id="calcTitle">Lot Size Calculator</h2></div><p id="calcDesc">Tentukan posisi berdasarkan batas risiko Anda.</p><div id="calcForm"></div></div></section>
 
+
+<section id="comp" class="page">
+  <div id="compoundingPage" class="compound-page">
+
+      <div class="compound-heading">
+        <div>
+          <div class="compound-topline">TRADING TOOLS / WEALTH PLANNER</div>
+          <h1>Compounding <span>Calculator</span></h1>
+          <div class="compound-subtitle">Simulasikan potensi pertumbuhan modal melalui compounding dan penambahan modal berkala. Ubah asumsi untuk membandingkan berbagai skenario.</div>
+        </div>
+        <div class="compound-mark" aria-hidden="true">↗</div>
+      </div>
+    <section class="panel">
+      <div class="input-grid">
+        <div class="field">
+          <label for="modal">MODAL AWAL (IDR)</label>
+          <div class="input-wrap"><span class="currency">Rp</span>
+            <input id="modal" type="number" min="0" step="100000" value="10000000">
+          </div>
+        </div>
+        <div class="field">
+          <label for="dca">DCA BULANAN (IDR)</label>
+          <div class="input-wrap"><span class="currency">Rp</span>
+            <input id="dca" type="number" min="0" step="100000" value="1000000">
+          </div>
+        </div>
+        <div class="field">
+          <div class="range-head"><label for="ret">RETURN TAHUNAN</label>
+            <span class="range-value" id="retText">50%</span></div>
+          <input id="ret" type="range" min="1" max="200" value="50">
+          <div class="range-labels"><span>1%</span><span>50%</span><span>100%</span><span>150%</span><span>200%</span></div>
+        </div>
+        <div class="field">
+          <div class="range-head"><label for="yrs">DURASI INVESTASI</label>
+            <span class="range-value" id="yrsText">20 Tahun</span></div>
+          <input id="yrs" type="range" min="1" max="50" value="20">
+          <div class="range-labels"><span>1 thn</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50 thn</span></div>
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="primary" id="calculate">↗ &nbsp; HITUNG PROYEKSI</button>
+      </div>
+    </section>
+
+    <section class="metrics">
+      <div class="metric">
+        <div class="metric-label">TOTAL MODAL</div>
+        <div class="metric-value" id="invest">Rp 0</div>
+        <div class="metric-note">Modal awal + total DCA</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">TOTAL PROFIT</div>
+        <div class="metric-value green" id="profit">Rp 0</div>
+        <div class="metric-note">Nilai akhir dikurangi total modal</div>
+      </div>
+      <div class="metric featured">
+        <div class="metric-label">NILAI PORTFOLIO AKHIR</div>
+        <div class="metric-value gold" id="value">Rp 0</div>
+        <div class="metric-note">Estimasi pada akhir periode</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">ROI</div>
+        <div class="metric-value gold" id="roi">0%</div>
+        <div class="metric-note">Profit dibanding total modal</div>
+      </div>
+    </section>
+
+    <section class="results-grid">
+      <div class="panel">
+        <h2 class="section-title"><span>▥</span> GRAFIK PERTUMBUHAN PORTFOLIO</h2>
+        <div class="chart-box"><canvas id="chart"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2 class="section-title"><span>◎</span> TARGET KEKAYAAN</h2>
+        <div class="target-list">
+          <div class="target"><div><div class="target-name">TARGET PORTFOLIO</div><div class="target-amount">Rp 100 Juta</div></div><div class="target-time" id="m100">-</div></div>
+          <div class="target"><div><div class="target-name">TARGET PORTFOLIO</div><div class="target-amount">Rp 1 Miliar</div></div><div class="target-time" id="m1">-</div></div>
+          <div class="target"><div><div class="target-name">TARGET PORTFOLIO</div><div class="target-amount">Rp 10 Miliar</div></div><div class="target-time" id="m10">-</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="section-title"><span>▤</span> RINGKASAN TAHUNAN</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tahun</th><th>Total Modal</th><th>Nilai Portfolio</th><th>Profit / Loss</th><th>ROI</th></tr></thead>
+          <tbody id="annualRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="disclaimer">
+      <div class="disclaimer-icon">ⓘ</div>
+      <div><h3>DISCLAIMER & RISIKO</h3>
+        <p>Semua bisnis dan aktivitas trading mengandung risiko. Trader Minoritas tidak menjanjikan profit pasti. Hasil aktual dapat berbeda dan dapat mengalami kerugian. Perhitungan ini merupakan simulasi matematis berdasarkan asumsi return tetap, bukan prediksi, sinyal trading, atau jaminan hasil masa depan. Belum memperhitungkan biaya, pajak, dan fluktuasi return.</p>
+      </div>
+    </section>
+    <div class="footer">TRADER MINORITAS · MINORITAS DI JUMLAH, MAYORITAS DI PROFIT</div>
+
+  </div>
+</section>
+
 <section id="chrono" class="page"><div class="intro"><p class="kicker">TRADING TOOL</p><h1>TM <em>Chrono Heatmap.</em></h1><p>See the market's historical tendency, minute by minute.</p></div><div class="panel chrono-workspace" style="padding:0;overflow:hidden;"><iframe src="TM_Chrono_Heatmap.html" title="TM Chrono Heatmap" style="display:block;width:100%;height:900px;border:0;background:#f6f7f9;" loading="lazy"></iframe></div></section><section id="event" class="page"><div class="intro"><p class="kicker">EVENT & WEBINAR</p><h1>Belajar bersama,<br><em>bertumbuh bersama.</em></h1><p>Sesi live untuk memperdalam proses dan bertukar perspektif.</p></div><div class="events"><article class="feature-event"><b>18<small>SEP<br>2026</small></b><p class="kicker">WEBINAR MEMBER</p><h2>Membaca Market Structure Tanpa Overthinking</h2><p>Dengan Raka Pratama · Jumat, 19:30 WIB</p><button class="primary">Daftar webinar →</button></article><article><p class="kicker">COMMUNITY SESSION</p><h2>Monthly Trade Review</h2><p>Bedah jurnal dan pelajaran terbaik dari bulan ini.</p><footer>27 SEP · 10:00 WIB <button>Detail →</button></footer></article><article><p class="kicker">ARCHIVE</p><h2>Psikologi Saat Drawdown</h2><p>Rekaman webinar bersama mentor TM sudah tersedia.</p><footer>REKAMAN · 72 MENIT <button>▶ Tonton</button></footer></article></div></section>
 
-<section id="profile" class="page"><div class="intro"><p class="kicker">PENGATURAN AKUN</p><h1>Profile <em>saya.</em></h1><p>Kelola informasi dan preferensi workspace Anda.</p></div><div class="profile"><article class="panel user-card"><b>AM</b><h2>Andi Mahendra</h2><p>VIP Member · Bergabung Oktober 2024</p><hr><small>MEMBERSHIP AKTIF HINGGA</small><strong>04 Oktober 2027</strong></article><form class="panel profile-form" id="profileForm"><label>Nama lengkap<input value="Andi Mahendra"></label><label>Email<input value="member@tradminoritas.id" type="email"></label><label>Bio singkat<textarea placeholder="Ceritakan fokus trading Anda..."></textarea></label><button class="primary">Simpan perubahan</button></form></div></section></main></div><dialog id="videoModal" class="video-modal"><button id="closeVideo" aria-label="Tutup video">×</button><div class="video-modal-meta"><p class="kicker">MODUL VIP</p><h2 id="videoModalTitle">Video</h2><button id="modalComplete" class="primary modal-complete">✓ Tandai sudah selesai</button></div><div class="video-frame-wrap"><video id="videoFrame" class="video-player-host" playsinline preload="metadata" controlslist="nodownload noplaybackrate" disablepictureinpicture aria-label="Video Modul VIP"></video><div class="video-custom-controls" id="videoControls" aria-label="Kontrol video"><button type="button" id="videoPlay" aria-label="Putar video">▶</button><input id="videoSeek" type="range" min="0" max="1000" value="0" step="1" aria-label="Posisi video"><span id="videoTime">0:00 / 0:00</span><button type="button" id="videoMute" aria-label="Mute">🔊</button><input id="videoVolume" type="range" min="0" max="100" value="100" step="1" aria-label="Volume"><button type="button" id="videoFullscreen" aria-label="Layar penuh">⛶</button></div></div></dialog><dialog id="modal" class="trade-modal"><button id="close">×</button><p class="kicker" id="tradeModalKicker">ADD TRADE</p><h2 id="tradeModalTitle">Catat trade.</h2><form id="tradeForm"><div class="modal-grid"><label>Instrument<input id="tradeInstrument" placeholder="XAUUSD" required></label><label>Buy / Sell<select id="tradeDirection"><option>Buy</option><option>Sell</option></select></label><label>Win / Loss<select id="tradeResult"><option value="win">Win</option><option value="loss">Loss</option><option value="be">Break Even</option></select></label><label>Lot Size<input id="tradeLot" type="number" step="any" placeholder="0.03"></label><label>Entry Date<input id="tradeDate" type="date" required></label><label>Entry Price<input id="tradeEntry" type="number" step="any" placeholder="4000.00"></label><label>Stop Loss<input id="tradeSL" type="number" step="any" placeholder="3997.50"></label><label>Take Profit<input id="tradeTP" type="number" step="any" placeholder="4010.00"></label><label>Exit Date<input id="tradeExitDate" type="date"></label><label>Exit Price<input id="tradeExit" type="number" step="any" placeholder="4010.00"></label><label>Profit / Loss<input id="tradePL" type="number" step="any" placeholder="10" required></label><label>Result (R)<input id="tradeR" type="number" step="any" placeholder="1.5" required></label></div><button class="primary" type="submit">Simpan trade →</button></form></dialog><div id="toast"></div><script src="member.js"></script></body></html>
+<section id="profile" class="page"><div class="intro"><p class="kicker">PENGATURAN AKUN</p><h1>Profile <em>saya.</em></h1><p>Kelola informasi dan preferensi workspace Anda.</p></div><div class="profile"><article class="panel user-card"><b>AM</b><h2>Andi Mahendra</h2><p>VIP Member · Bergabung Oktober 2024</p><hr><small>MEMBERSHIP AKTIF HINGGA</small><strong>04 Oktober 2027</strong></article><form class="panel profile-form" id="profileForm"><label>Nama lengkap<input value="Andi Mahendra"></label><label>Email<input value="member@tradminoritas.id" type="email"></label><label>Bio singkat<textarea placeholder="Ceritakan fokus trading Anda..."></textarea></label><button class="primary">Simpan perubahan</button></form></div></section></main></div><dialog id="videoModal" class="video-modal"><button id="closeVideo" aria-label="Tutup video">×</button><div class="video-modal-meta"><p class="kicker">MODUL VIP</p><h2 id="videoModalTitle">Video</h2><button id="modalComplete" class="primary modal-complete">✓ Tandai sudah selesai</button></div><div class="video-frame-wrap"><video id="videoFrame" class="video-player-host" playsinline preload="metadata" controlslist="nodownload noplaybackrate" disablepictureinpicture aria-label="Video Modul VIP"></video><div class="video-custom-controls" id="videoControls" aria-label="Kontrol video"><button type="button" id="videoPlay" aria-label="Putar video">▶</button><input id="videoSeek" type="range" min="0" max="1000" value="0" step="1" aria-label="Posisi video"><span id="videoTime">0:00 / 0:00</span><button type="button" id="videoMute" aria-label="Mute">🔊</button><input id="videoVolume" type="range" min="0" max="100" value="100" step="1" aria-label="Volume"><button type="button" id="videoFullscreen" aria-label="Layar penuh">⛶</button></div></div></dialog><dialog id="modal" class="trade-modal"><button id="close">×</button><p class="kicker" id="tradeModalKicker">ADD TRADE</p><h2 id="tradeModalTitle">Catat trade.</h2><form id="tradeForm"><div class="modal-grid"><label>Instrument<input id="tradeInstrument" placeholder="XAUUSD" required></label><label>Buy / Sell<select id="tradeDirection"><option>Buy</option><option>Sell</option></select></label><label>Win / Loss<select id="tradeResult"><option value="win">Win</option><option value="loss">Loss</option><option value="be">Break Even</option></select></label><label>Lot Size<input id="tradeLot" type="number" step="any" placeholder="0.03"></label><label>Entry Date<input id="tradeDate" type="date" required></label><label>Entry Price<input id="tradeEntry" type="number" step="any" placeholder="4000.00"></label><label>Stop Loss<input id="tradeSL" type="number" step="any" placeholder="3997.50"></label><label>Take Profit<input id="tradeTP" type="number" step="any" placeholder="4010.00"></label><label>Exit Date<input id="tradeExitDate" type="date"></label><label>Exit Price<input id="tradeExit" type="number" step="any" placeholder="4010.00"></label><label>Profit / Loss<input id="tradePL" type="number" step="any" placeholder="10" required></label><label>Result (R)<input id="tradeR" type="number" step="any" placeholder="1.5" required></label></div><button class="primary" type="submit">Simpan trade →</button></form></dialog><div id="toast"></div><script src="member.js"></script>
+<script id="tm-compounding-script">
+
+let growthChart;
+
+const $ = id => document.querySelector("#compoundingPage #" + id);
+
+function rupiah(n) {
+  if (!Number.isFinite(n)) return "—";
+  const abs = Math.abs(n);
+  if (abs >= 1e12) return (n < 0 ? "-Rp " : "Rp ") + (abs/1e12).toLocaleString("id-ID",{maximumFractionDigits:2}) + " T";
+  if (abs >= 1e9) return (n < 0 ? "-Rp " : "Rp ") + (abs/1e9).toLocaleString("id-ID",{maximumFractionDigits:2}) + " Miliar";
+  if (abs >= 1e6) return (n < 0 ? "-Rp " : "Rp ") + (abs/1e6).toLocaleString("id-ID",{maximumFractionDigits:2}) + " Juta";
+  return (n < 0 ? "-Rp " : "Rp ") + Math.round(abs).toLocaleString("id-ID");
+}
+
+function shortRupiah(n) {
+  const abs = Math.abs(n);
+  if (abs >= 1e12) return "Rp " + (n/1e12).toFixed(1) + " T";
+  if (abs >= 1e9) return "Rp " + (n/1e9).toFixed(1) + " M";
+  if (abs >= 1e6) return "Rp " + (n/1e6).toFixed(0) + " Jt";
+  return "Rp " + Math.round(n).toLocaleString("id-ID");
+}
+
+function calc() {
+  const modal = Math.max(0, Number($("modal").value) || 0);
+  const dca = Math.max(0, Number($("dca").value) || 0);
+  const annualRate = Number($("ret").value) / 100;
+  const years = Number($("yrs").value);
+  const monthlyRate = Math.pow(1 + annualRate, 1/12) - 1;
+
+  let balance = modal;
+  let totalDeposited = modal;
+  const labels = [];
+  const values = [];
+  const rows = [];
+  const targets = [
+    {amount:1e8, id:"m100"},
+    {amount:1e9, id:"m1"},
+    {amount:1e10, id:"m10"}
+  ];
+  const hit = {};
+  targets.forEach(t => hit[t.id] = null);
+
+  for (let month=1; month<=years*12; month++) {
+    // DCA disetor di awal bulan, lalu return bulanan diterapkan.
+    balance += dca;
+    totalDeposited += dca;
+    balance *= (1 + monthlyRate);
+
+    targets.forEach(t => {
+      if (hit[t.id] === null && balance >= t.amount) {
+        hit[t.id] = month;
+      }
+    });
+
+    if (month % 12 === 0) {
+      const year = month/12;
+      const profit = balance - totalDeposited;
+      labels.push("Tahun " + year);
+      values.push(balance);
+      rows.push({year, deposited:totalDeposited, balance, profit,
+        roi: totalDeposited > 0 ? profit/totalDeposited*100 : 0});
+    }
+  }
+
+  const finalBalance = balance;
+  const totalProfit = finalBalance - totalDeposited;
+  $("invest").textContent = rupiah(totalDeposited);
+  $("profit").textContent = rupiah(totalProfit);
+  $("value").textContent = rupiah(finalBalance);
+  $("roi").textContent = (totalDeposited > 0 ? (totalProfit/totalDeposited*100) : 0).toLocaleString("id-ID",{maximumFractionDigits:1}) + "%";
+
+  targets.forEach(t => {
+    const month = hit[t.id];
+    $(t.id).textContent = month === null
+      ? "Belum tercapai"
+      : (Math.floor((month-1)/12) + 1) + " Tahun";
+  });
+
+  $("annualRows").innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.year}</td>
+      <td>${rupiah(r.deposited)}</td>
+      <td>${rupiah(r.balance)}</td>
+      <td style="color:${r.profit >= 0 ? '#35d49a' : '#ff795f'}">${rupiah(r.profit)}</td>
+      <td>${r.roi.toLocaleString("id-ID",{maximumFractionDigits:1})}%</td>
+    </tr>`).join("");
+
+  if (growthChart) growthChart.destroy();
+  growthChart = new Chart($("chart"), {
+    type:"line",
+    data:{
+      labels,
+      datasets:[{
+        label:"Nilai Portfolio",
+        data:values,
+        borderColor:"#e0bd51",
+        backgroundColor:"rgba(212,175,55,.12)",
+        pointBackgroundColor:"#f3d77a",
+        pointBorderColor:"#f3d77a",
+        pointRadius:values.length > 25 ? 0 : 2,
+        pointHoverRadius:5,
+        borderWidth:2.5,
+        fill:true,
+        tension:.28
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{intersect:false,mode:"index"},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:"#191915",
+          borderColor:"#6d5722",
+          borderWidth:1,
+          titleColor:"#f3d77a",
+          bodyColor:"#fff",
+          callbacks:{label:ctx=>"Portfolio: "+rupiah(ctx.parsed.y)}
+        }
+      },
+      scales:{
+        x:{grid:{color:"rgba(255,255,255,.045)"},ticks:{color:"#99988f",maxTicksLimit:8}},
+        y:{beginAtZero:true,grid:{color:"rgba(255,255,255,.07)"},
+          ticks:{color:"#99988f",callback:v=>shortRupiah(v)}}
+      }
+    }
+  });
+}
+
+$("ret").addEventListener("input", () => {
+  $("retText").textContent = $("ret").value + "%";
+});
+$("yrs").addEventListener("input", () => {
+  $("yrsText").textContent = $("yrs").value + " Tahun";
+});
+$("calculate").addEventListener("click", calc);
+["modal","dca"].forEach(id => $(id).addEventListener("change", calc));
+
+let tmCompoundingInitialized = false;
+function initTMCompounding() {
+  if (tmCompoundingInitialized) return;
+  tmCompoundingInitialized = true;
+  calc();
+}
+document.addEventListener("click", event => {
+  const nav = event.target.closest('[data-page="comp"]');
+  if (nav) setTimeout(() => { if (!growthChart) initTMCompounding(); }, 0);
+});
+window.addEventListener("DOMContentLoaded", initTMCompounding);
+
+</script></body></html>
