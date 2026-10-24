@@ -7,7 +7,14 @@
 
 
 <section id="backtest" class="page">
-<div class="intro"><p class="kicker">TRADER MINORITAS</p><h1>TM <em>EDGE LAB.</em></h1><p>Catat hasil backtest langsung seperti spreadsheet. Tidak perlu tombol tambah trade.</p></div>
+<div class="intro">
+  <p class="kicker">TRADER MINORITAS</p>
+  <h1>TM <em>EDGE LAB.</em></h1>
+  <h2 class="edge-brand-subtitle">Where Data Becomes an Edge.</h2>
+  <p class="edge-brand-description">Laboratorium riset trading berbasis data historis, pengujian strategi, dan analisis statistik untuk menemukan keunggulan yang terukur di tengah ketidakpastian pasar.</p>
+  <p class="edge-brand-mantra">We don't chase the market. We study it.</p>
+  <p class="edge-brand-signoff">TRADER MINORITAS — Minoritas di Jumlah, Mayoritas di Profit.</p>
+</div>
 <div class="panel edge-config">
   <div class="section-head"><div><p class="kicker">BACKTEST CONFIGURATION</p><h2>Pengaturan backtest</h2></div></div>
   <div class="edge-config-grid">
@@ -54,7 +61,7 @@
 <div class="edge-layout">
   <div class="panel edge-table-panel">
     <div class="section-head"><div><p class="kicker">TRADE LOG</p><h2>Backtest spreadsheet</h2></div><div class="edge-table-actions"><button class="ghost-action" id="edgeImport">Paste / Import CSV</button><button class="ghost-action" id="edgeExport">Export CSV</button></div></div>
-    <p class="edge-hint">Kolom biru dapat diedit. Baris transaksi disediakan seperti spreadsheet; klik sel kosong untuk mengisi transaksi berikutnya. Tanggal entry dan exit opsional.</p>
+    <p class="edge-hint">Kolom biru dapat diedit. Baris transaksi disediakan seperti spreadsheet; klik sel kosong untuk mengisi transaksi berikutnya.</p>
     <div class="trade-table-scroll edge-sheet-scroll"><table class="edge-sheet"><thead><tr><th>Trade</th><th>Buy/Sell</th><th>Win/Loss</th><th>Profit/Loss ($)</th><th>Balance ($)</th><th>Peak ($)</th><th>Drawdown ($)</th><th>Win Streak</th><th>Loss Streak</th></tr></thead><tbody id="edgeRows"></tbody></table></div>
   </div>
   <div class="panel edge-stats-panel"><div class="section-head"><div><p class="kicker">RESULTS</p><h2>Statistik backtest</h2></div></div><div id="edgeStats" class="edge-stats"></div><div class="edge-chart-wrap"><p class="kicker">BALANCE</p><svg id="edgeChart" viewBox="0 0 600 220" preserveAspectRatio="none" aria-label="Grafik balance"></svg></div></div>
