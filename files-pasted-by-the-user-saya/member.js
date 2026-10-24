@@ -107,6 +107,48 @@ const videoFullscreen=document.getElementById('videoFullscreen');
 const videoFrameWrap=document.querySelector('.video-frame-wrap');
 let activeVideoId=null,videoPlayer=videoFrame,videoTimer=null;
 let videoPlaybackRate=1;
+
+let lastPositionSaveAt=0;
+
+function getVideoPositionKey(id){
+  return 'tmVipPosition_'+id;
+}
+
+function saveCurrentVideoPosition(){
+  if(!videoPlayer || !activeVideoId) return;
+
+  const current=videoPlayer.currentTime;
+  const duration=videoPlayer.duration;
+
+  if(!Number.isFinite(current) || current<0) return;
+
+  const key=getVideoPositionKey(activeVideoId);
+
+  // Jika video hampir selesai, mulai lagi dari awal
+  // saat dibuka kembali.
+  if(Number.isFinite(duration) && duration>0 && current>=duration-2){
+    localStorage.removeItem(key);
+    return;
+  }
+
+  localStorage.setItem(key,String(Math.floor(current)));
+  lastPositionSaveAt=current;
+}
+
+// Simpan posisi berkala, saat pause, dan saat video selesai.
+videoPlayer?.addEventListener('timeupdate',()=>{
+  if(videoPlayer.currentTime-lastPositionSaveAt>=5){
+    saveCurrentVideoPosition();
+  }
+});
+
+videoPlayer?.addEventListener('pause',saveCurrentVideoPosition);
+videoPlayer?.addEventListener('ended',()=>{
+  if(activeVideoId){
+    localStorage.removeItem(getVideoPositionKey(activeVideoId));
+  }
+});
+
 let videoSpeedButton=null;
 let videoControlsHideTimer=null;
 
@@ -202,10 +244,35 @@ async function createR2Player(file){
   try{
     const signedUrl=await getSignedVideoUrl(file);
     if(activeVideoId!==file.replace(/\.mp4$/i,''))return;
-    videoPlayer.src=signedUrl;
-    videoPlayer.playbackRate=videoPlaybackRate;
-    videoPlayer.load();
-    await videoPlayer.play().catch(()=>{});
+
+const positionKey=getVideoPositionKey(activeVideoId);
+const savedPosition=Number(localStorage.getItem(positionKey)||0);
+
+lastPositionSaveAt=0;
+
+// Pasang listener sebelum video dimuat agar posisi
+// bisa dipulihkan setelah durasi video diketahui.
+videoPlayer.addEventListener('loadedmetadata',function restorePosition(){
+  if(!videoPlayer || !activeVideoId) return;
+
+  const duration=videoPlayer.duration;
+
+  if(
+    Number.isFinite(duration) &&
+    savedPosition>0 &&
+    savedPosition<duration-2
+  ){
+    videoPlayer.currentTime=savedPosition;
+  }
+
+  lastPositionSaveAt=savedPosition;
+},{once:true});
+
+videoPlayer.src=signedUrl;
+videoPlayer.playbackRate=videoPlaybackRate;
+videoPlayer.load();
+await videoPlayer.play().catch(()=>{});
+
     startVideoTimer();
     syncVideoControls();
   }catch(err){
@@ -221,6 +288,7 @@ function closeVipVideo(){
   clearTimeout(videoControlsHideTimer);
   videoControlsHideTimer=null;
   videoControls?.classList.remove('tm-controls-hidden');
+   saveCurrentVideoPosition();
   stopVideoTimer();
   if(videoPlayer){videoPlayer.pause();videoPlayer.removeAttribute('src');videoPlayer.load();}
   if(document.fullscreenElement)document.exitFullscreen?.().catch?.(()=>{});
