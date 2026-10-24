@@ -128,3 +128,23 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
 .edge-period-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
 .edge-period-actions button{cursor:pointer}
 @media(max-width:480px){.edge-period-fields{grid-template-columns:1fr}.edge-period-picker{width:min(340px,calc(100vw - 34px))}}
+
+
+/* TM EDGE LAB: increase contrast for calculated spreadsheet metrics */
+.edge-sheet td .calculated{
+  color:#182235;
+  font-weight:700;
+  opacity:1;
+}
+.edge-sheet td .calculated.positive{color:#087443;}
+.edge-sheet td .calculated.negative{color:#c4321d;}
+/* Keep calculated balance/peak/drawdown/streak values legible on white cells */
+.edge-sheet td:nth-child(5) .calculated,
+.edge-sheet td:nth-child(6) .calculated,
+.edge-sheet td:nth-child(7) .calculated,
+.edge-sheet td:nth-child(8) .calculated,
+.edge-sheet td:nth-child(9) .calculated{
+  color:#182235;
+  font-weight:700;
+}
+.edge-sheet td:nth-child(7) .calculated.negative{color:#c4321d;}
