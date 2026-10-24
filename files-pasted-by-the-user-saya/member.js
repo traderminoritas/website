@@ -394,7 +394,7 @@ updateOverview();
   function renderMode(mode){
     const m=metrics(mode);
     if(mode==='journal'){$('journalStats').innerHTML=statHTML(m);$('journalTable').innerHTML=tableHTML(mode,m)}
-    if(mode==='backtest'){$('btStats').innerHTML=statHTML(m);$('btTable').innerHTML=tableHTML(mode,m);$('btTradeCount').textContent=m.trades.length+' TRADES';drawChart(mode,m)}
+    if(mode==='backtest'){if($('btStats'))$('btStats').innerHTML=statHTML(m);if($('btTable'))$('btTable').innerHTML=tableHTML(mode,m);if($('btTradeCount'))$('btTradeCount').textContent=m.trades.length+' TRADES';drawChart(mode,m)}
     if(mode==='forward'){$('ftStats').innerHTML=statHTML(m);$('ftTable').innerHTML=tableHTML(mode,m);$('ftTradeCount').textContent=m.trades.length+' TRADES';drawChart(mode,m)}
   }
   const timeframes=[['M1','M1 · 1 minute'],['M2','M2 · 2 minutes'],['M3','M3 · 3 minutes'],['M4','M4 · 4 minutes'],['M5','M5 · 5 minutes'],['M6','M6 · 6 minutes'],['M10','M10 · 10 minutes'],['M12','M12 · 12 minutes'],['M15','M15 · 15 minutes'],['M20','M20 · 20 minutes'],['M30','M30 · 30 minutes'],['H1','H1 · 1 hour'],['H2','H2 · 2 hours'],['H3','H3 · 3 hours'],['H4','H4 · 4 hours'],['H6','H6 · 6 hours'],['H8','H8 · 8 hours'],['H12','H12 · 12 hours'],['D1','D1 · Daily'],['W1','W1 · Weekly'],['MN1','M1 · Monthly']];
@@ -423,4 +423,131 @@ updateOverview();
   document.querySelectorAll('[data-template]').forEach(b=>b.addEventListener('click',()=>downloadTemplate(b.dataset.template)));
   document.querySelectorAll('.summary-tabs button').forEach(btn=>btn.addEventListener('click',()=>{const wrap=btn.closest('.summary-tabs');wrap.querySelectorAll('button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');toastMessage(btn.textContent+' summary — siap dikembangkan ke analisis periode.')}));
   loadCfg('backtest');loadCfg('forward');renderMode('journal');renderMode('backtest');renderMode('forward');
+})();
+
+
+/* TM EDGE LAB renderer — compatible with the current edge-* HTML markup. */
+(function(){
+  const $ = id => document.getElementById(id);
+  const rowsEl = $('edgeRows');
+  if (!rowsEl) return;
+
+  const STORAGE_KEY = 'tmEdgeLabProjectV1';
+  let rows = [];
+  let nextId = 1;
+  const readNumber = (id, fallback=0) => {
+    const el = $(id); const n = el ? Number(el.value) : fallback;
+    return Number.isFinite(n) ? n : fallback;
+  };
+  const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[ch]));
+  const money = n => (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  function calc(){
+    const initial = Math.max(0, readNumber('edgeInitial',1000));
+    const fixedProfit = Math.max(0, readNumber('edgeProfit',10));
+    const fixedLoss = Math.max(0, readNumber('edgeLoss',10));
+    const mode = $('edgeMode')?.value || 'fixed';
+    let balance = initial, peak = initial, winStreak = 0, lossStreak = 0;
+    let wins=0, losses=0, grossWin=0, grossLoss=0, maxDD=0;
+    rows.forEach((r,i)=>{
+      let pl = Number(r.pl)||0;
+      if(mode==='fixed') pl = r.result==='Win' ? fixedProfit : r.result==='Loss' ? -fixedLoss : 0;
+      r.pl = pl;
+      balance += pl; peak = Math.max(peak,balance);
+      if(r.result==='Win'){wins++;grossWin+=pl;winStreak++;lossStreak=0}
+      else if(r.result==='Loss'){losses++;grossLoss+=Math.abs(pl);lossStreak++;winStreak=0}
+      else {winStreak=0;lossStreak=0}
+      r.balance=balance; r.peak=peak; r.drawdown=Math.max(0,peak-balance);
+      r.winStreak=winStreak; r.lossStreak=lossStreak; maxDD=Math.max(maxDD,r.drawdown);
+    });
+    return {initial,balance,peak,wins,losses,grossWin,grossLoss,maxDD,total:wins+losses,net:balance-initial};
+  }
+  function renderStats(m){
+    const winRate=m.total ? m.wins/m.total*100 : 0;
+    const stats=[
+      ['TOTAL TRADES',m.total],['WIN RATE',winRate.toFixed(1)+'%'],
+      ['NET PROFIT / LOSS',money(m.net)],['ENDING BALANCE',money(m.balance)],
+      ['TOTAL WIN',money(m.grossWin)],['TOTAL LOSS',money(-m.grossLoss)],
+      ['MAX DRAWDOWN',money(-m.maxDD)],['PROFIT FACTOR',m.grossLoss ? (m.grossWin/m.grossLoss).toFixed(2) : (m.grossWin ? '∞' : '—')]
+    ];
+    const el=$('edgeStats'); if(el) el.innerHTML=stats.map(([k,v])=>`<div class="edge-stat"><small>${k}</small><b>${escapeHtml(v)}</b></div>`).join('');
+    const chart=$('edgeChart');
+    if(chart){
+      const values=[m.initial,...rows.map(r=>r.balance)];
+      const W=600,H=220,p=18,min=Math.min(...values),max=Math.max(...values),range=max-min||1;
+      const pts=values.map((v,i)=>`${p+i*(W-2*p)/Math.max(1,values.length-1)},${H-p-(v-min)*(H-2*p)/range}`).join(' ');
+      chart.innerHTML=`<polyline points="${pts}" fill="none" stroke="#d8b45e" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="${p}" y1="${H-p}" x2="${W-p}" y2="${H-p}" stroke="#777" stroke-opacity=".35"/>`;
+    }
+  }
+  function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({rows,nextId,config:{
+    explanation:$('edgeExplanation')?.value||'',rr:$('edgeRR')?.value||'',mode:$('edgeMode')?.value||'fixed',
+    lot:$('edgeLot')?.value||'0.01',symbol:$('edgeSymbol')?.value||'XAUUSD',timeframe:$('edgeTimeframe')?.value||'M1',
+    start:$('edgePeriodStart')?.value||'2024-01-01',end:$('edgePeriodEnd')?.value||'2026-12-31',initial:$('edgeInitial')?.value||'1000',
+    profit:$('edgeProfit')?.value||'10',loss:$('edgeLoss')?.value||'10'
+  }}))}catch(e){}}
+  function render(){
+    const m=calc();
+    rowsEl.innerHTML=rows.map((r,i)=>`<tr>
+      <td>${i+1}</td>
+      <td><select data-field="side" data-id="${r.id}" aria-label="Buy/Sell"><option ${r.side==='Buy'?'selected':''}>Buy</option><option ${r.side==='Sell'?'selected':''}>Sell</option></select></td>
+      <td><select data-field="result" data-id="${r.id}" aria-label="Win/Loss"><option ${r.result==='Win'?'selected':''}>Win</option><option ${r.result==='Loss'?'selected':''}>Loss</option></select></td>
+      <td>${money(r.pl)}</td><td>${money(r.balance)}</td><td>${money(r.peak)}</td><td>${money(-r.drawdown)}</td><td>${r.winStreak}</td><td>${r.lossStreak}</td>
+    </tr>`).join('') + `<tr class="edge-entry-row"><td>${rows.length+1}</td><td><select id="edgeNextSide" aria-label="Transaksi berikutnya"><option>Buy</option><option>Sell</option></select></td><td><select id="edgeNextResult" aria-label="Hasil transaksi berikutnya"><option>Win</option><option>Loss</option></select></td><td colspan="6"><button type="button" id="edgeAddTrade" class="primary">+ Tambah trade</button> <span class="edge-hint">Pilih Buy/Sell dan Win/Loss, lalu tambah trade.</span></td></tr>`;
+    renderStats(m); save();
+  }
+  function applyConfig(c){
+    if(!c)return;
+    const map={edgeExplanation:'explanation',edgeRR:'rr',edgeMode:'mode',edgeLot:'lot',edgeSymbol:'symbol',edgeTimeframe:'timeframe',edgePeriodStart:'start',edgePeriodEnd:'end',edgeInitial:'initial',edgeProfit:'profit',edgeLoss:'loss'};
+    Object.entries(map).forEach(([id,key])=>{if($(id)&&c[key]!==undefined)$(id).value=c[key]});
+    const label=$('edgePeriodLabel'); if(label){const fmt=d=>{if(!d)return '';const x=new Date(d+'T00:00:00');return x.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})};label.textContent=fmt(c.start)+' s/d '+fmt(c.end)}
+  }
+  function load(){
+    try{const data=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');if(data){rows=Array.isArray(data.rows)?data.rows:[];nextId=data.nextId||rows.length+1;applyConfig(data.config)}}catch(e){}
+  }
+  rowsEl.addEventListener('change',e=>{
+    const el=e.target.closest('[data-field]'); if(!el)return;
+    const r=rows.find(x=>String(x.id)===el.dataset.id); if(!r)return;
+    r[el.dataset.field]=el.value; render();
+  });
+  rowsEl.addEventListener('click',e=>{
+    if(e.target.id!=='edgeAddTrade')return;
+    rows.push({id:nextId++,side:$('edgeNextSide')?.value||'Buy',result:$('edgeNextResult')?.value||'Win',pl:0});
+    render();
+  });
+  ['edgeInitial','edgeProfit','edgeLoss','edgeMode'].forEach(id=>$(id)?.addEventListener('input',render));
+  ['edgeExplanation','edgeRR','edgeLot','edgeSymbol','edgeTimeframe','edgePeriodStart','edgePeriodEnd'].forEach(id=>$(id)?.addEventListener('change',save));
+  $('edgeMode')?.addEventListener('change',()=>{
+    const fixed=$('edgeFixedValues'), manual=$('edgeManualValues');
+    if(fixed) fixed.hidden=$('edgeMode').value!=='fixed';
+    if(manual) manual.hidden=$('edgeMode').value!=='manual';
+  });
+  $('edgePeriodButton')?.addEventListener('click',()=>{const p=$('edgePeriodPicker');if(p)p.hidden=!p.hidden});
+  $('edgePeriodCancel')?.addEventListener('click',()=>{const p=$('edgePeriodPicker');if(p)p.hidden=true});
+  $('edgePeriodApply')?.addEventListener('click',()=>{
+    const a=$('edgePeriodStart')?.value,b=$('edgePeriodEnd')?.value;
+    if(a&&b&&a>b){alert('Tanggal mulai tidak boleh setelah tanggal akhir.');return}
+    const fmt=d=>d?new Date(d+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}):'';
+    if($('edgePeriodLabel'))$('edgePeriodLabel').textContent=fmt(a)+' s/d '+fmt(b);
+    if($('edgePeriodPicker'))$('edgePeriodPicker').hidden=true;save();
+  });
+  $('edgeNewProject')?.addEventListener('click',()=>{
+    if(!confirm('Buat project baru? Data project saat ini akan diganti.'))return;
+    rows=[];nextId=1;render();
+  });
+  $('edgeProjectExport')?.addEventListener('click',()=>{
+    const blob=new Blob([JSON.stringify({rows,config:JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}').config||{}},null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='tm-edge-lab-project.json';a.click();URL.revokeObjectURL(a.href);
+  });
+  $('edgeProjectImport')?.addEventListener('click',()=>$('edgeProjectFile')?.click());
+  $('edgeProjectFile')?.addEventListener('change',async e=>{
+    const file=e.target.files?.[0];if(!file)return;
+    try{const data=JSON.parse(await file.text());rows=Array.isArray(data.rows)?data.rows:[];nextId=Math.max(1,...rows.map(r=>(+r.id||0)+1));applyConfig(data.config);render()}
+    catch(err){alert('File project tidak valid.')}
+    e.target.value='';
+  });
+  load();
+  const fixed=$('edgeFixedValues'),manual=$('edgeManualValues');
+  if(fixed&&manual){fixed.hidden=$('edgeMode')?.value!=='fixed';manual.hidden=$('edgeMode')?.value!=='manual'}
+  render();
 })();
