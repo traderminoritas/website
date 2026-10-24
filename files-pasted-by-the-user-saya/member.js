@@ -559,7 +559,7 @@ updateOverview();
  }
  function renderStats(){
   const m=stats();
-  const items=[['Total Net Profit/Loss',money(m.net)],['Total Trades',m.rows.length],['Total Win',m.wins],['Total Loss',m.losses],['Winrate',m.winrate.toFixed(2)+'%'],['Profit Factor',m.pf.toFixed(2)],['Max Drawdown',money(m.maxDD)],['Max Drawdown %',(Number(state.initial)?(m.maxDD/Number(state.initial)*100):0).toFixed(2)+'%'],['Consecutive Wins',m.mw],['Consecutive Losses',m.ml],['Recovery Factor',m.recovery.toFixed(2)],['Total Buy',m.buy],['Total Sell',m.sell],['Current Balance',money(m.balance)]];
+  const items=[['Total Net Profit/Loss',money(m.net)],['Total Trades',m.rows.length],['Total Win',m.wins],['Total Loss',m.losses],['Winrate',m.winrate.toFixed(2)+'%'],['Profit Factor',m.pf.toFixed(2)],['Max Drawdown',money(m.maxDD)],['Max Drawdown %',(Number(state.initial)?(m.maxDD/Number(state.initial)*100):0).toFixed(2)+'%'],['Consecutive Wins',m.mw],['Consecutive Losses',m.ml],['Recovery Factor',m.recovery.toFixed(2)],['Current Balance',money(m.balance)],['Total Buy',m.buy],['Total Sell',m.sell]];
   $('edgeStats').innerHTML=items.map(([k,v])=>`<div class="edge-stat"><span>${k}</span><strong>${v}</strong></div>`).join('');
   const svg=$('edgeChart'), vals=[Number(state.initial)||0,...m.rows.map(t=>t.balance)], W=600,H=220,p=16,min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;
   const pts=vals.map((v,i)=>`${p+i/Math.max(vals.length-1,1)*(W-p*2)},${H-p-(v-min)/range*(H-p*2)}`).join(' ');
