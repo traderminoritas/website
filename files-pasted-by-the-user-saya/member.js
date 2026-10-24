@@ -523,8 +523,7 @@ updateOverview();
     <td>${state.mode==='manual'?`<input data-i="${i}" data-k="pl" type="number" step="any" placeholder="Profit + / Loss -" value="${blank?'':esc(t.pl??'')}" aria-label="Profit/Loss dolar">`:`<span class="calculated ${t.pl<0?'negative':'positive'}">${blank?'—':plText}</span>`}</td>
     <td><span class="calculated">${bal}</span></td><td><span class="calculated">${peak}</span></td><td><span class="calculated ${!blank&&t.dd?'negative':''}">${dd}</span></td>
     <td><span class="calculated">${blank?'—':t.winStreak}</span></td><td><span class="calculated">${blank?'—':t.lossStreak}</span></td>
-    <td><input data-i="${i}" data-k="entryDate" type="date" value="${esc(t.entryDate||'')}" aria-label="Entry date (optional)"></td>
-    <td><input data-i="${i}" data-k="exitDate" type="date" value="${esc(t.exitDate||'')}" aria-label="Exit date (optional)"></td></tr>`;
+    </tr>`;
   }).join('');
  }
  function renderStats(){
@@ -557,13 +556,13 @@ updateOverview();
  }));
  $('edgeMode')?.addEventListener('change',syncMode);
  $('edgeExport')?.addEventListener('click',()=>{
-  const header=['Trade','Buy/Sell','Win/Loss','Profit/Loss USD','Balance USD','Peak USD','Drawdown USD','Win Streak','Loss Streak','Entry Date','Exit Date'];
-  const m=stats();const lines=[header,...m.rows.map(t=>[t.num,t.direction||'',t.result||'',t.pl,t.balance,t.peak,t.dd,t.winStreak,t.lossStreak,t.entryDate||'',t.exitDate||''])].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const header=['Trade','Buy/Sell','Win/Loss','Profit/Loss USD','Balance USD','Peak USD','Drawdown USD','Win Streak','Loss Streak'];
+  const m=stats();const lines=[header,...m.rows.map(t=>[t.num,t.direction||'',t.result||'',t.pl,t.balance,t.peak,t.dd,t.winStreak,t.lossStreak])].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines],{type:'text/csv;charset=utf-8'}));a.download='TM_EDGE_LAB_Backtest.csv';a.click();URL.revokeObjectURL(a.href);
  });
  $('edgeImport')?.addEventListener('click',()=>$('edgeCsvFile').click());
  $('edgeCsvFile')?.addEventListener('change',async e=>{
-  const f=e.target.files?.[0];if(!f)return;const txt=await f.text();const lines=txt.split(/\r?\n/).filter(Boolean);const parsed=lines.slice(1).map(line=>{const a=line.split(',').map(x=>x.replace(/^"|"$/g,''));return {direction:a[1]==='Buy'?'Buy':'Sell',result:a[2]==='Win'?'Win':a[2]==='Loss'?'Loss':'',pl:Number(a[3])||0,entryDate:a[9]||'',exitDate:a[10]||''};});state.trades=parsed;persist();render();e.target.value='';
+  const f=e.target.files?.[0];if(!f)return;const txt=await f.text();const lines=txt.split(/\r?\n/).filter(Boolean);const parsed=lines.slice(1).map(line=>{const a=line.split(',').map(x=>x.replace(/^"|"$/g,''));return {direction:a[1]==='Buy'?'Buy':'Sell',result:a[2]==='Win'?'Win':a[2]==='Loss'?'Loss':'',pl:Number(a[3])||0};});state.trades=parsed;persist();render();e.target.value='';
  });
  initInputs();render();
 })();
