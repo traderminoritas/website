@@ -520,7 +520,7 @@ updateOverview();
    return `<tr><td>${t.num}</td>
     <td><select data-i="${i}" data-k="direction" aria-label="Buy/Sell"><option ${t.direction==='Buy'?'selected':''}>Buy</option><option ${t.direction==='Sell'?'selected':''}>Sell</option></select></td>
     <td><select data-i="${i}" data-k="result" aria-label="Win/Loss"><option value="">—</option><option ${t.result==='Win'?'selected':''}>Win</option><option ${t.result==='Loss'?'selected':''}>Loss</option></select></td>
-    <td>${state.mode==='manual'?`<input data-i="${i}" data-k="pl" type="number" step="any" placeholder="Profit + / Loss -" value="${blank?'':esc(t.pl??'')}" aria-label="Profit/Loss dolar">`:`<span class="calculated ${t.pl<0?'negative':'positive'}">${blank?'—':plText}</span>`}</td>
+    <td>${state.mode==='manual'?`<input data-i="${i}" data-k="pl" type="number" min="0" step="any" placeholder="${t.result==='Loss'?'Nilai loss (otomatis minus)':'Nilai profit'}" value="${blank?'':esc(Math.abs(Number(t.pl)||0))}" aria-label="Profit/Loss dolar" ${t.result==='Loss'?'readonly':''}>`:`<span class="calculated ${t.pl<0?'negative':'positive'}">${blank?'—':plText}</span>`}</td>
     <td><span class="calculated">${bal}</span></td><td><span class="calculated">${peak}</span></td><td><span class="calculated ${!blank&&t.dd?'negative':''}">${dd}</span></td>
     <td><span class="calculated">${blank?'—':t.winStreak}</span></td><td><span class="calculated">${blank?'—':t.lossStreak}</span></td>
     </tr>`;
@@ -540,10 +540,16 @@ updateOverview();
   if(i===state.trades.length){
    const t={direction:'Sell',result:'',pl:0,entryDate:'',exitDate:''};
    t[k]=el.value;
+   if(k==='pl') t.pl=(t.result==='Loss'?-1:1)*Math.abs(Number(el.value)||0);
+   if(k==='result'&&t.result==='Loss') t.pl=-Math.abs(Number(t.pl)||0);
+   if(k==='result'&&t.result==='Win') t.pl=Math.abs(Number(t.pl)||0);
    if(k==='direction'&&t.direction==='')t.direction='Sell';
    state.trades.push(t);
   }else if(state.trades[i]){
    state.trades[i][k]=el.value;
+   if(k==='pl') state.trades[i].pl=(state.trades[i].result==='Loss'?-1:1)*Math.abs(Number(el.value)||0);
+   if(k==='result'&&state.trades[i].result==='Loss') state.trades[i].pl=-Math.abs(Number(state.trades[i].pl)||0);
+   if(k==='result'&&state.trades[i].result==='Win') state.trades[i].pl=Math.abs(Number(state.trades[i].pl)||0);
   }else return;
   // Only count a transaction after Win/Loss is selected. In fixed mode result drives P/L.
   if(state.trades[i] && !state.trades[i].result && k!=='result' && !state.trades[i].entryDate && !state.trades[i].exitDate && !state.trades[i].pl){ /* retain editable draft */ }
