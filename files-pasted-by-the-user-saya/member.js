@@ -515,6 +515,10 @@ updateOverview();
     $('edgeLoss').value=Math.abs(Number(state.loss));
   }
   $('edgeManualValues').hidden=!manual;
+  const modeDescription=$('edgeModeDescription');
+  if(modeDescription)modeDescription.textContent=manual
+    ?'Isi Profit/Loss secara langsung pada tabel Backtest. Nilai Profit per Win dan Loss per Loss di bawah tidak digunakan.'
+    :'Profit/Loss otomatis memakai nilai Profit per Win dan Loss per Loss di bawah. Lot Size menjadi konfigurasi backtest.';
   persist();render();
  }
  function stats(){

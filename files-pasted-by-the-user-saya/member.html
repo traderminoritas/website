@@ -13,7 +13,10 @@
   <div class="edge-config-grid">
     <label class="edge-explanation-label">Explanation<textarea id="edgeExplanation" class="blue-input edge-explanation-input" rows="1" placeholder="Jelaskan aturan strategi backtest...">Mengambil posisi sell setiap harinya 16.23 WIB atau 12.23 Jam Broker. TP SL 50 points</textarea></label>
     <label>Reward to Risk<input id="edgeRR" class="blue-input" value="1:1"></label>
-    <label>Mode profit/loss<select id="edgeMode" class="blue-input"><option value="fixed">Fixed Lot</option><option value="manual">Manual</option></select></label>
+    <label>Mode profit/loss
+      <select id="edgeMode" class="blue-input"><option value="fixed">Fixed Lot</option><option value="manual">Manual</option></select>
+      <small id="edgeModeDescription" class="edge-mode-description">Profit/Loss otomatis memakai nilai Profit per Win dan Loss per Loss di bawah. Lot Size menjadi konfigurasi backtest.</small>
+    </label>
     <label>Lot Size<input id="edgeLot" class="blue-input" type="number" min="0.01" step="0.01" value="0.01"></label>
     <label>Symbol<input id="edgeSymbol" class="blue-input" value="XAUUSD" placeholder="Contoh: XAUUSD"></label>
     <label>Timeframe<select id="edgeTimeframe" class="blue-input">
@@ -44,10 +47,8 @@
   <div class="edge-pl-config" id="edgeFixedValues">
     <label>Profit per Win ($)<input id="edgeProfit" class="blue-input" type="number" min="0" step="any" value="10"></label>
     <label>Loss per Loss ($)<input id="edgeLoss" class="blue-input" type="number" min="0" step="any" value="10" inputmode="decimal" aria-describedby="edgeLossHint"><small id="edgeLossHint" class="edge-loss-hint">Masukkan nominal loss positif; sistem otomatis menghitungnya sebagai minus.</small></label>
-    <p>Fixed Lot: nilai profit/loss otomatis memakai nilai di atas. Lot size menjadi konfigurasi backtest.</p>
   </div>
   <div class="edge-pl-config" id="edgeManualValues" hidden>
-    <p>Manual: isi Profit/Loss langsung pada tabel di sebelah kiri. Kotak Profit dan Loss di bagian pengaturan disembunyikan.</p>
   </div>
 </div>
 <div class="edge-layout">
