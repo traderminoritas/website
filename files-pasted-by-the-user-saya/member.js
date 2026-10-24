@@ -477,7 +477,7 @@ updateOverview();
  function initInputs(){
   $('edgeMode').value=state.mode;$('edgeLot').value=state.lot;$('edgeInitial').value=state.initial;
   $('edgeProfit').value=state.profit;$('edgeLoss').value=state.loss;$('edgeExplanation').value=state.explanation;
-  $('edgeRR').value=state.rr;$('edgeSymbol').value=state.symbol;$('edgePeriod').value=state.period;
+  $('edgeRR').value=state.rr;$('edgeSymbol').value=state.symbol;const periodLabel=$('edgePeriodLabel');if(periodLabel)periodLabel.textContent=state.period;
   syncMode();
  }
  function syncMode(){
@@ -544,9 +544,9 @@ updateOverview();
   persist();render();
  }
  document.addEventListener('change',e=>{const el=e.target;if(!el.matches('#edgeRows [data-k]'))return;commitCell(el);});
- ['edgeLot','edgeInitial','edgeProfit','edgeLoss','edgeExplanation','edgeRR','edgeSymbol','edgePeriod'].forEach(id=>$(id)?.addEventListener('change',()=>{
-  const map={edgeLot:'lot',edgeInitial:'initial',edgeProfit:'profit',edgeLoss:'loss',edgeExplanation:'explanation',edgeRR:'rr',edgeSymbol:'symbol',edgePeriod:'period'};
-  const key=map[id];state[key]=id==='edgeLot'||id==='edgeInitial'||id==='edgeProfit'||id==='edgeLoss'?Number($(id).value)||0:$(id).value;persist();render();
+ ['edgeLot','edgeInitial','edgeProfit','edgeLoss','edgeExplanation','edgeRR','edgeSymbol','edgePeriodButton'].forEach(id=>$(id)?.addEventListener('change',()=>{
+  const map={edgeLot:'lot',edgeInitial:'initial',edgeProfit:'profit',edgeLoss:'loss',edgeExplanation:'explanation',edgeRR:'rr',edgeSymbol:'symbol',edgePeriodButton:'period'};
+  const key=map[id];state[key]=id==='edgeLot'||id==='edgeInitial'||id==='edgeProfit'||id==='edgeLoss'?Number($(id).value)||0:(id==='edgePeriodButton'?$('edgePeriodLabel').textContent:$(id).value);persist();render();
  }));
  $('edgeMode')?.addEventListener('change',syncMode);
  $('edgeExport')?.addEventListener('click',()=>{
@@ -606,10 +606,7 @@ updateOverview();
     label.textContent=displayRange();
     closePicker();
     // Trigger the same persistence mechanism as other config fields, if present.
-    const event=new Event('change',{bubbles:true});
-    start.dispatchEvent(event);
-    end.dispatchEvent(event);
-    button.dispatchEvent(event);
+    button.dispatchEvent(new Event('change',{bubbles:true}));
   });
   document.addEventListener('click',event=>{
     if(!picker.hidden&&!picker.contains(event.target)&&!button.contains(event.target))closePicker();
