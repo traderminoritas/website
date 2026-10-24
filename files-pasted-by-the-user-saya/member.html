@@ -53,7 +53,10 @@
   </div>
   <div class="edge-pl-config" id="edgeFixedValues">
     <label>Profit per Win ($)<input id="edgeProfit" class="blue-input" type="number" min="0" step="any" value="10"></label>
-    <label>Loss per Loss ($)<input id="edgeLoss" class="blue-input" type="number" min="0" step="any" value="10" inputmode="decimal" aria-describedby="edgeLossHint"><small id="edgeLossHint" class="edge-loss-hint">Masukkan nominal loss positif; sistem otomatis menghitungnya sebagai minus.</small></label>
+    <label>Loss per Loss ($)
+      <span class="edge-loss-input-wrap"><span class="edge-loss-minus" aria-hidden="true">−</span><input id="edgeLoss" class="blue-input" type="number" min="0" step="any" value="10" inputmode="decimal" aria-describedby="edgeLossHint"></span>
+      <small id="edgeLossHint" class="edge-loss-hint">Ketik nominal saja; nilai dihitung sebagai minus.</small>
+    </label>
   </div>
   <div class="edge-pl-config" id="edgeManualValues" hidden>
   </div>

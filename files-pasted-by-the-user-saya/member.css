@@ -365,3 +365,55 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
   #backtest .edge-brand-description{font-size:14px;line-height:1.7}
   #backtest .edge-brand-signoff{font-size:11px}
 }
+
+/* Loss input: fixed, non-editable minus sign with editable positive magnitude */
+.edge-loss-input-wrap{
+  display:flex;
+  align-items:stretch;
+  width:100%;
+  min-width:0;
+  min-height:44px;
+  overflow:hidden;
+  border:1px solid #b7d6ff;
+  border-radius:7px;
+  background:#eaf3ff;
+  box-sizing:border-box;
+}
+.edge-loss-input-wrap:focus-within{
+  border-color:#3984ed;
+  box-shadow:0 0 0 2px #3984ed33;
+}
+.edge-loss-input-wrap .edge-loss-minus{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 38px;
+  color:#172235;
+  font-size:16px;
+  font-weight:700;
+  user-select:none;
+  pointer-events:none;
+  background:#dceaff;
+  border-right:1px solid #b7d6ff;
+}
+.edge-loss-input-wrap input#edgeLoss{
+  flex:1 1 auto;
+  width:100%;
+  min-width:0;
+  min-height:42px;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+.edge-loss-input-wrap input#edgeLoss:focus{outline:none}
+.edge-loss-input-wrap:has(input:disabled){
+  background:#d9dce1;
+  border-color:#b7bdc7;
+  opacity:.72;
+}
+.edge-loss-input-wrap:has(input:disabled) .edge-loss-minus{
+  color:#858b95;
+  background:#d9dce1;
+  border-color:#b7bdc7;
+}
