@@ -113,3 +113,18 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
 #edgeChart .edge-axis{stroke:#d9dee7;stroke-width:1}
 @media(max-width:1100px){.edge-config-grid{grid-template-columns:repeat(2,minmax(130px,1fr))}.edge-layout{grid-template-columns:1fr}}
 @media(max-width:600px){.edge-config-grid{grid-template-columns:1fr 1fr}.edge-pl-config{grid-template-columns:1fr 1fr}.edge-table-panel,.edge-stats-panel{padding:12px}.edge-stats{grid-template-columns:1fr 1fr}}
+
+
+/* TM EDGE LAB — calendar period picker */
+.edge-period-control{position:relative}
+.edge-period-button{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;cursor:pointer;min-height:38px}
+.edge-period-button>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.edge-period-button>span:last-child{color:var(--gold);font-size:16px;flex:none}
+.edge-period-picker{position:absolute;top:calc(100% + 8px);left:0;z-index:30;width:min(420px,calc(100vw - 40px));padding:16px;background:#22211e;border:1px solid #5b5137;box-shadow:0 16px 42px #0009}
+.edge-period-picker[hidden]{display:none!important}
+.edge-period-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.edge-period-fields label{display:block;font-size:9px;color:var(--muted)}
+.edge-period-fields input{display:block;width:100%;min-width:0;margin-top:7px;padding:10px;background:#171715;border:1px solid #464239;color:var(--text);font:11px Manrope;color-scheme:dark}
+.edge-period-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.edge-period-actions button{cursor:pointer}
+@media(max-width:480px){.edge-period-fields{grid-template-columns:1fr}.edge-period-picker{width:min(340px,calc(100vw - 34px))}}

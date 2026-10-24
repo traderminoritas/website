@@ -560,3 +560,61 @@ updateOverview();
  });
  initInputs();render();
 })();
+
+
+/* TM EDGE LAB calendar period picker */
+(function setupEdgePeriodPicker(){
+  const button=document.getElementById('edgePeriodButton');
+  const label=document.getElementById('edgePeriodLabel');
+  const picker=document.getElementById('edgePeriodPicker');
+  const start=document.getElementById('edgePeriodStart');
+  const end=document.getElementById('edgePeriodEnd');
+  const apply=document.getElementById('edgePeriodApply');
+  const cancel=document.getElementById('edgePeriodCancel');
+  if(!button||!label||!picker||!start||!end||!apply||!cancel)return;
+
+  const formatDate=value=>{
+    if(!value)return '';
+    const [y,m,d]=value.split('-').map(Number);
+    const months=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    return `${d} ${months[m-1]} ${y}`;
+  };
+  const displayRange=()=>`${formatDate(start.value)} s/d ${formatDate(end.value)}`;
+
+  function openPicker(){
+    // Sync the popup fields with the currently applied range before editing.
+    const text=label.textContent.trim();
+    const match=text.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})\s+s\/d\s+(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/);
+    if(match){
+      const months={'Jan':'01','Feb':'02','Mar':'03','Apr':'04','Mei':'05','May':'05','Jun':'06','Jul':'07','Agu':'08','Aug':'08','Sep':'09','Okt':'10','Oct':'10','Nov':'11','Des':'12','Dec':'12'};
+      const a=months[match[2]],b=months[match[5]];
+      if(a)start.value=`${match[3]}-${a}-${match[1].padStart(2,'0')}`;
+      if(b)end.value=`${match[6]}-${b}-${match[4].padStart(2,'0')}`;
+    }
+    picker.hidden=false;
+    button.setAttribute('aria-expanded','true');
+  }
+  function closePicker(){
+    picker.hidden=true;
+    button.setAttribute('aria-expanded','false');
+  }
+  button.addEventListener('click',()=>picker.hidden?openPicker():closePicker());
+  cancel.addEventListener('click',closePicker);
+  apply.addEventListener('click',()=>{
+    if(!start.value||!end.value){toastMessage('Pilih tanggal mulai dan selesai.');return;}
+    if(start.value>end.value){toastMessage('Tanggal selesai harus sama atau setelah tanggal mulai.');return;}
+    label.textContent=displayRange();
+    closePicker();
+    // Trigger the same persistence mechanism as other config fields, if present.
+    const event=new Event('change',{bubbles:true});
+    start.dispatchEvent(event);
+    end.dispatchEvent(event);
+    button.dispatchEvent(event);
+  });
+  document.addEventListener('click',event=>{
+    if(!picker.hidden&&!picker.contains(event.target)&&!button.contains(event.target))closePicker();
+  });
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&!picker.hidden)closePicker();
+  });
+})();
