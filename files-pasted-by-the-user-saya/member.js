@@ -467,12 +467,9 @@ updateOverview();
 (function(){
  const $=id=>document.getElementById(id);
  const KEY='tmEdgeLabSpreadsheetV1';
- const defaults={mode:'fixed',lot:.01,initial:1000,profit:10,loss:-10,explanation:'',rr:'',symbol:'XAUUSD',timeframe:'M1',period:'1 Jan 2024 s/d 31 Des 2026',trades:[]};
+ const defaults={mode:'fixed',lot:.01,initial:1000,profit:10,loss:-10,explanation:'Mengambil posisi sell setiap harinya 16.23 WIB atau 12.23 Jam Broker. TP SL 50 points',rr:'1:1',symbol:'XAUUSD',timeframe:'M1',period:'1 Jan 2024 s/d 31 Des 2026',trades:[]};
  let state;
- try{state={...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')};
- if(state.explanation==='Mengambil posisi sell setiap harinya 16.23 WIB atau 12.23 Jam Broker. TP SL 50 points')state.explanation='';
- if(state.rr==='1:1')state.rr='';
-}catch(e){state={...defaults};}
+ try{state={...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')};}catch(e){state={...defaults};}
  if(!Array.isArray(state.trades))state.trades=[];
  // Migrate the previous combined Symbol / Timeframe value.
  if(typeof state.symbol==='string' && state.symbol.includes(' - ')){
@@ -484,44 +481,16 @@ updateOverview();
  const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
  const money=n=>'$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
  function persist(){localStorage.setItem(KEY,JSON.stringify(state));}
- function resizeExplanation(){
-  const el=$('edgeExplanation');
-  if(!el)return;
-  el.style.height='44px';
-  el.style.height=Math.max(44,el.scrollHeight)+'px';
- }
- $('edgeExplanation')?.addEventListener('input',resizeExplanation);
- window.addEventListener('resize',resizeExplanation);
  function initInputs(){
   $('edgeMode').value=state.mode;$('edgeLot').value=state.lot;$('edgeInitial').value=state.initial;
-  $('edgeProfit').value=state.profit;$('edgeLoss').value=Math.abs(Number(state.loss)||0);$('edgeExplanation').value=state.explanation;
+  $('edgeProfit').value=state.profit;$('edgeLoss').value=state.loss;$('edgeExplanation').value=state.explanation;
   $('edgeRR').value=state.rr;$('edgeSymbol').value=state.symbol;$('edgeTimeframe').value=state.timeframe;const periodLabel=$('edgePeriodLabel');if(periodLabel)periodLabel.textContent=state.period;
   syncMode();
  }
  function syncMode(){
   state.mode=$('edgeMode').value;
-  const fixedValues=$('edgeFixedValues');
-  const manual=state.mode==='manual';
-  fixedValues.hidden=false;
-  fixedValues.classList.toggle('is-unavailable',manual);
-  $('edgeProfit').disabled=manual;
-  $('edgeLoss').disabled=manual;
-  if(manual){
-    $('edgeProfit').value=0;
-    $('edgeLoss').value=0;
-    state.profit=0;
-    state.loss=0;
-  }else{
-    if(!(Number(state.profit)>0))state.profit=10;
-    if(!(Math.abs(Number(state.loss))>0))state.loss=-10;
-    $('edgeProfit').value=state.profit;
-    $('edgeLoss').value=Math.abs(Number(state.loss));
-  }
-  $('edgeManualValues').hidden=!manual;
-  const modeDescription=$('edgeModeDescription');
-  if(modeDescription)modeDescription.textContent=manual
-    ?'Isi nilai Profit/Loss langsung pada tabel Backtest. Profit per Win dan Loss per Loss di bagian pengaturan tidak digunakan.'
-    :'Profit/Loss otomatis dihitung berdasarkan nilai Profit per Win dan Loss per Loss.';
+  $('edgeFixedValues').hidden=state.mode==='manual';
+  $('edgeManualValues').hidden=state.mode!=='manual';
   persist();render();
  }
  function stats(){
@@ -559,7 +528,7 @@ updateOverview();
  }
  function renderStats(){
   const m=stats();
-  const items=[['Total Net Profit/Loss',money(m.net)],['Total Trades',m.rows.length],['Total Win',m.wins],['Total Loss',m.losses],['Winrate',m.winrate.toFixed(2)+'%'],['Profit Factor',m.pf.toFixed(2)],['Max Drawdown',money(m.maxDD)],['Max Drawdown %',(Number(state.initial)?(m.maxDD/Number(state.initial)*100):0).toFixed(2)+'%'],['Consecutive Wins',m.mw],['Consecutive Losses',m.ml],['Recovery Factor',m.recovery.toFixed(2)],['Current Balance',money(m.balance)],['Total Buy',m.buy],['Total Sell',m.sell]];
+  const items=[['Total Net Profit/Loss',money(m.net)],['Total Trades',m.rows.length],['Total Win',m.wins],['Total Loss',m.losses],['Winrate',m.winrate.toFixed(2)+'%'],['Profit Factor',m.pf.toFixed(2)],['Max Drawdown',money(m.maxDD)],['Max Drawdown %',(Number(state.initial)?(m.maxDD/Number(state.initial)*100):0).toFixed(2)+'%'],['Consecutive Wins',m.mw],['Consecutive Losses',m.ml],['Recovery Factor',m.recovery.toFixed(2)],['Total Buy',m.buy],['Total Sell',m.sell],['Current Balance',money(m.balance)]];
   $('edgeStats').innerHTML=items.map(([k,v])=>`<div class="edge-stat"><span>${k}</span><strong>${v}</strong></div>`).join('');
   const svg=$('edgeChart'), vals=[Number(state.initial)||0,...m.rows.map(t=>t.balance)], W=600,H=220,p=16,min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;
   const pts=vals.map((v,i)=>`${p+i/Math.max(vals.length-1,1)*(W-p*2)},${H-p-(v-min)/range*(H-p*2)}`).join(' ');
@@ -583,19 +552,68 @@ updateOverview();
  document.addEventListener('change',e=>{const el=e.target;if(!el.matches('#edgeRows [data-k]'))return;commitCell(el);});
  ['edgeLot','edgeInitial','edgeProfit','edgeLoss','edgeExplanation','edgeRR','edgeSymbol','edgeTimeframe','edgePeriodButton'].forEach(id=>$(id)?.addEventListener('change',()=>{
   const map={edgeLot:'lot',edgeInitial:'initial',edgeProfit:'profit',edgeLoss:'loss',edgeExplanation:'explanation',edgeRR:'rr',edgeSymbol:'symbol',edgeTimeframe:'timeframe',edgePeriodButton:'period'};
-  const key=map[id];state[key]=id==='edgeLoss'?-Math.abs(Number($(id).value)||0):(id==='edgeLot'||id==='edgeInitial'||id==='edgeProfit'?Number($(id).value)||0:(id==='edgePeriodButton'?$('edgePeriodLabel').textContent:$(id).value));persist();render();
+  const key=map[id];state[key]=id==='edgeLot'||id==='edgeInitial'||id==='edgeProfit'||id==='edgeLoss'?Number($(id).value)||0:(id==='edgePeriodButton'?$('edgePeriodLabel').textContent:$(id).value);persist();render();
  }));
  $('edgeMode')?.addEventListener('change',syncMode);
+ function downloadFile(filename, content, type){
+  const blob=new Blob([content],{type});
+  const href=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=href;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(href),1000);
+ }
  $('edgeExport')?.addEventListener('click',()=>{
   const header=['Trade','Buy/Sell','Win/Loss','Profit/Loss USD','Balance USD','Peak USD','Drawdown USD','Win Streak','Loss Streak'];
-  const m=stats();const lines=[header,...m.rows.map(t=>[t.num,t.direction||'',t.result||'',t.pl,t.balance,t.peak,t.dd,t.winStreak,t.lossStreak])].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines],{type:'text/csv;charset=utf-8'}));a.download='TM_EDGE_LAB_Backtest.csv';a.click();URL.revokeObjectURL(a.href);
+  const m=stats();const lines=[header,...m.rows.map(t=>[t.num,t.direction||'',t.result||'',t.pl,t.balance,t.peak,t.dd,t.winStreak,t.lossStreak])].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\\r\\n');
+  downloadFile('TM_EDGE_LAB_Backtest.csv','\\uFEFF'+lines,'text/csv;charset=utf-8');
  });
  $('edgeImport')?.addEventListener('click',()=>$('edgeCsvFile').click());
  $('edgeCsvFile')?.addEventListener('change',async e=>{
-  const f=e.target.files?.[0];if(!f)return;const txt=await f.text();const lines=txt.split(/\r?\n/).filter(Boolean);const parsed=lines.slice(1).map(line=>{const a=line.split(',').map(x=>x.replace(/^"|"$/g,''));return {direction:a[1]==='Buy'?'Buy':'Sell',result:a[2]==='Win'?'Win':a[2]==='Loss'?'Loss':'',pl:Number(a[3])||0};});state.trades=parsed;persist();render();e.target.value='';
+  const f=e.target.files?.[0];if(!f)return;
+  try{
+   const txt=await f.text();const lines=txt.split(/\\r?\\n/).filter(Boolean);
+   const parsed=lines.slice(1).map(line=>{const a=line.split(',').map(x=>x.replace(/^"|"$/g,''));return {direction:a[1]==='Buy'?'Buy':'Sell',result:a[2]==='Win'?'Win':a[2]==='Loss'?'Loss':'',pl:Number(a[3])||0};});
+   state.trades=parsed;persist();render();toastMessage('CSV berhasil diimpor.');
+  }catch(err){toastMessage('File CSV tidak dapat dibaca.');}
+  e.target.value='';
  });
- initInputs();resizeExplanation();render();
+ $('edgeProjectExport')?.addEventListener('click',()=>{
+  const payload={format:'TM_EDGE_LAB_PROJECT',version:1,exportedAt:new Date().toISOString(),project:{
+   mode:state.mode,lot:state.lot,initial:state.initial,profit:state.profit,loss:state.loss,
+   explanation:state.explanation,rr:state.rr,symbol:state.symbol,timeframe:state.timeframe,
+   period:state.period,trades:state.trades
+  }};
+  const safeSymbol=String(state.symbol||'Backtest').replace(/[^a-z0-9_-]+/gi,'_');
+  downloadFile(`TM_EDGE_LAB_${safeSymbol}.json`,JSON.stringify(payload,null,2),'application/json;charset=utf-8');
+  toastMessage('Project berhasil diexport.');
+ });
+ $('edgeProjectImport')?.addEventListener('click',()=>$('edgeProjectFile')?.click());
+ $('edgeProjectFile')?.addEventListener('change',async e=>{
+  const file=e.target.files?.[0];if(!file)return;
+  try{
+   const imported=JSON.parse(await file.text());
+   const project=imported?.format==='TM_EDGE_LAB_PROJECT' ? imported.project : imported?.project;
+   const required=['mode','lot','initial','profit','loss','explanation','rr','symbol','timeframe','period','trades'];
+   if(!project||!required.every(k=>Object.prototype.hasOwnProperty.call(project,k))||!Array.isArray(project.trades)){
+    throw new Error('Invalid project');
+   }
+   if(!['fixed','manual'].includes(project.mode))throw new Error('Invalid mode');
+   if(project.trades.length>100000)throw new Error('Too many trades');
+   state={...defaults,...project,trades:project.trades.map(t=>({
+    direction:t?.direction==='Buy'?'Buy':'Sell',
+    result:['Win','Loss'].includes(t?.result)?t.result:'',
+    pl:Number(t?.pl)||0,
+    entryDate:String(t?.entryDate||''),
+    exitDate:String(t?.exitDate||'')
+   }))};
+   persist();initInputs();render();
+   toastMessage('Project berhasil diimport.');
+  }catch(err){
+   toastMessage('File project tidak valid. Pilih file JSON hasil Export TM EDGE LAB.');
+  }
+  e.target.value='';
+ });
+ initInputs();render();
 })();
 
 
