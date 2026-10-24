@@ -466,7 +466,7 @@ updateOverview();
 /* TM EDGE LAB spreadsheet backtest */
 (function(){
  const $=id=>document.getElementById(id);
- const defaults={mode:'fixed',lot:.01,initial:1000,profit:10,loss:10,explanation:'Mengambil posisi sell setiap harinya 16.23 WIB atau 12.23 Jam Broker. TP SL 50 points',rr:'1:1',symbol:'XAUUSD',timeframe:'M1',period:'1 Jan 2024 s/d 31 Des 2026',trades:[]};
+ const defaults={mode:'fixed',lot:.01,initial:1000,profit:10,loss:10,explanation:'',rr:'',symbol:'XAUUSD',timeframe:'M1',period:'1 Jan 2024 s/d 31 Des 2026',trades:[]};
  let state={...defaults};
  if(!Array.isArray(state.trades))state.trades=[];
  // Migrate the previous combined Symbol / Timeframe value.
@@ -482,14 +482,20 @@ updateOverview();
  function persist(){}
  function initInputs(){
   $('edgeMode').value=state.mode;$('edgeLot').value=state.lot;$('edgeInitial').value=state.initial;
-  $('edgeProfit').value=state.profit;$('edgeLoss').value=state.loss;$('edgeExplanation').value=state.explanation;
-  $('edgeRR').value=state.rr;$('edgeSymbol').value=state.symbol;$('edgeTimeframe').value=state.timeframe;const periodLabel=$('edgePeriodLabel');if(periodLabel)periodLabel.textContent=state.period;
+  $('edgeProfit').value=state.profit;$('edgeLoss').value=Math.abs(Number(state.loss)||0);$('edgeExplanation').value=state.explanation||'';
+  $('edgeRR').value=state.rr||'';$('edgeSymbol').value=state.symbol;$('edgeTimeframe').value=state.timeframe;const periodLabel=$('edgePeriodLabel');if(periodLabel)periodLabel.textContent=state.period;
   syncMode();
  }
  function syncMode(){
   state.mode=$('edgeMode').value;
   $('edgeFixedValues').hidden=state.mode==='manual';
   $('edgeManualValues').hidden=state.mode!=='manual';
+  const modeDescription=$('edgeModeDescription');
+  if(modeDescription){
+   modeDescription.textContent=state.mode==='fixed'
+    ?'Fixed Lot: Profit/Loss otomatis dihitung dari nilai Profit per Win dan Loss per Loss di atas.'
+    :'Manual: isi Profit/Loss tiap transaksi secara langsung di tabel backtest; profit gunakan angka positif dan loss angka negatif.';
+  }
   persist();render();
  }
  function stats(){

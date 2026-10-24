@@ -114,7 +114,7 @@
   <div class="section-head"><div><p class="kicker">BACKTEST CONFIGURATION</p><h2>Pengaturan backtest</h2></div></div>
   <div class="edge-config-grid">
     <label class="edge-explanation-label">Explanation<textarea id="edgeExplanation" class="blue-input edge-explanation-input" rows="1" placeholder="Jelaskan aturan strategi backtest..."></textarea></label>
-    <label>Reward to Risk Ratio<input id="edgeRR" class="blue-input" value="" placeholder="Contoh: 1:1"></label>
+    <label>Reward to Risk Ratio<input id="edgeRR" class="blue-input" value="" placeholder="1:1"></label>
     <label>Mode profit/loss
       <select id="edgeMode" class="blue-input"><option value="fixed">Fixed Lot</option><option value="manual">Manual</option></select>
       <small id="edgeModeDescription" class="edge-mode-description">Profit/Loss otomatis dihitung berdasarkan nilai Profit per Win dan Loss per Loss.</small>
@@ -154,6 +154,7 @@
     </label>
   </div>
   <div class="edge-pl-config" id="edgeManualValues" hidden>
+    <p class="edge-mode-description">Manual: masukkan nilai Profit/Loss pada setiap transaksi langsung di tabel backtest. Nilai positif untuk profit dan negatif untuk loss.</p>
   </div>
 </div>
 <div class="edge-layout edge-layout-stacked">
