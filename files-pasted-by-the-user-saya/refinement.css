@@ -465,20 +465,3 @@ em{font-family:Manrope,Arial,sans-serif!important;font-style:normal!important;fo
   .partner-alert a{color:#d8b45e!important;opacity:1!important}
   .partner-card>a.partner-visit b{background:transparent!important;color:#f4e8c4!important;box-shadow:none!important;width:auto!important;height:auto!important}
 }
-
-
-/* Ensure all five official partners use the same card structure. */
-.partner-list article.partner-card{display:grid!important;grid-template-columns:58px minmax(0,1fr) auto!important;align-items:center!important;gap:16px!important;padding:22px 0!important;border-bottom:1px solid rgba(216,180,94,.16)!important}
-.partner-avatar{position:relative;width:56px;height:56px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid rgba(216,180,94,.62);background:radial-gradient(circle at 35% 30%,#3b3018,#14130f 72%);color:#d8b45e;font:500 10px 'DM Mono',monospace}
-.partner-avatar img{width:100%;height:100%;object-fit:cover;display:block}
-.partner-avatar span{display:none}
-.partner-avatar.no-photo span{display:block}
-.partner-info{min-width:0}
-.partner-info .partner-kicker{margin-bottom:5px;color:#d8b45e;font:500 7px/1.2 'DM Mono',monospace;letter-spacing:1.2px}
-.partner-info h3{margin:0 0 6px!important;color:#f3f0e8!important;font-size:13px!important;font-weight:700!important}
-.partner-info p{margin:0 0 5px!important;color:#aaa69b!important;font-size:9px!important}
-.partner-info small{color:#aaa69b!important;font:8px 'DM Mono',monospace!important;letter-spacing:.5px!important}
-.partner-verified{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#39c47b;color:#062b18;font-size:10px;vertical-align:middle;margin-left:4px}
-.partner-visit{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(216,180,94,.55);border-radius:999px;padding:8px 12px;color:#f3d783!important;text-decoration:none!important;font-size:8px!important;font-weight:700;white-space:nowrap}
-.partner-visit span{display:grid;place-items:center;background:#d8b45e;color:#15130d;width:18px;height:18px;border-radius:50%;font-size:12px}
-@media(max-width:600px){.partner-list article.partner-card{grid-template-columns:48px minmax(0,1fr)!important;gap:12px!important}.partner-avatar{width:46px;height:46px}.partner-visit{grid-column:2;justify-self:start;margin-top:4px}}
