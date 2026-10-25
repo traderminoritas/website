@@ -24,7 +24,19 @@
   <link rel="stylesheet" href="mobile-fullbleed.css" />
   <link rel="stylesheet" href="mobile-controls-final.css" />
 
-</head>
+<style id="tm-products-update">
+.tm-products{padding:130px 0;background:linear-gradient(180deg,#11110f,#171713);border-top:1px solid rgba(216,180,94,.12);border-bottom:1px solid rgba(216,180,94,.12)}
+.tm-products .section-head{max-width:760px;margin-bottom:54px}
+.tm-products .section-head>p:last-child{max-width:620px}
+.tm-product-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tm-product-grid article{min-height:195px;padding:24px 20px;border:1px solid rgba(216,180,94,.18);background:linear-gradient(145deg,rgba(32,31,26,.9),rgba(17,17,15,.95));display:flex;flex-direction:column;align-items:flex-start;transition:transform .2s,border-color .2s}
+.tm-product-grid article:hover{transform:translateY(-3px);border-color:rgba(216,180,94,.55)}
+.tm-product-no{font:8px 'DM Mono',monospace;letter-spacing:1.1px;color:var(--gold);margin-bottom:auto}
+.tm-product-grid h3{font-size:15px;line-height:1.45;letter-spacing:.1px;margin:28px 0 8px;font-weight:700}
+.tm-product-grid p{font-size:11px;line-height:1.6;color:#aaa69b;margin:0}
+@media(max-width:900px){.tm-product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tm-products{padding:90px 0}}
+@media(max-width:480px){.tm-product-grid{grid-template-columns:1fr}.tm-product-grid article{min-height:160px;padding:21px}.tm-product-grid h3{margin-top:24px}}
+</style></head>
 
 <body>
 
@@ -120,7 +132,7 @@
           </div>
 
           <div>
-            <strong>39+</strong>
+            <strong>40+</strong>
             <small>MODUL PEMBELAJARAN</small>
           </div>
 
@@ -479,7 +491,7 @@
           </h3>
 
           <p>
-            Modul VIP dari fundamental hingga psikologi trading, dengan jalur belajar sesuai level Anda.
+            Modul VIP dari teknikal, money management, hingga psikologi trading, dengan jalur belajar sesuai level Anda.
           </p>
 
           <a href="#member">
@@ -503,8 +515,8 @@
             Backtest strategi dan dokumentasikan setiap hipotesis sebelum masuk ke pasar.
           </p>
 
-          <a href="#tools">
-            Coba calculator <span>→</span>
+          <a href="#produk">
+            Kenali TM EDGE LAB <span>→</span>
           </a>
 
         </article>
@@ -540,165 +552,27 @@
          TOOLS
          ===================================================== -->
 
-    <section id="tools" class="tool-section">
+    <section id="produk" class="tm-products">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">03 — Ekosistem TRADER MINORITAS</p>
+      <h2>Lebih dari sekadar<br><em>belajar trading.</em></h2>
+      <p>Ekosistem untuk belajar, menguji strategi, membaca data historis, dan membangun proses trading yang lebih terukur.</p>
+    </div>
+    <div class="tm-product-grid">
+      <article><span class="tm-product-no">01 / MARKET DATA</span><h3>TM CHRONO HEATMAP</h3><p>Historical Market Analysis</p></article>
+      <article><span class="tm-product-no">02 / STRATEGY LAB</span><h3>TM EDGE LAB</h3><p>Strategy Development &amp; Analysis</p></article>
+      <article><span class="tm-product-no">03 / FINANCIAL PLANNING</span><h3>TM COMPOUNDING CALCULATOR</h3><p>Financial Planning Tool</p></article>
+      <article><span class="tm-product-no">04 / AUTOMATION</span><h3>TM EA AUTO TP &amp; SL</h3><p>Trading Automation Tool</p></article>
+      <article><span class="tm-product-no">05 / MEMBERSHIP</span><h3>TM VIP MEMBERSHIP</h3><p>Premium Membership</p></article>
+      <article><span class="tm-product-no">06 / STRATEGY COLLECTION</span><h3>TM VIP STRATEGY LIBRARY</h3><p>Trading Strategy Collection</p></article>
+      <article><span class="tm-product-no">07 / EDUCATION</span><h3>TM 40 EXCLUSIVE VIDEO MODULES</h3><p>Premium Trading Education</p></article>
+      <article><span class="tm-product-no">08 / COMMUNITY</span><h3>TM WEBINAR &amp; EVENT</h3><p>Education &amp; Community</p></article>
+    </div>
+  </div>
+</section>
 
-      <div class="wrap tool-layout">
-
-        <div>
-
-          <p class="eyebrow">
-            03 — Trading tools
-          </p>
-
-          <h2>
-            Risiko terukur.<br>
-            <em>Eksekusi lebih tenang.</em>
-          </h2>
-
-          <p class="tool-description">
-            Mulai dari ukuran posisi yang sesuai rencana.
-            Gunakan kalkulator lot size sederhana kami untuk memperkirakan risiko per transaksi.
-          </p>
-
-          <div class="tool-pills">
-
-            <span>Lot size</span>
-            <span>Risk / Reward</span>
-            <span>Compounding</span>
-            <span>Profit / Loss</span>
-
-          </div>
-
-        </div>
-
-
-        <form class="calculator" id="lotCalculator">
-
-          <div class="calculator-title">
-
-            <span>TM</span>
-
-            <div>
-              <b>Lot Size Calculator</b>
-              <small>
-                Estimasi posisi yang sesuai risiko
-              </small>
-            </div>
-
-          </div>
-
-
-          <label>
-
-            Modal akun
-
-            <div class="input-wrap">
-
-              <span>$</span>
-
-              <input
-                id="balance"
-                type="number"
-                min="1"
-                value="1000">
-
-            </div>
-
-          </label>
-
-
-          <div class="form-row">
-
-            <label>
-
-              Risiko
-
-              <div class="input-wrap">
-
-                <input
-                  id="risk"
-                  type="number"
-                  min="0.1"
-                  step="0.1"
-                  value="1">
-
-                <span>%</span>
-
-              </div>
-
-            </label>
-
-
-            <label>
-
-              Stop loss
-
-              <div class="input-wrap">
-
-                <input
-                  id="stopLoss"
-                  type="number"
-                  min="1"
-                  value="30">
-
-                <span>pips</span>
-
-              </div>
-
-            </label>
-
-          </div>
-
-
-          <div class="calc-result">
-
-            <div>
-
-              <small>
-                RISIKO MAKSIMUM
-              </small>
-
-              <strong id="riskAmount">
-                $10.00
-              </strong>
-
-            </div>
-
-
-            <div>
-
-              <small>
-                UKURAN POSISI*
-              </small>
-
-              <strong id="lotAmount">
-                0.03 lot
-              </strong>
-
-            </div>
-
-          </div>
-
-
-          <small class="disclaimer">
-
-            *Estimasi untuk pasangan mayor USD.
-            Bukan nasihat finansial.
-
-          </small>
-
-        </form>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         MEMBERSHIP
-         ===================================================== -->
-
-    <section id="member" class="membership wrap">
+<section id="member" class="membership wrap">
 
       <div class="membership-copy">
 
@@ -730,7 +604,7 @@
 
           <li>
             <i>✓</i>
-            Modul pembelajaran eksklusif
+            40+ modul pembelajaran eksklusif
           </li>
 
           <li>
@@ -1269,7 +1143,7 @@
             alt="39 plus modul pembelajaran">
 
           <h3>
-            39+ modul pembelajaran
+            40+ modul pembelajaran
           </h3>
 
           <p>
@@ -1319,14 +1193,14 @@
         </h2>
 
         <p>
-          39+ Modul · 17 Strategi · Zoom Meeting · EA Premium · Lifetime Membership
+          40+ Modul · 17 Strategi · Zoom Meeting · EA Premium · Lifetime Membership
         </p>
 
 
         <div class="vip-stats">
 
           <span>
-            <b>39+</b> Modul
+            <b>40+</b> Modul
           </span>
 
           <span>
