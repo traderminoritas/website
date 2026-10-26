@@ -94,74 +94,7 @@ sectionNumbers.forEach(([selector, text]) => {
 });
 
 
-/* =========================================================
-   PARTNER RESMI — FOTO + VERIFIED + COPY BARU
-   ========================================================= */
-
-const partners = [
-  {
-    name: 'Kent Vilandka',
-    handle: '@kokokentminority',
-    since: 'Official Partner since August 2025',
-    url: 'https://www.tiktok.com/@kokokentminority',
-    photo: 'https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/kent.png',
-    initials: 'KV'
-  },
-  {
-    name: 'Siswandi Waluyo',
-    handle: '@omsisminority',
-    since: 'Official Partner since August 2025',
-    url: 'https://www.tiktok.com/@omsisminority',
-    photo: 'https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/siswandi.png',
-    initials: 'SW'
-  },
-  {
-    name: 'David Zen Geraldy',
-    handle: '@mrzenminority',
-    since: 'Official Partner since August 2025',
-    url: 'https://www.tiktok.com/@mrzenminority',
-    photo: 'https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/zen.png',
-    initials: 'ZG'
-  },
-  {
-    name: 'Teja Tri Sumanto',
-    handle: '@tri.minority',
-    since: 'Official Partner since May 2026',
-    url: 'https://www.tiktok.com/@tri.minority',
-    photo: '',
-    initials: 'TT'
-  },
-  {
-    name: 'Muchtar Syafaat',
-    handle: '@jatimminority',
-    since: 'Official Partner since March 2026',
-    url: 'https://www.tiktok.com/@jatimminority',
-    photo: '',
-    initials: 'MS'
-  }
-];
-
-const partnerList = document.querySelector('.partner-list');
-
-if (partnerList) {
-  partnerList.innerHTML = partners.map((partner) => `
-    <article class="partner-card">
-      <div class="partner-avatar ${partner.photo ? '' : 'no-photo'}">
-        ${partner.photo ? `<img src="${partner.photo}" alt="Foto ${partner.name}" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-photo')">` : ''}
-        <span>${partner.initials}</span>
-      </div>
-      <div class="partner-info">
-        <div class="partner-kicker">OFFICIAL PARTNER</div>
-        <h3>${partner.name}<span class="verified-badge" aria-label="Verified partner">✓</span></h3>
-        <p>${partner.since}</p>
-        <small>${partner.handle}</small>
-      </div>
-      <a class="partner-visit" href="${partner.url}" target="_blank" rel="noopener noreferrer" aria-label="Kunjungi ${partner.name} di TikTok">
-        <span>Kunjungi TikTok</span><b aria-hidden="true">→</b>
-      </a>
-    </article>
-  `).join('');
-}
+/* Partner cards remain in index.html so all five partners are preserved. */
 
 
 /* =========================================================
