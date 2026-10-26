@@ -56,6 +56,17 @@
 .quote-grid { align-items: stretch; }
 </style>
 
+<style id="tm-mobile-photo-zoom-fix">
+.membership-zoom-figure{margin:22px 0;max-width:460px}
+.membership-zoom-figure img,.zoom-benefit-card img{display:block;width:100%;height:auto;object-fit:contain;border:1px solid rgba(220,180,90,.35);border-radius:10px}
+.membership-zoom-figure figcaption{margin-top:8px;font-size:.82rem;line-height:1.6;color:#aaa69b}
+.zoom-benefit-card{min-width:0;align-self:stretch}
+.zoom-benefit-card img{max-height:260px;object-fit:contain;object-position:center;background:#11110f;margin-bottom:16px}
+.partner-avatar{overflow:hidden;border-radius:50%;isolation:isolate}
+.partner-avatar img{width:100%;height:100%;display:block;object-fit:cover;object-position:center}
+@media(max-width:600px){.membership-zoom-figure{width:100%;max-width:100%;margin:18px 0}.membership-zoom-figure img{max-height:none;width:100%}.zoom-benefit-card img{max-height:240px}.partner-avatar{flex-shrink:0}.partner-avatar img{min-width:100%;min-height:100%}}
+</style>
+
 </head>
 
 <body>
@@ -625,6 +636,11 @@
           Keanggotaan ini merupakan wujud keputusan dan komitmen Anda untuk menempuh perjalanan menjadi trader yang profesional.
         </p>
 
+        <figure class="membership-zoom-figure">
+          <img src="https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/ZOOM%20COMPLETE.png" alt="Dokumentasi Zoom rutin Trader Minoritas" loading="lazy" decoding="async">
+          <figcaption>Zoom rutin — belajar, berdiskusi, dan bertumbuh bersama komunitas sejak Agustus 2025.</figcaption>
+        </figure>
+
         <ul>
 
           <li>
@@ -787,7 +803,7 @@
         <div class="partner-list">
 
           <article class="partner-card">
-            <div class="partner-avatar"><img src="https://unavatar.io/tiktok/kokokentminority" alt="Kent Vilandka" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-photo');this.parentElement.insertAdjacentHTML('beforeend','<span>KV</span>')"></div>
+            <div class="partner-avatar"><img src="https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/kent.png" alt="Kent Vilandka" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-photo');this.parentElement.insertAdjacentHTML('beforeend','<span>KV</span>')"></div>
             <div class="partner-info">
               <div class="partner-kicker">OFFICIAL PARTNER</div>
               <h3>Kent Vilandka <span class="partner-verified" aria-label="Official Partner">✓</span></h3>
@@ -798,7 +814,7 @@
           </article>
 
           <article class="partner-card">
-            <div class="partner-avatar"><img src="https://unavatar.io/tiktok/omsisminority" alt="Siswandi Waluyo" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-photo');this.parentElement.insertAdjacentHTML('beforeend','<span>SW</span>')"></div>
+            <div class="partner-avatar"><img src="https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/siswandi.png" alt="Siswandi Waluyo" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-photo');this.parentElement.insertAdjacentHTML('beforeend','<span>SW</span>')"></div>
             <div class="partner-info">
               <div class="partner-kicker">OFFICIAL PARTNER</div>
               <h3>Siswandi Waluyo <span class="partner-verified" aria-label="Official Partner">✓</span></h3>
@@ -809,7 +825,7 @@
           </article>
 
           <article class="partner-card">
-            <div class="partner-avatar"><img src="https://unavatar.io/tiktok/mrzenminority" alt="David Zen Geraldy" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-photo');this.parentElement.insertAdjacentHTML('beforeend','<span>DZ</span>')"></div>
+            <div class="partner-avatar"><img src="https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/zen.png" alt="David Zen Geraldy" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('no-photo');this.parentElement.insertAdjacentHTML('beforeend','<span>DZ</span>')"></div>
             <div class="partner-info">
               <div class="partner-kicker">OFFICIAL PARTNER</div>
               <h3>David Zen Geraldy <span class="partner-verified" aria-label="Official Partner">✓</span></h3>
@@ -1134,6 +1150,12 @@
             Alat eksklusif untuk proses dan manajemen risiko.
           </p>
 
+        </article>
+
+        <article class="zoom-benefit-card">
+          <img src="https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/ZOOM%20COMPLETE.png" alt="Zoom rutin dan event komunitas Trader Minoritas" loading="lazy" decoding="async">
+          <h3>Zoom rutin &amp; event komunitas</h3>
+          <p>Sesi edukasi dan diskusi komunitas Trader Minoritas sejak Agustus 2025.</p>
         </article>
 
       </div>
