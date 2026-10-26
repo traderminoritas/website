@@ -25,17 +25,17 @@
   <link rel="stylesheet" href="mobile-controls-final.css" />
 
 <style id="tm-products-update">
-.tm-products{padding:130px 0;background:linear-gradient(180deg,#11110f,#171713);border-top:1px solid rgba(216,180,94,.12);border-bottom:1px solid rgba(216,180,94,.12)}
-.tm-products .section-head{max-width:760px;margin-bottom:54px}
+.tm-products{padding:90px 0;background:linear-gradient(180deg,#11110f,#171713);border-top:1px solid rgba(216,180,94,.12);border-bottom:1px solid rgba(216,180,94,.12)}
+.tm-products .section-head{max-width:760px;margin-bottom:32px}
 .tm-products .section-head>p:last-child{max-width:620px}
 .tm-product-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.tm-product-grid article{min-height:195px;padding:24px 20px;border:1px solid rgba(216,180,94,.18);background:linear-gradient(145deg,rgba(32,31,26,.9),rgba(17,17,15,.95));display:flex;flex-direction:column;align-items:flex-start;transition:transform .2s,border-color .2s}
+.tm-product-grid article{min-height:125px;padding:17px 18px;border:1px solid rgba(216,180,94,.18);background:linear-gradient(145deg,rgba(32,31,26,.9),rgba(17,17,15,.95));display:flex;flex-direction:column;align-items:flex-start;transition:transform .2s,border-color .2s}
 .tm-product-grid article:hover{transform:translateY(-3px);border-color:rgba(216,180,94,.55)}
-.tm-product-no{font:8px 'DM Mono',monospace;letter-spacing:1.1px;color:var(--gold);margin-bottom:auto}
-.tm-product-grid h3{font-size:15px;line-height:1.45;letter-spacing:.1px;margin:28px 0 8px;font-weight:700}
+.tm-product-no{font:8px 'DM Mono',monospace;letter-spacing:1.1px;color:var(--gold);margin-bottom:12px}
+.tm-product-grid h3{font-size:14px;line-height:1.4;letter-spacing:.1px;margin:12px 0 6px;font-weight:700}
 .tm-product-grid p{font-size:11px;line-height:1.6;color:#aaa69b;margin:0}
-@media(max-width:900px){.tm-product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tm-products{padding:90px 0}}
-@media(max-width:480px){.tm-product-grid{grid-template-columns:1fr}.tm-product-grid article{min-height:160px;padding:21px}.tm-product-grid h3{margin-top:24px}}
+@media(max-width:900px){.tm-product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tm-products{padding:70px 0}.tm-product-grid article{min-height:115px}}
+@media(max-width:480px){.tm-product-grid{grid-template-columns:1fr}.tm-products{padding:58px 0}.tm-product-grid article{min-height:105px;padding:16px}.tm-product-grid h3{margin-top:10px}}
 </style></head>
 
 <body>
@@ -761,54 +761,59 @@
 
         <div class="partner-list">
 
-          <article>
-            <div class="partner-logo">K</div>
-            <div>
-              <h3>Kent Vilandka</h3>
+          <article class="partner-card">
+            <div class="partner-avatar"><img src="https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/kent.png" alt="Kent Vilandka" loading="lazy"></div>
+            <div class="partner-info">
+              <div class="partner-kicker">OFFICIAL PARTNER</div>
+              <h3>Kent Vilandka <span class="partner-verified" aria-label="Official Partner">✓</span></h3>
               <p>Official Partner since August 2025</p>
               <small>@kokokentminority</small>
             </div>
-            <a href="https://www.tiktok.com/@kokokentminority" target="_blank" rel="noopener" aria-label="Kunjungi TikTok Kent Vilandka">Kunjungi TikTok ↗</a>
+            <a class="partner-visit" href="https://www.tiktok.com/@kokokentminority" target="_blank" rel="noopener" aria-label="Kunjungi TikTok Kent Vilandka">Kunjungi TikTok <span>→</span></a>
           </article>
 
-          <article>
-            <div class="partner-logo partner-alt">S</div>
-            <div>
-              <h3>Siswandi Waluyo</h3>
+          <article class="partner-card">
+            <div class="partner-avatar"><img src="https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/siswandi.png" alt="Siswandi Waluyo" loading="lazy"></div>
+            <div class="partner-info">
+              <div class="partner-kicker">OFFICIAL PARTNER</div>
+              <h3>Siswandi Waluyo <span class="partner-verified" aria-label="Official Partner">✓</span></h3>
               <p>Official Partner since August 2025</p>
               <small>@omsisminority</small>
             </div>
-            <a href="https://www.tiktok.com/@omsisminority" target="_blank" rel="noopener" aria-label="Kunjungi TikTok Siswandi Waluyo">Kunjungi TikTok ↗</a>
+            <a class="partner-visit" href="https://www.tiktok.com/@omsisminority" target="_blank" rel="noopener" aria-label="Kunjungi TikTok Siswandi Waluyo">Kunjungi TikTok <span>→</span></a>
           </article>
 
-          <article>
-            <div class="partner-logo partner-third">Z</div>
-            <div>
-              <h3>David Zen Geraldy</h3>
+          <article class="partner-card">
+            <div class="partner-avatar"><img src="https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/zen.png" alt="David Zen Geraldy" loading="lazy"></div>
+            <div class="partner-info">
+              <div class="partner-kicker">OFFICIAL PARTNER</div>
+              <h3>David Zen Geraldy <span class="partner-verified" aria-label="Official Partner">✓</span></h3>
               <p>Official Partner since August 2025</p>
               <small>@mrzenminority</small>
             </div>
-            <a href="https://www.tiktok.com/@mrzenminority" target="_blank" rel="noopener" aria-label="Kunjungi TikTok David Zen Geraldy">Kunjungi TikTok ↗</a>
+            <a class="partner-visit" href="https://www.tiktok.com/@mrzenminority" target="_blank" rel="noopener" aria-label="Kunjungi TikTok David Zen Geraldy">Kunjungi TikTok <span>→</span></a>
           </article>
 
-          <article>
-            <div class="partner-logo">TT</div>
-            <div>
-              <h3>Teja Tri Sumanto</h3>
+          <article class="partner-card">
+            <div class="partner-avatar no-photo"><span>TT</span></div>
+            <div class="partner-info">
+              <div class="partner-kicker">OFFICIAL PARTNER</div>
+              <h3>Teja Tri Sumanto <span class="partner-verified" aria-label="Official Partner">✓</span></h3>
               <p>Official Partner since May 2026</p>
               <small>@tri.minority</small>
             </div>
-            <a href="https://www.tiktok.com/@tri.minority" target="_blank" rel="noopener" aria-label="Kunjungi TikTok Teja Tri Sumanto">Kunjungi TikTok ↗</a>
+            <a class="partner-visit" href="https://www.tiktok.com/@tri.minority" target="_blank" rel="noopener" aria-label="Kunjungi TikTok Teja Tri Sumanto">Kunjungi TikTok <span>→</span></a>
           </article>
 
-          <article>
-            <div class="partner-logo partner-alt">MS</div>
-            <div>
-              <h3>Muchtar Syafaat</h3>
+          <article class="partner-card">
+            <div class="partner-avatar no-photo"><span>MS</span></div>
+            <div class="partner-info">
+              <div class="partner-kicker">OFFICIAL PARTNER</div>
+              <h3>Muchtar Syafaat <span class="partner-verified" aria-label="Official Partner">✓</span></h3>
               <p>Official Partner since March 2026</p>
               <small>@jatimminority</small>
             </div>
-            <a href="https://www.tiktok.com/@jatimminority" target="_blank" rel="noopener" aria-label="Kunjungi TikTok Muchtar Syafaat">Kunjungi TikTok ↗</a>
+            <a class="partner-visit" href="https://www.tiktok.com/@jatimminority" target="_blank" rel="noopener" aria-label="Kunjungi TikTok Muchtar Syafaat">Kunjungi TikTok <span>→</span></a>
           </article>
 
         </div>
