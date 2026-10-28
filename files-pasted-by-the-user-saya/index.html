@@ -158,9 +158,8 @@
 
 
 <style id="tm-desktop-mobile-layout-overflow-fix">
-/* Desktop only: retain the narrow phone-style canvas, but force every section
-   and its internal components to use a true single-column/mobile composition. */
-@media (min-width: 1024px) {
+/* Desktop-only phone-inspired layout: wider readable canvas and stacked section headings. */
+@media (min-width: 700px) {
   html, body { max-width:100%; overflow-x:hidden; }
   body { margin:0; }
   body, body * { box-sizing:border-box; }
@@ -168,120 +167,89 @@
   body .wrap,
   body header.nav.wrap,
   body footer.footer.wrap {
-    width:min(370px, calc(100vw - 28px)) !important;
-    max-width:370px !important;
+    width:min(560px, calc(100vw - 40px)) !important;
+    max-width:560px !important;
     margin-left:auto !important;
     margin-right:auto !important;
     min-width:0 !important;
   }
   body main > section,
   body main > section.wrap {
-    width:min(370px, calc(100vw - 28px)) !important;
-    max-width:370px !important;
+    width:min(560px, calc(100vw - 40px)) !important;
+    max-width:560px !important;
     margin-left:auto !important;
     margin-right:auto !important;
-    padding-left:16px !important;
-    padding-right:16px !important;
+    padding-left:24px !important;
+    padding-right:24px !important;
     min-width:0 !important;
     overflow:visible;
   }
   body main > section > .wrap,
   body main > section .wrap {
-    width:100% !important;
-    max-width:100% !important;
-    margin-left:0 !important;
-    margin-right:0 !important;
-    padding-left:0 !important;
-    padding-right:0 !important;
+    width:100% !important; max-width:100% !important;
+    margin-left:0 !important; margin-right:0 !important;
+    padding-left:0 !important; padding-right:0 !important;
     min-width:0 !important;
   }
-  /* Stack desktop grids and split layouts to match the phone version. */
-  .hero, .statement-inner, .video-section, .membership,
-  .tm-philosophy-head, .tm-philosophy-logo, .section-head,
-  .video-copy, .membership-copy, .dashboard, .market-card,
-  .asset-grid, .feature-grid, .tm-product-grid, .asset-benefits,
-  .quote-grid, .partner-list, .faq-list, .faq-category,
-  .tm-philosophy-grid, .tm-philosophy-summary,
-  .dash-cards, .dash-progress, .pair, .card-stats,
-  .hero-actions, .hero-proof, .footer, .footer-links, .legal {
+  /* Do not leave desktop 3-column section headings inside the narrow canvas. */
+  .section-head {
+    display:flex !important; flex-direction:column !important;
+    align-items:flex-start !important; justify-content:flex-start !important;
+    gap:14px !important; width:100% !important; max-width:100% !important;
     min-width:0 !important;
-    max-width:100% !important;
+  }
+  .section-head > *, .statement-inner > *, .hero-copy, .video-copy,
+  .membership-copy, .faq-list > *, .faq-category, .faq-category details,
+  .asset-grid figure, .asset-benefits article, .feature-grid article,
+  .quote-grid blockquote, .tm-product-grid article {
+    width:100% !important; min-width:0 !important; max-width:100% !important;
   }
   .hero, .video-section, .membership, .statement-inner {
-    display:flex !important;
-    flex-direction:column !important;
-    align-items:stretch !important;
-    gap:24px !important;
+    display:flex !important; flex-direction:column !important;
+    align-items:stretch !important; gap:24px !important;
   }
   .asset-grid, .feature-grid, .tm-product-grid, .asset-benefits,
   .quote-grid, .partner-list, .faq-list, .tm-philosophy-grid,
   .dash-cards, .card-stats {
-    display:grid !important;
-    grid-template-columns:minmax(0,1fr) !important;
-    grid-auto-flow:row !important;
-    gap:14px !important;
-    align-items:stretch !important;
+    display:grid !important; grid-template-columns:minmax(0,1fr) !important;
+    grid-auto-flow:row !important; gap:16px !important; align-items:stretch !important;
   }
-  .section-head, .statement-inner > *, .hero-copy, .video-copy,
-  .membership-copy, .faq-list > *, .faq-category, .faq-category details,
-  .asset-grid figure, .asset-benefits article, .feature-grid article,
-  .quote-grid blockquote, .tm-product-grid article {
-    width:100% !important;
-    min-width:0 !important;
-    max-width:100% !important;
-  }
-  h1, h2, h3, h4, p, a, small, strong, b, li, summary, figcaption,
-  blockquote, .eyebrow, .lead, .side-note {
-    max-width:100%;
-    overflow-wrap:anywhere;
-    word-break:normal;
-  }
-  h1 { font-size:clamp(30px, 8vw, 42px) !important; line-height:1.12 !important; }
-  h2 { font-size:clamp(27px, 7vw, 36px) !important; line-height:1.15 !important; letter-spacing:-.8px !important; }
-  h3 { overflow-wrap:anywhere; }
+  h1 { font-size:clamp(32px, 4.2vw, 42px) !important; line-height:1.14 !important; letter-spacing:-1.1px !important; overflow-wrap:normal !important; }
+  h2 { font-size:clamp(29px, 3.5vw, 36px) !important; line-height:1.18 !important; letter-spacing:-.8px !important; overflow-wrap:normal !important; }
+  h3 { font-size:clamp(19px, 2.4vw, 24px) !important; line-height:1.25 !important; overflow-wrap:break-word !important; }
+  p, li, summary, figcaption, blockquote { overflow-wrap:break-word !important; word-break:normal !important; }
   img, svg, iframe, video { max-width:100% !important; }
   .asset-grid img, .asset-benefits img, .membership-zoom-figure img,
   .zoom-benefit-card img, .tm-philosophy-logo img {
-    display:block !important;
-    width:100% !important;
-    height:auto !important;
-    max-height:none !important;
-    object-fit:contain !important;
+    display:block !important; width:100% !important; height:auto !important;
+    max-height:none !important; object-fit:contain !important;
   }
   .asset-grid figure, .asset-large { margin:0 !important; }
   .faq-list { display:flex !important; flex-direction:column !important; }
-  .faq-category details { overflow-wrap:anywhere; }
+  .faq-category details { overflow-wrap:break-word !important; }
   .faq-category summary { display:flex; align-items:flex-start; gap:8px; }
   .faq-category summary span { flex:0 0 auto; }
   .nav.wrap {
-    display:flex !important;
-    align-items:center !important;
-    justify-content:space-between !important;
-    gap:8px !important;
-    padding:10px 12px !important;
-    position:relative;
-    z-index:1002;
+    display:flex !important; align-items:center !important; justify-content:space-between !important;
+    gap:8px !important; padding:10px 16px !important; position:relative; z-index:1002;
   }
-  /* The white hamburger is the separate mobile nav toggle; it is unbound here.
-     Hide it on desktop to avoid two confusing menu buttons. Keep the gold
-     partner-menu toggle active and above other layers. */
   .nav .menu-button { display:none !important; }
   .nav .nav-links { display:none !important; }
   .nav .partner-menu-wrap { display:flex !important; position:relative; z-index:1005; }
   .nav .partner-menu-toggle { display:inline-flex !important; min-width:38px; min-height:38px; position:relative; z-index:1006; pointer-events:auto !important; }
-  .nav .login-link { font-size:10px !important; padding:8px !important; white-space:nowrap; }
+  .nav .login-link { font-size:12px !important; padding:9px 12px !important; white-space:nowrap; }
   .partner-dropdown { z-index:1010 !important; }
   .hero-logo { max-width:150px !important; height:auto !important; }
-  .hero-proof { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:6px !important; }
+  .hero-proof { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:8px !important; }
   .hero-proof > * { min-width:0 !important; }
   .dash-cards { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
   .card-stats { grid-template-columns:repeat(3,minmax(0,1fr)) !important; }
   .button, a.button, button.button { max-width:100%; white-space:normal; }
-  .hero-actions { display:flex !important; flex-direction:column !important; align-items:stretch !important; }
+  .hero-actions { display:flex !important; flex-direction:column !important; align-items:stretch !important; gap:12px !important; }
   .hero-actions .button, .hero-actions .text-link { max-width:100%; }
-  .vip-float { right:max(12px, calc((100vw - 370px) / 2 + 12px)) !important; max-width:calc(100vw - 24px); z-index:1100 !important; }
-  .partners-dialog { width:min(370px, calc(100vw - 20px)) !important; max-width:370px !important; }
-  .partners-dialog .partners-in-dialog { padding:24px 14px 20px !important; }
+  .vip-float { right:24px !important; bottom:20px !important; max-width:calc(100vw - 32px); z-index:1100 !important; }
+  .partners-dialog { width:min(520px, calc(100vw - 32px)) !important; max-width:520px !important; }
+  .partners-dialog .partners-in-dialog { padding:24px 20px 20px !important; }
   footer.footer { display:flex !important; flex-direction:column !important; gap:18px !important; }
   .legal { display:flex !important; flex-wrap:wrap !important; gap:10px !important; }
 }
