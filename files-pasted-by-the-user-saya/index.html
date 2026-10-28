@@ -441,7 +441,7 @@
 
           <a
             class="button gold"
-            href="https://lynk.id/bossrobot.id/n6rn95280d36/checkout?"
+            href="https://lynk.id/bossrobot.id/15kp5w101nl9/checkout"
             target="_blank"
             rel="noopener">
 
@@ -999,7 +999,7 @@
   <div class="tm-inline-vip-cta-inner">
     <h3>Siap mulai membangun sistem trading?</h3>
     <p>Pelajari ekosistem Trader Minoritas dan pilih proses belajar yang sesuai dengan perjalanan trading Anda.</p>
-    <a class="button gold" href="https://lynk.id/bossrobot.id/n6rn95280d36/checkout" target="_blank" rel="noopener">Gabung VIP sekarang <span>→</span></a>
+    <a class="button gold" href="https://lynk.id/bossrobot.id/15kp5w101nl9/checkout" target="_blank" rel="noopener">Gabung VIP sekarang <span>→</span></a>
     <small>COMMITMENT FEE Rp100.000 · LIFETIME ACCESS<br><strong>NON-REFUNDABLE • TIDAK DAPAT DIKEMBALIKAN</strong></small>
   </div>
 </section>
@@ -1403,7 +1403,7 @@
 
         <a
           class="button gold"
-          href="https://lynk.id/bossrobot.id/n6rn95280d36/checkout?"
+          href="https://lynk.id/bossrobot.id/15kp5w101nl9/checkout"
           target="_blank"
           rel="noopener">
 
@@ -1522,7 +1522,7 @@
   <div class="tm-inline-vip-cta-inner">
     <h3>Siap mulai membangun sistem trading?</h3>
     <p>Pelajari ekosistem Trader Minoritas dan pilih proses belajar yang sesuai dengan perjalanan trading Anda.</p>
-    <a class="button gold" href="https://lynk.id/bossrobot.id/n6rn95280d36/checkout" target="_blank" rel="noopener">Gabung VIP sekarang <span>→</span></a>
+    <a class="button gold" href="https://lynk.id/bossrobot.id/15kp5w101nl9/checkout" target="_blank" rel="noopener">Gabung VIP sekarang <span>→</span></a>
     <small>COMMITMENT FEE Rp100.000 · LIFETIME ACCESS<br><strong>NON-REFUNDABLE • TIDAK DAPAT DIKEMBALIKAN</strong></small>
   </div>
 </section>
@@ -1570,7 +1570,7 @@
         <div style="margin-top:8px;font-size:clamp(30px,5vw,42px);font-weight:800;color:#fff;">Rp100.000</div>
         <div style="margin-top:6px;font-weight:700;color:#fff;">Lifetime Access</div>
         <div style="margin-top:12px;font-size:12px;font-weight:800;color:#d7d3c8;">NON-REFUNDABLE • TIDAK DAPAT DIKEMBALIKAN</div>
-        <a class="button gold" style="margin-top:20px;" href="https://lynk.id/bossrobot.id/n6rn95280d36/checkout" target="_blank" rel="noopener">Gabung VIP sekarang <span>→</span></a>
+        <a class="button gold" style="margin-top:20px;" href="https://lynk.id/bossrobot.id/15kp5w101nl9/checkout" target="_blank" rel="noopener">Gabung VIP sekarang <span>→</span></a>
         <div class="vip-commitment-reminder" style="margin:10px auto 0;max-width:360px;text-align:center;font-size:11px;line-height:1.65;color:#d7d3c8;">COMMITMENT FEE <b style="color:#fff;">Rp100.000</b> · Lifetime Access<br><b style="color:#e3c77f;">NON-REFUNDABLE • TIDAK DAPAT DIKEMBALIKAN</b></div>
       </div>
     </section>
@@ -1617,7 +1617,7 @@
 
         <a
           class="button gold"
-          href="https://lynk.id/bossrobot.id/n6rn95280d36/checkout"
+          href="https://lynk.id/bossrobot.id/15kp5w101nl9/checkout"
           target="_blank"
           rel="noopener">
 
@@ -1907,7 +1907,7 @@
 
   <a
     class="vip-float"
-    href="https://lynk.id/bossrobot.id/n6rn95280d36/checkout?"
+    href="https://lynk.id/bossrobot.id/15kp5w101nl9/checkout"
     target="_blank"
     rel="noopener"
     aria-label="Gabung program VIP">
@@ -1967,6 +1967,39 @@
   document.addEventListener('keydown',function(event){
     if(event.key==='Escape')closeDropdown();
   });
+})();
+</script>
+
+
+<script id="tm-partner-vip-routing">
+(function () {
+  const checkoutByPartner = {
+    kent: 'https://lynk.id/bossrobot.id/15kp5w101nl9/checkout',
+    omsis: 'https://lynk.id/bossrobot.id/ozwqkw3p3e13/checkout',
+    zen: 'https://lynk.id/bossrobot.id/pq8wypn95gxd/checkout',
+    teja: 'https://lynk.id/bossrobot.id/xm47ve79dqzy/checkout',
+    jatim: 'https://lynk.id/bossrobot.id/4rjy86rlp6ry/checkout'
+  };
+  const defaultCheckout = checkoutByPartner.kent;
+
+  function getCheckout() {
+    const params = new URLSearchParams(window.location.search);
+    const partner = (params.get('ref') || '').trim().toLowerCase();
+    return checkoutByPartner[partner] || defaultCheckout;
+  }
+
+  function routeVipButtons() {
+    const checkout = getCheckout();
+    document.querySelectorAll('a[href*="lynk.id/bossrobot.id/"]').forEach(function (link) {
+      link.href = checkout;
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', routeVipButtons);
+  } else {
+    routeVipButtons();
+  }
 })();
 </script>
 
