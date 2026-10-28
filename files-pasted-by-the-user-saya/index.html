@@ -167,16 +167,16 @@
   body .wrap,
   body header.nav.wrap,
   body footer.footer.wrap {
-    width:min(560px, calc(100vw - 40px)) !important;
-    max-width:560px !important;
+    width:min(75vw, 1000px) !important;
+    max-width:1000px !important;
     margin-left:auto !important;
     margin-right:auto !important;
     min-width:0 !important;
   }
   body main > section,
   body main > section.wrap {
-    width:min(560px, calc(100vw - 40px)) !important;
-    max-width:560px !important;
+    width:min(75vw, 1000px) !important;
+    max-width:1000px !important;
     margin-left:auto !important;
     margin-right:auto !important;
     padding-left:24px !important;
@@ -266,8 +266,8 @@
     flex-direction: column !important;
     align-items: stretch !important;
     gap: 26px !important;
-    width: min(560px, calc(100vw - 40px)) !important;
-    max-width: 560px !important;
+    width: min(75vw, 1000px) !important;
+    max-width: 1000px !important;
     margin-left: auto !important;
     margin-right: auto !important;
   }
@@ -353,6 +353,20 @@
   .tm-products {
     padding-top: clamp(28px, 3.2vw, 54px) !important;
     padding-bottom: clamp(28px, 3.2vw, 54px) !important;
+  }
+}
+</style>
+
+
+<style id="tm-desktop-width-75pct">
+/* Desktop only: expand the phone-inspired page canvas to 75% of the viewport.
+   Content remains in its existing order; images and text reflow naturally within the wider canvas. */
+@media (min-width: 901px) {
+  body .wrap, body header.nav.wrap, body footer.footer.wrap,
+  body main > section, body main > section.wrap,
+  body main section.testimonials, body main section.faq {
+    width: min(75vw, 1000px) !important;
+    max-width: 1000px !important;
   }
 }
 </style>
