@@ -157,158 +157,126 @@
 </style>
 
 
-<style id="tm-desktop-phone-layout">
-/* Desktop presentation: keep the website in a clean, phone-like centered canvas. */
-@media (min-width: 901px) {
-  html {
-    background: #080807 !important;
-    scroll-behavior: smooth;
-  }
-  body {
-    width: min(100%, 480px) !important;
-    max-width: 480px !important;
-    min-width: 0 !important;
-    margin: 0 auto !important;
-    overflow-x: hidden !important;
-    position: relative;
-    background: #10100e !important;
-    box-shadow: 0 0 0 1px rgba(216,180,94,.22), 0 0 70px rgba(0,0,0,.55);
-  }
-  body > .noise {
-    position: fixed !important;
-    left: calc(50% - 240px) !important;
-    width: 480px !important;
-    pointer-events: none !important;
-  }
-  .wrap {
-    width: auto !important;
-    max-width: none !important;
-    margin-left: 18px !important;
-    margin-right: 18px !important;
-  }
-  /* Compact, phone-like top navigation */
-  header.nav {
-    width: auto !important;
-    max-width: none !important;
-    min-height: 66px !important;
-    margin: 0 !important;
-    padding: 12px 16px !important;
-    display: flex !important;
-    flex-wrap: wrap !important;
-    align-items: center !important;
-    gap: 10px !important;
-    position: relative !important;
-    top: auto !important;
-    border-bottom: 1px solid rgba(216,180,94,.16) !important;
-    background: rgba(16,16,14,.98) !important;
-  }
-  header.nav .brand { flex: 1 1 auto !important; min-width: 0 !important; }
-  header.nav .brand img { max-width: 145px !important; height: auto !important; }
-  header.nav .menu-button {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    flex: 0 0 38px !important;
-    width: 38px !important;
-    height: 38px !important;
-    padding: 0 !important;
-    order: 2 !important;
-  }
-  header.nav .nav-links {
-    display: none !important;
-    flex: 0 0 100% !important;
-    width: 100% !important;
-    order: 5 !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 0 !important;
-    padding: 6px 0 !important;
-  }
-  header.nav .nav-links.is-open { display: flex !important; }
-  header.nav .nav-links a { padding: 12px 8px !important; border-top: 1px solid rgba(216,180,94,.12) !important; }
-  header.nav .partner-menu-wrap { order: 3 !important; }
-  header.nav .partner-menu-toggle { min-height: 38px !important; padding: 8px 10px !important; }
-  header.nav .partner-menu-label { display: none !important; }
-  header.nav .login-link { order: 4 !important; min-height: 38px !important; padding: 8px 10px !important; font-size: 11px !important; }
-  /* Stack desktop grids exactly like a phone layout */
-  .hero {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 26px !important;
-    padding-top: 34px !important;
-    padding-bottom: 44px !important;
-  }
-  .hero-copy, .market-card, .video-copy, .video-frame, .membership-copy, .dashboard {
-    width: 100% !important;
-    max-width: none !important;
-    min-width: 0 !important;
-  }
-  .hero-logo { width: min(180px, 56%) !important; max-width: 100% !important; }
-  .hero h1 { font-size: clamp(34px, 8vw, 42px) !important; line-height: 1.08 !important; letter-spacing: -1.5px !important; }
-  .hero .lead { font-size: 14px !important; line-height: 1.75 !important; }
-  .hero-actions { display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
-  .hero-actions .button, .hero-actions > a { width: 100% !important; max-width: none !important; justify-content: center !important; }
-  .hero-proof { display: grid !important; grid-template-columns: repeat(3,minmax(0,1fr)) !important; gap: 8px !important; }
-  .hero-proof > div { min-width: 0 !important; }
-  .market-card { padding: 15px !important; }
-  .card-top { gap: 8px !important; flex-wrap: wrap !important; font-size: 9px !important; }
-  .pair { gap: 10px !important; }
-  .pair h3 { font-size: 20px !important; }
-  .statement-inner { display: flex !important; flex-direction: column !important; gap: 16px !important; }
-  .statement h2, .section-head h2, .video-copy h2, .membership-copy h2, .cta h2 { font-size: clamp(29px, 7vw, 38px) !important; line-height: 1.14 !important; letter-spacing: -1px !important; }
-  .tm-philosophy { padding: 54px 0 !important; }
-  .tm-philosophy-grid, .feature-grid, .asset-grid, .quote-grid, .asset-benefits, .tm-product-grid, .dash-cards {
-    display: grid !important;
-    grid-template-columns: minmax(0,1fr) !important;
-    gap: 14px !important;
-  }
-  .tm-philosophy-card, .feature-grid article, .quote-grid blockquote, .asset-benefits article, .tm-product-grid article {
-    min-width: 0 !important;
-    width: 100% !important;
-  }
-  .asset-grid figure, .asset-large { grid-column: auto !important; width: 100% !important; }
-  .asset-grid img, .asset-benefits img { width: 100% !important; max-width: 100% !important; height: auto !important; object-fit: contain !important; }
-  .video-section, .membership {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 26px !important;
-    padding-top: 50px !important;
-    padding-bottom: 50px !important;
-  }
-  .video-frame { aspect-ratio: 16 / 9 !important; }
-  .video-frame iframe { width: 100% !important; height: 100% !important; }
-  .tm-products { padding: 54px 0 !important; }
-  .tm-product-grid article { min-height: 0 !important; padding: 17px !important; }
-  .tm-inline-vip-cta { padding: 18px 14px 28px !important; }
-  .tm-inline-vip-cta-inner { padding: 22px 16px !important; }
-  .tm-inline-vip-cta .button { width: 100% !important; max-width: none !important; }
-  #vip-information { padding-top: 42px !important; }
-  #vip-information > div[style*="display:grid"] { grid-template-columns: minmax(0,1fr) !important; }
-  .partners-dialog { width: min(448px, calc(100vw - 24px)) !important; max-height: 88vh !important; }
-  .partners-dialog .partners-in-dialog { padding: 22px 12px !important; }
-  .partner-list { display: grid !important; grid-template-columns: minmax(0,1fr) !important; gap: 12px !important; }
-  .partner-card { min-width: 0 !important; }
-  .cta { padding: 54px 0 !important; }
-  .cta .wrap { display: flex !important; flex-direction: column !important; align-items: stretch !important; }
-  .cta .button { width: 100% !important; justify-content: center !important; }
-  .member-assets { padding-top: 46px !important; padding-bottom: 46px !important; }
-  .footer {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 18px !important;
-    padding-top: 30px !important;
-    padding-bottom: 90px !important;
-  }
-  .footer-links, .legal { display: flex !important; flex-wrap: wrap !important; gap: 12px !important; }
-  .vip-float { left: 50% !important; right: auto !important; transform: translateX(-50%) !important; width: calc(100% - 24px) !important; max-width: 456px !important; bottom: 12px !important; }
-  dialog#loginDialog { width: min(420px, calc(100vw - 24px)) !important; max-width: calc(100vw - 24px) !important; }
+<style id="tm-desktop-luxury-responsive">
+/* Desktop-first refinement: premium spacing, readable content, and uncropped visuals. */
+:root{--tm-gold:#d8b45e;--tm-ink:#10100e;--tm-panel:#171713;--tm-copy:#c8c4b9;--tm-line:rgba(216,180,94,.2)}
+html{scroll-behavior:smooth;scroll-padding-top:100px}
+body{overflow-x:hidden;background:#10100e;color:#f1eee5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img,svg,video,iframe{max-width:100%}
+img{height:auto}
+.wrap{width:min(1200px,calc(100% - 64px));margin-left:auto;margin-right:auto}
+section{scroll-margin-top:92px}
+.section-head{max-width:780px;margin-left:auto;margin-right:auto}
+.section-head h2,.video-copy h2,.membership-copy h2,.statement-inner h2,.cta h2{letter-spacing:-.035em;text-wrap:balance}
+.section-head>p:last-child,.video-copy>p,.membership-copy>p,.statement-inner>div>p{font-size:15px;line-height:1.9;color:#bdb8ab}
+/* Header stays tidy and proportionate on wide screens. */
+header.nav.wrap{min-height:86px;gap:24px;width:min(1280px,calc(100% - 64px));}
+.brand img{display:block;width:clamp(112px,12vw,158px);max-height:68px;object-fit:contain}
+.nav-links{gap:clamp(18px,2.4vw,34px)}
+.nav-links a,.login-link{font-size:13px;white-space:nowrap}
+.partner-menu-toggle{min-height:42px}
+/* Hero: clear editorial two-column composition. */
+.hero.wrap{width:min(1200px,calc(100% - 64px));min-height:620px;padding-top:56px;padding-bottom:76px;display:grid;grid-template-columns:minmax(0,1.02fr) minmax(420px,.98fr);align-items:center;column-gap:clamp(44px,6vw,88px);row-gap:36px}
+.hero-copy{min-width:0;max-width:610px}
+.hero-logo{width:clamp(150px,17vw,220px);max-height:180px;object-fit:contain;margin:0 0 24px}
+.hero h1{font-size:clamp(44px,4.8vw,68px);line-height:1.08;letter-spacing:-.055em;max-width:650px;text-wrap:balance}
+.hero .lead{max-width:510px;font-size:16px;line-height:1.85}
+.hero-actions{align-items:flex-start;gap:16px}
+.hero-actions .vip-commitment-reminder{text-align:left!important;margin-left:0!important}
+.hero-proof{max-width:500px;gap:clamp(20px,3vw,42px);margin-top:38px}
+.market-card{width:100%;max-width:570px;justify-self:end;padding:clamp(22px,2.5vw,32px);border-radius:18px;box-shadow:0 26px 80px rgba(0,0,0,.3)}
+.market-card .chart{height:clamp(190px,22vw,260px)}
+.market-card .card-top{gap:16px;flex-wrap:wrap}
+.side-note{grid-column:1/-1;justify-self:center;margin-top:0}
+/* Sections have a consistent rhythm instead of oversized empty bands. */
+.statement{padding:clamp(76px,8vw,112px) 0}
+.statement-inner{gap:clamp(38px,6vw,90px)}
+.tm-philosophy,.features,.testimonials,.member-assets{padding-top:clamp(72px,7vw,100px);padding-bottom:clamp(72px,7vw,100px)}
+.video-section.wrap,.membership.wrap{width:min(1200px,calc(100% - 64px));padding-top:clamp(72px,7vw,100px);padding-bottom:clamp(72px,7vw,100px);gap:clamp(42px,6vw,84px)}
+.video-frame{width:100%;min-width:0;aspect-ratio:16/9;border-radius:16px;overflow:hidden}
+.video-frame iframe{width:100%;height:100%;display:block}
+/* Visual proof: never crop embedded text out of infographic images. */
+.proof-gallery{padding:clamp(70px,7vw,96px) 0}
+.asset-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;align-items:stretch}
+.asset-grid figure{min-width:0;display:flex;flex-direction:column;padding:12px;border:1px solid rgba(216,180,94,.16);border-radius:14px;background:linear-gradient(150deg,rgba(32,31,26,.8),rgba(17,17,15,.95));overflow:hidden}
+.asset-grid figure.asset-large{grid-column:span 2;grid-row:span 2}
+.asset-grid figure img{width:100%;height:100%;min-height:0;max-height:390px;object-fit:contain;object-position:center;background:#11110f;border-radius:8px}
+.asset-grid figure.asset-large img{max-height:520px}
+.asset-grid figcaption{padding:12px 4px 3px;font-size:11px;letter-spacing:1.2px;line-height:1.5;color:#d8b45e}
+/* Feature cards: readable line lengths and aligned heights. */
+.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:stretch}
+.feature-grid article{min-width:0;padding:clamp(24px,2.7vw,34px);border-radius:14px}
+.feature-grid h3{font-size:clamp(19px,1.7vw,23px);line-height:1.35}
+.feature-grid article p{font-size:13px;line-height:1.85}
+.tm-products{padding:clamp(76px,7vw,104px) 0}
+.tm-products .section-head{margin-bottom:38px}
+.tm-product-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-items:stretch}
+.tm-product-grid article{min-height:170px;padding:23px;border-radius:12px;justify-content:flex-start}
+.tm-product-no{font-size:9px;letter-spacing:1.3px;margin-bottom:25px}
+.tm-product-grid h3{font-size:clamp(14px,1.15vw,16px);line-height:1.5;overflow-wrap:anywhere}
+.tm-product-grid p{font-size:12px;line-height:1.7}
+.tm-inline-vip-cta{padding:26px 32px 40px}
+.tm-inline-vip-cta-inner{max-width:900px;padding:34px 40px;border-radius:18px}
+.tm-inline-vip-cta p{font-size:14px}
+/* Membership dashboard is a supporting visual, not a tiny unreadable thumbnail. */
+.membership-copy{min-width:0}
+.membership-zoom-figure{width:100%;max-width:560px}
+.membership-zoom-figure img,.zoom-benefit-card img{object-fit:contain!important;background:#11110f}
+.dashboard{width:100%;min-width:0;max-width:560px;justify-self:end;border-radius:16px;overflow:hidden;box-shadow:0 24px 75px rgba(0,0,0,.3)}
+.dash-main{padding:clamp(20px,2.6vw,32px)}
+.dash-cards{gap:14px}
+.dash-cards article{min-width:0;padding:18px}
+/* Benefit images often contain designed typography; show the complete artwork. */
+.asset-benefits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:stretch}
+.asset-benefits article{min-width:0;padding:18px;border:1px solid rgba(216,180,94,.16);border-radius:14px;background:rgba(20,20,17,.5);overflow:hidden}
+.asset-benefits article img{display:block;width:100%;height:auto;max-height:360px;aspect-ratio:auto;object-fit:contain;object-position:center;background:#11110f;border-radius:8px;margin:0 auto 18px}
+.asset-benefits article h3{font-size:17px;line-height:1.5}
+.asset-benefits article p{font-size:13px;line-height:1.8}
+.zoom-benefit-card img{height:auto!important;max-height:360px!important;aspect-ratio:auto!important;object-fit:contain!important}
+/* Terms, testimonials, and footer remain aligned to the same grid. */
+.quote-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:stretch}
+.quote-grid blockquote{min-width:0;padding:clamp(22px,2.4vw,30px);border-radius:14px}
+.quote-grid blockquote p{font-size:13px;line-height:1.9}
+.partners-dialog{width:min(1040px,calc(100vw - 48px));}
+.partners-dialog .partners-in-dialog{padding:36px 32px}
+.partner-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.partner-card{min-width:0;gap:14px;flex-wrap:wrap}
+.partner-visit{margin-left:auto}
+.vip-float{max-width:360px;box-shadow:0 12px 36px rgba(0,0,0,.35)}
+/* Tablet: preserve breathing room while collapsing columns sensibly. */
+@media(max-width:1050px){
+ .wrap,header.nav.wrap,.hero.wrap,.video-section.wrap,.membership.wrap{width:min(100% - 44px,900px)}
+ .hero.wrap{grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);column-gap:34px;min-height:unset}
+ .hero h1{font-size:clamp(40px,5.2vw,56px)}
+ .hero-logo{width:155px}
+ .market-card{padding:22px}
+ .tm-product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .asset-benefits{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .asset-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .asset-grid figure.asset-large{grid-column:span 2;grid-row:auto}
+ .asset-grid figure img,.asset-grid figure.asset-large img{max-height:440px}
+ .partner-list{grid-template-columns:1fr}
 }
-/* Small laptop/tablet windows should retain the same phone-like presentation. */
-@media (min-width: 601px) and (max-width: 900px) {
-  .hero, .video-section, .membership { grid-template-columns: minmax(0,1fr) !important; }
+@media(max-width:760px){
+ .wrap,header.nav.wrap,.hero.wrap,.video-section.wrap,.membership.wrap{width:calc(100% - 36px)}
+ .hero.wrap{display:flex;flex-direction:column;align-items:stretch;padding-top:40px;padding-bottom:56px;gap:34px}
+ .hero-copy{max-width:none}
+ .hero-logo{width:135px}
+ .hero h1{font-size:clamp(38px,9vw,54px)}
+ .market-card{max-width:none;justify-self:stretch}
+ .side-note{align-self:center}
+ .feature-grid,.quote-grid{grid-template-columns:1fr}
+ .video-section.wrap,.membership.wrap{display:flex;flex-direction:column;gap:34px}
+ .dashboard{max-width:none}
+ .asset-benefits{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .tm-philosophy-grid{grid-template-columns:1fr}
+ .tm-product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:480px){
+ .asset-grid,.asset-benefits,.tm-product-grid{grid-template-columns:1fr}
+ .asset-grid figure.asset-large{grid-column:auto}
+ .tm-product-grid article{min-height:0}
+ .tm-inline-vip-cta-inner{padding:22px 16px}
 }
 </style>
 
@@ -1921,27 +1889,6 @@
   });
   document.addEventListener('keydown',function(event){
     if(event.key==='Escape')closeDropdown();
-  });
-})();
-</script>
-
-
-<script id="tm-desktop-phone-menu">
-(function(){
-  const menuButton = document.querySelector('.menu-button');
-  const navLinks = document.querySelector('.nav-links');
-  if (!menuButton || !navLinks) return;
-  menuButton.addEventListener('click', function(){
-    const open = navLinks.classList.toggle('is-open');
-    menuButton.setAttribute('aria-expanded', String(open));
-    menuButton.setAttribute('aria-label', open ? 'Tutup menu' : 'Buka menu');
-  });
-  navLinks.querySelectorAll('a').forEach(function(link){
-    link.addEventListener('click', function(){
-      navLinks.classList.remove('is-open');
-      menuButton.setAttribute('aria-expanded', 'false');
-      menuButton.setAttribute('aria-label', 'Buka menu');
-    });
   });
 })();
 </script>
