@@ -156,6 +156,162 @@
   }
 </style>
 
+
+<style id="tm-desktop-phone-layout">
+/* Desktop presentation: keep the website in a clean, phone-like centered canvas. */
+@media (min-width: 901px) {
+  html {
+    background: #080807 !important;
+    scroll-behavior: smooth;
+  }
+  body {
+    width: min(100%, 480px) !important;
+    max-width: 480px !important;
+    min-width: 0 !important;
+    margin: 0 auto !important;
+    overflow-x: hidden !important;
+    position: relative;
+    background: #10100e !important;
+    box-shadow: 0 0 0 1px rgba(216,180,94,.22), 0 0 70px rgba(0,0,0,.55);
+  }
+  body > .noise {
+    position: fixed !important;
+    left: calc(50% - 240px) !important;
+    width: 480px !important;
+    pointer-events: none !important;
+  }
+  .wrap {
+    width: auto !important;
+    max-width: none !important;
+    margin-left: 18px !important;
+    margin-right: 18px !important;
+  }
+  /* Compact, phone-like top navigation */
+  header.nav {
+    width: auto !important;
+    max-width: none !important;
+    min-height: 66px !important;
+    margin: 0 !important;
+    padding: 12px 16px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 10px !important;
+    position: relative !important;
+    top: auto !important;
+    border-bottom: 1px solid rgba(216,180,94,.16) !important;
+    background: rgba(16,16,14,.98) !important;
+  }
+  header.nav .brand { flex: 1 1 auto !important; min-width: 0 !important; }
+  header.nav .brand img { max-width: 145px !important; height: auto !important; }
+  header.nav .menu-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 38px !important;
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    order: 2 !important;
+  }
+  header.nav .nav-links {
+    display: none !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    order: 5 !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    padding: 6px 0 !important;
+  }
+  header.nav .nav-links.is-open { display: flex !important; }
+  header.nav .nav-links a { padding: 12px 8px !important; border-top: 1px solid rgba(216,180,94,.12) !important; }
+  header.nav .partner-menu-wrap { order: 3 !important; }
+  header.nav .partner-menu-toggle { min-height: 38px !important; padding: 8px 10px !important; }
+  header.nav .partner-menu-label { display: none !important; }
+  header.nav .login-link { order: 4 !important; min-height: 38px !important; padding: 8px 10px !important; font-size: 11px !important; }
+  /* Stack desktop grids exactly like a phone layout */
+  .hero {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 26px !important;
+    padding-top: 34px !important;
+    padding-bottom: 44px !important;
+  }
+  .hero-copy, .market-card, .video-copy, .video-frame, .membership-copy, .dashboard {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+  }
+  .hero-logo { width: min(180px, 56%) !important; max-width: 100% !important; }
+  .hero h1 { font-size: clamp(34px, 8vw, 42px) !important; line-height: 1.08 !important; letter-spacing: -1.5px !important; }
+  .hero .lead { font-size: 14px !important; line-height: 1.75 !important; }
+  .hero-actions { display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
+  .hero-actions .button, .hero-actions > a { width: 100% !important; max-width: none !important; justify-content: center !important; }
+  .hero-proof { display: grid !important; grid-template-columns: repeat(3,minmax(0,1fr)) !important; gap: 8px !important; }
+  .hero-proof > div { min-width: 0 !important; }
+  .market-card { padding: 15px !important; }
+  .card-top { gap: 8px !important; flex-wrap: wrap !important; font-size: 9px !important; }
+  .pair { gap: 10px !important; }
+  .pair h3 { font-size: 20px !important; }
+  .statement-inner { display: flex !important; flex-direction: column !important; gap: 16px !important; }
+  .statement h2, .section-head h2, .video-copy h2, .membership-copy h2, .cta h2 { font-size: clamp(29px, 7vw, 38px) !important; line-height: 1.14 !important; letter-spacing: -1px !important; }
+  .tm-philosophy { padding: 54px 0 !important; }
+  .tm-philosophy-grid, .feature-grid, .asset-grid, .quote-grid, .asset-benefits, .tm-product-grid, .dash-cards {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) !important;
+    gap: 14px !important;
+  }
+  .tm-philosophy-card, .feature-grid article, .quote-grid blockquote, .asset-benefits article, .tm-product-grid article {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+  .asset-grid figure, .asset-large { grid-column: auto !important; width: 100% !important; }
+  .asset-grid img, .asset-benefits img { width: 100% !important; max-width: 100% !important; height: auto !important; object-fit: contain !important; }
+  .video-section, .membership {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 26px !important;
+    padding-top: 50px !important;
+    padding-bottom: 50px !important;
+  }
+  .video-frame { aspect-ratio: 16 / 9 !important; }
+  .video-frame iframe { width: 100% !important; height: 100% !important; }
+  .tm-products { padding: 54px 0 !important; }
+  .tm-product-grid article { min-height: 0 !important; padding: 17px !important; }
+  .tm-inline-vip-cta { padding: 18px 14px 28px !important; }
+  .tm-inline-vip-cta-inner { padding: 22px 16px !important; }
+  .tm-inline-vip-cta .button { width: 100% !important; max-width: none !important; }
+  #vip-information { padding-top: 42px !important; }
+  #vip-information > div[style*="display:grid"] { grid-template-columns: minmax(0,1fr) !important; }
+  .partners-dialog { width: min(448px, calc(100vw - 24px)) !important; max-height: 88vh !important; }
+  .partners-dialog .partners-in-dialog { padding: 22px 12px !important; }
+  .partner-list { display: grid !important; grid-template-columns: minmax(0,1fr) !important; gap: 12px !important; }
+  .partner-card { min-width: 0 !important; }
+  .cta { padding: 54px 0 !important; }
+  .cta .wrap { display: flex !important; flex-direction: column !important; align-items: stretch !important; }
+  .cta .button { width: 100% !important; justify-content: center !important; }
+  .member-assets { padding-top: 46px !important; padding-bottom: 46px !important; }
+  .footer {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 18px !important;
+    padding-top: 30px !important;
+    padding-bottom: 90px !important;
+  }
+  .footer-links, .legal { display: flex !important; flex-wrap: wrap !important; gap: 12px !important; }
+  .vip-float { left: 50% !important; right: auto !important; transform: translateX(-50%) !important; width: calc(100% - 24px) !important; max-width: 456px !important; bottom: 12px !important; }
+  dialog#loginDialog { width: min(420px, calc(100vw - 24px)) !important; max-width: calc(100vw - 24px) !important; }
+}
+/* Small laptop/tablet windows should retain the same phone-like presentation. */
+@media (min-width: 601px) and (max-width: 900px) {
+  .hero, .video-section, .membership { grid-template-columns: minmax(0,1fr) !important; }
+}
+</style>
+
 </head>
 
 <body>
@@ -1765,6 +1921,27 @@
   });
   document.addEventListener('keydown',function(event){
     if(event.key==='Escape')closeDropdown();
+  });
+})();
+</script>
+
+
+<script id="tm-desktop-phone-menu">
+(function(){
+  const menuButton = document.querySelector('.menu-button');
+  const navLinks = document.querySelector('.nav-links');
+  if (!menuButton || !navLinks) return;
+  menuButton.addEventListener('click', function(){
+    const open = navLinks.classList.toggle('is-open');
+    menuButton.setAttribute('aria-expanded', String(open));
+    menuButton.setAttribute('aria-label', open ? 'Tutup menu' : 'Buka menu');
+  });
+  navLinks.querySelectorAll('a').forEach(function(link){
+    link.addEventListener('click', function(){
+      navLinks.classList.remove('is-open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      menuButton.setAttribute('aria-label', 'Buka menu');
+    });
   });
 })();
 </script>
