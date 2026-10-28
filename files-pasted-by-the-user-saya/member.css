@@ -417,3 +417,89 @@ html.tm-video-open,html.tm-video-open body{overflow:hidden!important}
   background:#d9dce1;
   border-color:#b7bdc7;
 }
+
+
+/* =========================================================
+   FINAL MEMBER AREA REFINEMENTS
+   ========================================================= */
+
+/* Replace any stale market-open/time styling with a neutral member label. */
+main > header .header-status{
+  margin-left:auto;
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  color:#b7b1a3;
+  font:500 9px 'DM Mono',monospace;
+  letter-spacing:1.25px;
+  white-space:nowrap;
+}
+main > header .header-status i{color:var(--gold);font-style:normal}
+
+/* Give TM EDGE LAB identity block enough breathing room before configuration. */
+#backtest > .intro:first-child{margin-bottom:46px !important}
+#backtest > .edge-config{margin-top:0 !important}
+
+/* Compounding header is nested inside the global dashboard header system.
+   Reset inherited global header rules so title/eyebrow never overlap. */
+#compoundingPage header.header{
+  height:auto !important;
+  min-height:0 !important;
+  width:100% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:24px !important;
+  margin:0 0 30px !important;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  color:var(--text) !important;
+  font:inherit !important;
+  letter-spacing:normal !important;
+  box-sizing:border-box !important;
+}
+#compoundingPage .topline{
+  display:block;
+  margin:0 0 10px;
+  font-size:10px;
+  line-height:1.5;
+  letter-spacing:2px;
+}
+#compoundingPage h1{
+  font-size:clamp(30px,3.2vw,46px) !important;
+  line-height:1.12 !important;
+  letter-spacing:-1.2px !important;
+  overflow-wrap:normal !important;
+  word-break:normal !important;
+  margin:0 0 12px !important;
+}
+#compoundingPage h1 span{display:inline;color:var(--gold2)}
+#compoundingPage .subtitle{max-width:720px;font-size:14px;line-height:1.75}
+#compoundingPage .header-mark{flex:0 0 auto;line-height:1;font-size:clamp(42px,5vw,70px)}
+
+@media(max-width:800px){
+  main > header .header-status{display:none !important}
+  #backtest > .intro:first-child{margin-bottom:32px !important}
+  #compoundingPage header.header{
+    display:block !important;
+    margin-bottom:22px !important;
+    padding:0 !important;
+  }
+  #compoundingPage .topline{
+    font-size:9px;
+    letter-spacing:1.6px;
+    line-height:1.5;
+    margin-bottom:9px;
+    white-space:normal;
+  }
+  #compoundingPage h1{
+    font-size:clamp(27px,7vw,38px) !important;
+    line-height:1.12 !important;
+    letter-spacing:-.8px !important;
+    margin:0 0 12px !important;
+  }
+  #compoundingPage h1 span{display:block}
+  #compoundingPage .subtitle{font-size:13px;line-height:1.7}
+  #compoundingPage .header-mark{display:none}
+}

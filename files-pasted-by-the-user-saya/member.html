@@ -458,7 +458,97 @@
 <style id="tm-hidden-nav-items">
 /* Temporarily hide menu shortcuts without deleting the pages or their data. */
 .nav-hidden-item { display: none !important; }
-</style></head><body><div class="app"><aside id="side"><a class="brand" href="index.html"><b>TM</b><span>TRADER<br>MINORITAS</span></a><small>WORKSPACE</small><nav><button class="active" data-page="dash">⌂ Overview</button><button data-page="learn">◫ Modul VIP <i>35</i></button><button data-page="backtest">◫ TM EDGE LAB</button><button data-page="tools" class="nav-hidden-item" aria-hidden="true" tabindex="-1">⌘ Trading Tools</button><button data-page="comp">↗ Compounding Calculator</button><button data-page="chrono">◈ Chrono Heatmap</button><button data-page="event" class="nav-hidden-item" aria-hidden="true" tabindex="-1">◌ Webinar & Event <i>2</i></button></nav><small>AKUN</small><nav><button data-page="profile">◎ Profile Saya</button><a href="index.html">↗ Kembali ke website</a></nav><footer><b>AM</b><span>Andi Mahendra<em>VIP Member</em></span><button id="logout">↪</button></footer></aside><main><header><button id="menu">☰</button><span id="crumb">DASHBOARD / OVERVIEW</span><span class="live">● MARKET OPEN <time>09:41 WIB</time></span></header>
+</style>
+<style id="tm-member-final-layout-fixes">
+/* Neutral top-right label; no market status or clock. */
+main > header .header-status{
+  margin-left:auto;
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  color:#b7b1a3;
+  font:500 9px 'DM Mono',monospace;
+  letter-spacing:1.25px;
+  white-space:nowrap;
+}
+main > header .header-status i{color:#d8b45e;font-style:normal}
+#backtest > .intro:first-child{
+  margin-bottom:46px !important;
+}
+#backtest > .edge-config{
+  margin-top:0 !important;
+}
+#compoundingPage header.header{
+  height:auto !important;
+  min-height:0 !important;
+  width:100% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:24px !important;
+  margin:0 0 30px !important;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  color:var(--text) !important;
+  font:inherit !important;
+  letter-spacing:normal !important;
+  box-sizing:border-box !important;
+}
+#compoundingPage .topline{
+  display:block;
+  margin:0 0 10px;
+  font-size:10px;
+  line-height:1.5;
+  letter-spacing:2px;
+}
+#compoundingPage h1{
+  font-size:clamp(30px,3.2vw,46px) !important;
+  line-height:1.12 !important;
+  letter-spacing:-1.2px !important;
+  overflow-wrap:normal !important;
+  word-break:normal !important;
+  margin:0 0 12px !important;
+}
+#compoundingPage h1 span{display:inline;color:var(--gold2)}
+#compoundingPage .subtitle{
+  max-width:720px;
+  font-size:14px;
+  line-height:1.75;
+}
+#compoundingPage .header-mark{
+  flex:0 0 auto;
+  line-height:1;
+  font-size:clamp(42px,5vw,70px);
+}
+@media(max-width:800px){
+  main > header .header-status{display:none !important}
+  #backtest > .intro:first-child{margin-bottom:32px !important}
+  #compoundingPage header.header{
+    display:block !important;
+    margin-bottom:22px !important;
+    padding:0 !important;
+  }
+  #compoundingPage .topline{
+    font-size:9px;
+    letter-spacing:1.6px;
+    line-height:1.5;
+    margin-bottom:9px;
+    white-space:normal;
+  }
+  #compoundingPage h1{
+    font-size:clamp(27px,7vw,38px) !important;
+    line-height:1.12 !important;
+    letter-spacing:-.8px !important;
+    margin:0 0 12px !important;
+  }
+  #compoundingPage h1 span{display:block}
+  #compoundingPage .subtitle{font-size:13px;line-height:1.7}
+  #compoundingPage .header-mark{display:none}
+}
+</style>
+
+</head><body><div class="app"><aside id="side"><a class="brand" href="index.html"><b>TM</b><span>TRADER<br>MINORITAS</span></a><small>WORKSPACE</small><nav><button class="active" data-page="dash">⌂ Overview</button><button data-page="learn">◫ Modul VIP <i>35</i></button><button data-page="backtest">◫ TM EDGE LAB</button><button data-page="tools" class="nav-hidden-item" aria-hidden="true" tabindex="-1">⌘ Trading Tools</button><button data-page="comp">↗ Compounding Calculator</button><button data-page="chrono">◈ Chrono Heatmap</button><button data-page="event" class="nav-hidden-item" aria-hidden="true" tabindex="-1">◌ Webinar & Event <i>2</i></button></nav><small>AKUN</small><nav><button data-page="profile">◎ Profile Saya</button><a href="index.html">↗ Kembali ke website</a></nav><footer><b>AM</b><span>Andi Mahendra<em>VIP Member</em></span><button id="logout">↪</button></footer></aside><main><header><button id="menu">☰</button><span id="crumb">DASHBOARD / OVERVIEW</span><span class="header-status">TRADER MINORITAS <i>•</i> MEMBER AREA</span></header>
 
 <section id="dash" class="page active"><div class="welcome"><div><p class="kicker" id="overviewDate">MEMBER AREA</p><h1>Selamat datang, <em>Andi.</em></h1><p>Semua yang Anda butuhkan untuk terus belajar, terhubung, dan berkembang.</p></div></div><div class="overview-progress panel"><div><p class="kicker">LEARNING PROGRESS</p><h2><span id="progressCount">0 / 35</span> video selesai.</h2><p id="progressLabel">Mulai dari satu materi, lalu lanjutkan secara konsisten.</p></div><strong id="progressPercent">0%</strong><div class="overview-progress-bar"><i id="progressBar"></i></div></div><div class="overview-grid"><article class="panel continue-card"><div><p class="kicker">LANJUTKAN BELAJAR</p><h2 id="continueTitle">Belum ada video yang dibuka.</h2><p id="continueMeta">Pilih materi dari Modul VIP untuk mulai belajar.</p></div><button class="primary" data-jump="learn" id="continueButton">Buka Modul VIP →</button></article><article class="panel announcement-card"><p class="kicker">ANNOUNCEMENT</p><h2>Library Modul VIP tersedia.</h2><p>Semua rekaman pembelajaran dan sesi komunitas tersimpan di satu tempat. Buka Modul VIP untuk melanjutkan dari materi pilihan Anda.</p><button class="link" data-jump="learn">Lihat semua materi →</button></article></div><div class="overview-grid quick-grid"><article class="panel quick-card"><p class="kicker">QUICK ACCESS</p><h2>Akses cepat.</h2><div class="quick-links"><button data-jump="learn"><b>◫</b><span>Modul VIP<small>35 video</small></span><i>→</i></button><button data-jump="backtest"><b>◫</b><span>TM EDGE LAB<small>Backtest strategi</small></span><i>→</i></button><button data-jump="tools" class="nav-hidden-item" aria-hidden="true" tabindex="-1"><b>⌘</b><span>Trading Tools<small>3 calculator</small></span><i>→</i></button><button data-jump="event" class="nav-hidden-item" aria-hidden="true" tabindex="-1"><b>◌</b><span>Webinar & Event<small>Sesi komunitas</small></span><i>→</i></button></div></article><article class="panel recent-card"><p class="kicker">MATERI TERBARU</p><h2>Terakhir di library.</h2><div id="recentMaterials"></div><button class="link" data-jump="learn">Buka Modul VIP →</button></article></div></section>
 
