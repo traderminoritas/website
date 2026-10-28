@@ -157,91 +157,133 @@
 </style>
 
 
-<style id="tm-desktop-use-mobile-layout">
-/* Desktop intentionally displays the same narrow, single-column composition as the mobile site.
-   These rules only run on desktop-sized viewports; phone styling is left untouched. */
-@media (min-width: 801px) {
-  html { background:#0d0d0b !important; }
-  body {
-    width:100% !important;
-    max-width:430px !important;
+<style id="tm-desktop-mobile-layout-overflow-fix">
+/* Desktop only: retain the narrow phone-style canvas, but force every section
+   and its internal components to use a true single-column/mobile composition. */
+@media (min-width: 1024px) {
+  html, body { max-width:100%; overflow-x:hidden; }
+  body { margin:0; }
+  body, body * { box-sizing:border-box; }
+  body main { width:100%; min-width:0; overflow:hidden; }
+  body .wrap,
+  body header.nav.wrap,
+  body footer.footer.wrap {
+    width:min(370px, calc(100vw - 28px)) !important;
+    max-width:370px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
     min-width:0 !important;
-    margin:0 auto !important;
-    overflow-x:hidden !important;
-    box-shadow:0 0 0 1px rgba(216,180,94,.12), 0 0 70px rgba(0,0,0,.35);
   }
-  .wrap { width:auto !important; max-width:none !important; margin-left:18px !important; margin-right:18px !important; }
-  section, footer { max-width:100% !important; }
-  .nav {
-    position:relative !important;
-    top:auto !important;
-    display:flex !important;
-    flex-wrap:nowrap !important;
-    gap:10px !important;
-    padding:14px 16px !important;
-    margin:0 !important;
+  body main > section,
+  body main > section.wrap {
+    width:min(370px, calc(100vw - 28px)) !important;
+    max-width:370px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+    padding-left:16px !important;
+    padding-right:16px !important;
+    min-width:0 !important;
+    overflow:visible;
+  }
+  body main > section > .wrap,
+  body main > section .wrap {
     width:100% !important;
-    box-sizing:border-box !important;
+    max-width:100% !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+    padding-left:0 !important;
+    padding-right:0 !important;
+    min-width:0 !important;
   }
-  .nav .brand { min-width:0 !important; flex:1 1 auto !important; }
-  .nav .brand img { max-width:150px !important; }
-  .menu-button { display:inline-flex !important; }
-  .nav-links { display:none !important; }
-  .partner-menu-toggle { min-height:38px !important; padding:8px 10px !important; }
-  .partner-menu-label { display:none !important; }
-  .login-link { font-size:11px !important; padding:8px !important; white-space:nowrap !important; }
-  .hero, .statement-inner, .video-section, .membership, .footer {
-    display:flex !important; flex-direction:column !important; align-items:stretch !important;
-    gap:26px !important; padding-left:0 !important; padding-right:0 !important;
+  /* Stack desktop grids and split layouts to match the phone version. */
+  .hero, .statement-inner, .video-section, .membership,
+  .tm-philosophy-head, .tm-philosophy-logo, .section-head,
+  .video-copy, .membership-copy, .dashboard, .market-card,
+  .asset-grid, .feature-grid, .tm-product-grid, .asset-benefits,
+  .quote-grid, .partner-list, .faq-list, .faq-category,
+  .tm-philosophy-grid, .tm-philosophy-summary,
+  .dash-cards, .dash-progress, .pair, .card-stats,
+  .hero-actions, .hero-proof, .footer, .footer-links, .legal {
+    min-width:0 !important;
+    max-width:100% !important;
   }
-  .hero { padding-top:34px !important; padding-bottom:38px !important; }
-  .hero-copy, .market-card, .video-copy, .video-frame, .membership-copy, .dashboard { width:100% !important; max-width:100% !important; min-width:0 !important; }
-  .hero h1, .statement h2, .video-copy h2, .section-head h2, .membership h2, .cta h2 {
-    font-size:clamp(30px, 8vw, 39px) !important;
-    line-height:1.12 !important; letter-spacing:-1.3px !important;
-    max-width:100% !important; overflow-wrap:normal !important;
+  .hero, .video-section, .membership, .statement-inner {
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:24px !important;
   }
-  .hero-logo { max-width:180px !important; }
-  .hero-proof { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:8px !important; }
-  .statement { padding:58px 0 !important; }
-  .statement-inner { gap:18px !important; }
-  .statement-inner > * { width:100% !important; max-width:100% !important; }
-  .tm-philosophy, .tm-products, .proof-gallery, .features, .testimonials, .member-assets, .cta {
-    padding-top:54px !important; padding-bottom:54px !important;
+  .asset-grid, .feature-grid, .tm-product-grid, .asset-benefits,
+  .quote-grid, .partner-list, .faq-list, .tm-philosophy-grid,
+  .dash-cards, .card-stats {
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) !important;
+    grid-auto-flow:row !important;
+    gap:14px !important;
+    align-items:stretch !important;
   }
-  .tm-philosophy-head, .section-head { max-width:100% !important; margin-left:0 !important; margin-right:0 !important; text-align:left !important; }
-  .tm-philosophy-grid, .feature-grid, .asset-grid, .quote-grid, .asset-benefits, .tm-product-grid, .dash-cards {
-    display:grid !important; grid-template-columns:minmax(0,1fr) !important;
-    gap:14px !important; align-items:stretch !important;
+  .section-head, .statement-inner > *, .hero-copy, .video-copy,
+  .membership-copy, .faq-list > *, .faq-category, .faq-category details,
+  .asset-grid figure, .asset-benefits article, .feature-grid article,
+  .quote-grid blockquote, .tm-product-grid article {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
   }
-  .asset-grid figure, .asset-grid .asset-large, .asset-benefits article,
-  .feature-grid article, .quote-grid blockquote, .tm-product-grid article,
-  .tm-philosophy-card { width:100% !important; max-width:100% !important; min-width:0 !important; }
-  .asset-grid img, .asset-benefits img, .membership-zoom-figure img, .zoom-benefit-card img {
-    display:block !important; width:100% !important; height:auto !important; max-height:none !important;
-    aspect-ratio:auto !important; object-fit:contain !important;
+  h1, h2, h3, h4, p, a, small, strong, b, li, summary, figcaption,
+  blockquote, .eyebrow, .lead, .side-note {
+    max-width:100%;
+    overflow-wrap:anywhere;
+    word-break:normal;
   }
-  .asset-grid figure { margin:0 !important; }
-  .asset-grid figcaption { margin-top:8px !important; }
-  .video-frame { aspect-ratio:16/9 !important; }
-  .video-frame iframe { width:100% !important; height:100% !important; }
-  .membership-zoom-figure { width:100% !important; max-width:100% !important; margin:18px 0 !important; }
-  .dashboard { box-sizing:border-box !important; }
-  .tm-product-grid article { min-height:0 !important; padding:17px !important; }
-  .quote-grid blockquote { min-height:0 !important; }
-  .cta .wrap { text-align:left !important; }
-  .tm-inline-vip-cta { padding:18px 14px 28px !important; }
-  .tm-inline-vip-cta-inner { padding:21px 15px !important; }
-  .tm-inline-vip-cta .button { width:100% !important; max-width:340px !important; }
-  .faq-list { display:flex !important; flex-direction:column !important; gap:14px !important; }
-  .faq-category { padding:15px 14px !important; }
-  .footer { gap:18px !important; }
-  .vip-float {
-    position:fixed !important; right:calc((100vw - 430px)/2 + 10px) !important;
-    bottom:14px !important; max-width:calc(430px - 24px) !important;
-    box-sizing:border-box !important; z-index:999 !important;
+  h1 { font-size:clamp(30px, 8vw, 42px) !important; line-height:1.12 !important; }
+  h2 { font-size:clamp(27px, 7vw, 36px) !important; line-height:1.15 !important; letter-spacing:-.8px !important; }
+  h3 { overflow-wrap:anywhere; }
+  img, svg, iframe, video { max-width:100% !important; }
+  .asset-grid img, .asset-benefits img, .membership-zoom-figure img,
+  .zoom-benefit-card img, .tm-philosophy-logo img {
+    display:block !important;
+    width:100% !important;
+    height:auto !important;
+    max-height:none !important;
+    object-fit:contain !important;
   }
-  .partners-dialog { width:min(400px,calc(100vw - 24px)) !important; }
+  .asset-grid figure, .asset-large { margin:0 !important; }
+  .faq-list { display:flex !important; flex-direction:column !important; }
+  .faq-category details { overflow-wrap:anywhere; }
+  .faq-category summary { display:flex; align-items:flex-start; gap:8px; }
+  .faq-category summary span { flex:0 0 auto; }
+  .nav.wrap {
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:8px !important;
+    padding:10px 12px !important;
+    position:relative;
+    z-index:1002;
+  }
+  /* The white hamburger is the separate mobile nav toggle; it is unbound here.
+     Hide it on desktop to avoid two confusing menu buttons. Keep the gold
+     partner-menu toggle active and above other layers. */
+  .nav .menu-button { display:none !important; }
+  .nav .nav-links { display:none !important; }
+  .nav .partner-menu-wrap { display:flex !important; position:relative; z-index:1005; }
+  .nav .partner-menu-toggle { display:inline-flex !important; min-width:38px; min-height:38px; position:relative; z-index:1006; pointer-events:auto !important; }
+  .nav .login-link { font-size:10px !important; padding:8px !important; white-space:nowrap; }
+  .partner-dropdown { z-index:1010 !important; }
+  .hero-logo { max-width:150px !important; height:auto !important; }
+  .hero-proof { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:6px !important; }
+  .hero-proof > * { min-width:0 !important; }
+  .dash-cards { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+  .card-stats { grid-template-columns:repeat(3,minmax(0,1fr)) !important; }
+  .button, a.button, button.button { max-width:100%; white-space:normal; }
+  .hero-actions { display:flex !important; flex-direction:column !important; align-items:stretch !important; }
+  .hero-actions .button, .hero-actions .text-link { max-width:100%; }
+  .vip-float { right:max(12px, calc((100vw - 370px) / 2 + 12px)) !important; max-width:calc(100vw - 24px); z-index:1100 !important; }
+  .partners-dialog { width:min(370px, calc(100vw - 20px)) !important; max-width:370px !important; }
+  .partners-dialog .partners-in-dialog { padding:24px 14px 20px !important; }
+  footer.footer { display:flex !important; flex-direction:column !important; gap:18px !important; }
+  .legal { display:flex !important; flex-wrap:wrap !important; gap:10px !important; }
 }
 </style>
 
