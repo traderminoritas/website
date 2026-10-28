@@ -326,6 +326,37 @@
 }
 </style>
 
+
+<style id="tm-desktop-vertical-spacing-half">
+/* Desktop only: reduce excessive vertical gaps between page sections by about 50%. */
+@media (min-width: 901px) {
+  main > section,
+  main > .section,
+  main > [class*="section"] {
+    padding-top: clamp(28px, 3.2vw, 54px) !important;
+    padding-bottom: clamp(28px, 3.2vw, 54px) !important;
+  }
+
+  /* Keep deliberate content spacing compact without changing mobile layout. */
+  main > section + section,
+  main > .section + .section,
+  main > [class*="section"] + [class*="section"] {
+    margin-top: 0 !important;
+  }
+
+  main > section .section-head,
+  main > .section .section-head,
+  main > [class*="section"] .section-head {
+    margin-bottom: clamp(18px, 2vw, 28px) !important;
+  }
+
+  .tm-products {
+    padding-top: clamp(28px, 3.2vw, 54px) !important;
+    padding-bottom: clamp(28px, 3.2vw, 54px) !important;
+  }
+}
+</style>
+
 </head>
 
 <body>
