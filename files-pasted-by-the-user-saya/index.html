@@ -255,6 +255,77 @@
 }
 </style>
 
+
+
+<style id="tm-desktop-faq-testimonials-stack">
+/* Desktop only: place section titles above their content, with the content using the full available width. */
+@media (min-width: 700px) {
+  body main section.testimonials,
+  body main section.faq {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 26px !important;
+    width: min(560px, calc(100vw - 40px)) !important;
+    max-width: 560px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  body main section.testimonials > .section-head,
+  body main section.faq > .section-head,
+  body main section.faq > div:first-child {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    gap: 12px !important;
+    margin: 0 !important;
+  }
+  body main section.testimonials > .section-head h2,
+  body main section.faq > div:first-child h2 {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    font-size: clamp(29px, 3vw, 36px) !important;
+    line-height: 1.2 !important;
+    letter-spacing: -.7px !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    text-wrap: balance;
+  }
+  body main section.testimonials .quote-grid,
+  body main section.faq .faq-list {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    gap: 16px !important;
+  }
+  body main section.testimonials .quote-grid blockquote,
+  body main section.faq .faq-category {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+  body main section.faq .faq-category {
+    padding: 18px 20px !important;
+  }
+  body main section.faq .faq-category details,
+  body main section.faq .faq-category details summary,
+  body main section.faq .faq-category details p,
+  body main section.testimonials .quote-grid blockquote p {
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+  }
+}
+</style>
+
 </head>
 
 <body>
