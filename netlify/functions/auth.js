@@ -1,38 +1,39 @@
-```javascript
+
 const AUTH_ORIGIN = "https://tm-vip-auth.bossrobot-id.workers.dev";
 
 export default async (request) => {
   const incomingUrl = new URL(request.url);
   const path = incomingUrl.searchParams.get("path") || "";
 
-  const allowedPaths = new Set([
-    "login",
-    "logout",
-    "me",
-    "vip",
-    "video-token",
-    "change-password",
-    "admin/members",
-  ]);
+  
+const allowedPaths = new Set([
+  "login",
+  "logout",
+  "me",
+  "vip",
+  "video-token",
+  "change-password",
+  "admin/members",
+]);
 
-  function isAllowedPath(value) {
-    return (
-      allowedPaths.has(value) ||
-      /^admin\/members\/\d+$/.test(value) ||
-      /^admin\/members\/\d+\/status$/.test(value) ||
-      /^admin\/members\/\d+\/reset-password$/.test(value) ||
-      /^owner\/members\/\d+\/role$/.test(value)
-    );
-  }
+function isAllowedPath(path) {
+  return (
+    allowedPaths.has(path) ||
+    /^admin\/members\/\d+\/status$/.test(path) ||
+    /^admin\/members\/\d+\/reset-password$/.test(path) ||
+    /^owner\/members\/\d+\/role$/.test(path)
+  );
+}
 
-  if (!isAllowedPath(path)) {
+
+  if (!allowedPaths.has(path)) {
     return Response.json(
       { error: "Endpoint tidak diizinkan." },
       { status: 404 }
     );
   }
 
-  if (!["GET", "POST", "PATCH", "DELETE", "OPTIONS"].includes(request.method)) {
+  if (!["GET", "POST", "PATCH", "OPTIONS"].includes(request.method)) {
     return Response.json(
       { error: "Method tidak diizinkan." },
       { status: 405 }
@@ -63,7 +64,6 @@ export default async (request) => {
 
   if (upstreamType) responseHeaders.set("content-type", upstreamType);
   if (setCookie) responseHeaders.set("set-cookie", setCookie);
-
   responseHeaders.set("cache-control", "no-store");
 
   return new Response(upstream.body, {
@@ -71,4 +71,3 @@ export default async (request) => {
     headers: responseHeaders,
   });
 };
-```
