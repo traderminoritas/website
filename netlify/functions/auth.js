@@ -5,14 +5,26 @@ export default async (request) => {
   const incomingUrl = new URL(request.url);
   const path = incomingUrl.searchParams.get("path") || "";
 
-  const allowedPaths = new Set([
-    "login",
-    "logout",
-    "me",
-    "vip",
-    "video-token",
-    "change-password",
-  ]);
+  
+const allowedPaths = new Set([
+  "login",
+  "logout",
+  "me",
+  "vip",
+  "video-token",
+  "change-password",
+  "admin/members",
+]);
+
+function isAllowedPath(path) {
+  return (
+    allowedPaths.has(path) ||
+    /^admin\/members\/\d+\/status$/.test(path) ||
+    /^admin\/members\/\d+\/reset-password$/.test(path) ||
+    /^owner\/members\/\d+\/role$/.test(path)
+  );
+}
+
 
   if (!allowedPaths.has(path)) {
     return Response.json(
