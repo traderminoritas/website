@@ -10,7 +10,7 @@ dialog.addEventListener('click', (event) => {
   if (event.target === dialog) dialog.close();
 });
 
-const TM_VIDEO_WORKER = 'https://tm-vip-video.bossrobot-id.workers.dev';
+const TM_AUTH_WORKER = 'https://tm-vip-auth.bossrobot-id.workers.dev';
 
 document.getElementById('loginForm').addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -19,24 +19,47 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
   const error = document.getElementById('loginError');
   const submit = document.querySelector('#loginForm button[type=submit]');
   error.textContent = '';
-  if (submit) { submit.disabled = true; submit.dataset.originalText = submit.innerHTML; submit.innerHTML = 'Memeriksa akses…'; }
+  if (submit) {
+    submit.disabled = true;
+    submit.dataset.originalText = submit.innerHTML;
+    submit.innerHTML = 'Memeriksa akses…';
+  }
+
   try {
-    const response = await fetch(`${TM_VIDEO_WORKER}/auth`, {
+    const response = await fetch(`${TM_AUTH_WORKER}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ username: email, password })
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok || !data.success || !data.token) {
-      throw new Error('Email atau password tidak sesuai.');
+    if (!response.ok || !data.ok || !data.member) {
+      throw new Error(data.error || 'Email atau password tidak sesuai.');
     }
-    sessionStorage.setItem('tmVipToken', data.token);
-    sessionStorage.setItem('tmDemoMember', 'Andi Mahendra');
+    if (!data.member.isVip) {
+      await fetch(`${TM_AUTH_WORKER}/logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
+      throw new Error('Akun dikenali, tetapi akses VIP belum aktif. Hubungi admin.');
+    }
+
+    const vipResponse = await fetch(`${TM_AUTH_WORKER}/vip`, {
+      method: 'GET',
+      credentials: 'include'
+    });
+    const vipData = await vipResponse.json().catch(() => ({}));
+    if (!vipResponse.ok || !vipData.ok) {
+      await fetch(`${TM_AUTH_WORKER}/logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
+      throw new Error(vipData.error || 'Akses VIP belum aktif.');
+    }
+
+    sessionStorage.setItem('tmVipMemberName', data.member.username || data.member.email || email);
     window.location.href = 'member.html';
   } catch (err) {
     error.textContent = err.message || 'Login gagal. Silakan coba lagi.';
   } finally {
-    if (submit) { submit.disabled = false; submit.innerHTML = submit.dataset.originalText || 'Masuk ke dashboard <span>→</span>'; }
+    if (submit) {
+      submit.disabled = false;
+      submit.innerHTML = submit.dataset.originalText || 'Masuk ke dashboard <span>→</span>';
+    }
   }
 });
 

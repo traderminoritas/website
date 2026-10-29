@@ -1,10 +1,32 @@
-const WORKER_URL='https://tm-vip-video.bossrobot-id.workers.dev';
-const VIP_TOKEN=sessionStorage.getItem('tmVipToken');
-if(!VIP_TOKEN)location.replace('index.html');
+const WORKER_URL = 'https://tm-vip-video.bossrobot-id.workers.dev';
+const AUTH_URL = 'https://tm-vip-auth.bossrobot-id.workers.dev';
+
+// Validate the browser session against the shared D1-backed auth service.
+(async function validateVipSession() {
+  try {
+    const response = await fetch(`${AUTH_URL}/me`, { credentials: 'include' });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.authenticated || !data.member || !data.member.isVip) {
+      await fetch(`${AUTH_URL}/logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
+      location.replace('index.html');
+      return;
+    }
+    sessionStorage.setItem('tmVipMemberName', data.member.username || data.member.email || 'Member VIP');
+  } catch (_) {
+    location.replace('index.html');
+  }
+})();
 const officialLogoStyles=document.createElement('style');officialLogoStyles.textContent="aside .brand>b{font-size:0!important;background:#111 url('https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/Trader%20MInoritas%20logo.png') center/90% auto no-repeat!important;border-color:rgba(216,180,94,.45)!important}";document.head.appendChild(officialLogoStyles);
 const pages=document.querySelectorAll('.page'),side=document.getElementById('side'),crumb=document.getElementById('crumb');
 function openPage(id){pages.forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));crumb.textContent='DASHBOARD / '+id.toUpperCase().replace('LEARN','MODUL VIP').replace('JOURNAL','JOURNAL & BACKTEST');side.classList.remove('open');scrollTo({top:0,behavior:'smooth'})}
-document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>openPage(b.dataset.page));document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>openPage(b.dataset.jump));document.getElementById('menu').onclick=()=>side.classList.toggle('open');document.getElementById('logout').onclick=()=>{sessionStorage.clear();location.href='index.html'};
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>openPage(b.dataset.page));document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>openPage(b.dataset.jump));document.getElementById('menu').onclick=()=>side.classList.toggle('open');document.getElementById('logout').onclick=async()=>{
+  try { await fetch(`${AUTH_URL}/logout`, { method: 'POST', credentials: 'include' }); }
+  catch (_) {}
+  sessionStorage.removeItem('tmVipMemberName');
+  sessionStorage.removeItem('tmVipToken');
+  sessionStorage.removeItem('tmDemoMember');
+  location.href='index.html';
+};
 const tool={lot:{type:'POSITION SIZING',title:'Lot Size Calculator',desc:'Tentukan posisi berdasarkan batas risiko Anda.',fields:[['Modal akun','balance',1000],['Risiko per transaksi (%)','risk',1],['Stop loss (pips)','sl',30]],calc:v=>[['RISIKO MAKSIMUM','$'+(v.balance*v.risk/100).toFixed(2)],['UKURAN POSISI',(v.balance*v.risk/100/(v.sl*10||1)).toFixed(2)+' lot']]},rr:{type:'RISK ANALYSIS',title:'Risk / Reward Calculator',desc:'Bandingkan potensi kerugian dan target sebelum entry.',fields:[['Entry price','entry',1.085],['Stop loss','stop',1.08],['Take profit','tp',1.0975]],calc:v=>[['RISIKO',Math.abs(v.entry-v.stop).toFixed(4)],['RISK : REWARD','1 : '+(Math.abs(v.tp-v.entry)/(Math.abs(v.entry-v.stop)||1)).toFixed(2)]]},comp:{type:'GROWTH PLAN',title:'Compounding Calculator',desc:'Visualisasikan pertumbuhan modal dengan target realistis.',fields:[['Modal awal','capital',1000],['Target per bulan (%)','rate',5],['Durasi (bulan)','months',12]],calc:v=>[['PROYEKSI MODAL','$'+(v.capital*Math.pow(1+v.rate/100,v.months)).toFixed(2)],['PERTUMBUHAN','$'+(v.capital*Math.pow(1+v.rate/100,v.months)-v.capital).toFixed(2)]]}};
 function render(type='lot'){let t=tool[type];
 
@@ -224,13 +246,35 @@ function syncVideoControls(){
 function startVideoTimer(){clearInterval(videoTimer);videoTimer=setInterval(syncVideoControls,500)}
 function stopVideoTimer(){clearInterval(videoTimer);videoTimer=null}
 async function getSignedVideoUrl(file){
-  const token=sessionStorage.getItem('tmVipToken');
-  if(!token)throw new Error('Session login tidak ditemukan.');
-  const res=await fetch(`${WORKER_URL}/video-url?file=${encodeURIComponent(file)}`,{headers:{Authorization:`Bearer ${token}`}});
-  if(res.status===401){sessionStorage.removeItem('tmVipToken');sessionStorage.removeItem('tmDemoMember');throw new Error('Sesi login sudah berakhir. Silakan login kembali.');}
-  if(!res.ok)throw new Error('Gagal mendapatkan akses video.');
-  const data=await res.json();
-  if(!data.success||!data.url)throw new Error('Signed video URL tidak tersedia.');
+  // Mint a short-lived token from the auth Worker using the HttpOnly session cookie.
+  const tokenResponse = await fetch(`${AUTH_URL}/video-token`, {
+    method: 'POST',
+    credentials: 'include'
+  });
+  const tokenData = await tokenResponse.json().catch(() => ({}));
+  if (tokenResponse.status === 401) {
+    throw new Error('Sesi login sudah berakhir. Silakan login kembali.');
+  }
+  if (tokenResponse.status === 403) {
+    throw new Error('Akses VIP tidak aktif. Hubungi admin.');
+  }
+  if (!tokenResponse.ok || !tokenData.ok || !tokenData.videoToken) {
+    throw new Error(tokenData.error || 'Gagal memverifikasi akses VIP.');
+  }
+
+  const res = await fetch(`${WORKER_URL}/video-url?file=${encodeURIComponent(file)}`, {
+    headers: { Authorization: `Bearer ${tokenData.videoToken}` }
+  });
+  if (res.status === 401) {
+    throw new Error('Token video kedaluwarsa. Silakan coba putar video lagi.');
+  }
+  if (res.status === 403) {
+    throw new Error('Akses VIP tidak aktif. Hubungi admin.');
+  }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.success || !data.url) {
+    throw new Error(data.error || 'Gagal mendapatkan akses video.');
+  }
   return data.url;
 }
 async function createR2Player(file){
