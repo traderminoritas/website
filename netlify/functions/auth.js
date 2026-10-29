@@ -15,13 +15,13 @@ export default async (request) => {
     "admin/members",
   ]);
 
-  function isAllowedPath(path) {
+  function isAllowedPath(value) {
     return (
-      allowedPaths.has(path) ||
-      /^admin\/members\/\d+$/.test(path) ||
-      /^admin\/members\/\d+\/status$/.test(path) ||
-      /^admin\/members\/\d+\/reset-password$/.test(path) ||
-      /^owner\/members\/\d+\/role$/.test(path)
+      allowedPaths.has(value) ||
+      /^admin\/members\/\d+$/.test(value) ||
+      /^admin\/members\/\d+\/status$/.test(value) ||
+      /^admin\/members\/\d+\/reset-password$/.test(value) ||
+      /^owner\/members\/\d+\/role$/.test(value)
     );
   }
 
@@ -63,6 +63,7 @@ export default async (request) => {
 
   if (upstreamType) responseHeaders.set("content-type", upstreamType);
   if (setCookie) responseHeaders.set("set-cookie", setCookie);
+
   responseHeaders.set("cache-control", "no-store");
 
   return new Response(upstream.body, {
