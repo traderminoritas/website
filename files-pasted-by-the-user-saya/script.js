@@ -26,7 +26,7 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
   }
 
   try {
-    const response = await fetch(`${TM_AUTH_WORKER}/login`, {
+    const response = await fetch(`${TM_AUTH_URL}?path=login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -37,17 +37,17 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
       throw new Error(data.error || 'Email atau password tidak sesuai.');
     }
     if (!data.member.isVip) {
-      await fetch(`${TM_AUTH_WORKER}/logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
+      await fetch(`${TM_AUTH_URL}?path=logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
       throw new Error('Akun dikenali, tetapi akses VIP belum aktif. Hubungi admin.');
     }
 
-    const vipResponse = await fetch(`${TM_AUTH_WORKER}/vip`, {
+    const vipResponse = await fetch(`${TM_AUTH_URL}?path=vip`, {
       method: 'GET',
       credentials: 'include'
     });
     const vipData = await vipResponse.json().catch(() => ({}));
     if (!vipResponse.ok || !vipData.ok) {
-      await fetch(`${TM_AUTH_WORKER}/logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
+      await fetch(`${TM_AUTH_URL}?path=logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
       throw new Error(vipData.error || 'Akses VIP belum aktif.');
     }
 
