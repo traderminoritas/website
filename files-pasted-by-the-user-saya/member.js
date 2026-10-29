@@ -852,14 +852,16 @@ updateOverview();
       const statusButton = protectedAccount ? '' : `<button type="button" data-action="status" data-id="${Number(m.id)}" data-vip="${vip}" data-active="${active}" class="ghost-action">Ubah VIP/status</button>`;
       const resetButton = protectedAccount ? '' : `<button type="button" data-action="reset" data-id="${Number(m.id)}" class="ghost-action">Reset password</button>`;
       const roleButton = isOwner(currentMember) && !protectedAccount ? `<button type="button" data-action="role" data-id="${Number(m.id)}" data-admin="${admin}" class="ghost-action">${admin ? 'Jadikan Member' : 'Jadikan Admin'}</button>` : '';
+      const canDelete = !protectedAccount && (isOwner(currentMember) || !admin);
+      const deleteButton = canDelete ? `<button type="button" data-action="delete" data-id="${Number(m.id)}" data-username="${esc(m.username)}" data-email="${esc(m.email)}" data-admin="${admin}" class="ghost-action tm-danger-action">Hapus akun</button>` : '';
       return `<tr>
         <td style="padding:12px">${Number(m.id) || ''}</td>
         <td style="padding:12px">${esc(m.username)}</td>
         <td style="padding:12px">${esc(m.email)}</td>
-        <td style="padding:12px">${role}</td>
+        <td style="padding:12px"><span class="tm-role-pill">${role}</span></td>
         <td style="padding:12px">${vip ? 'Aktif' : 'Nonaktif'}</td>
         <td style="padding:12px">${active ? 'Aktif' : 'Dinonaktifkan'}</td>
-        <td style="padding:12px;display:flex;flex-wrap:wrap;gap:6px">${statusButton}${resetButton}${roleButton}</td>
+        <td style="padding:12px"><div class="tm-row-actions">${statusButton}${resetButton}${roleButton}${deleteButton}</div></td>
       </tr>`;
     }).join('');
   }
@@ -929,6 +931,16 @@ updateOverview();
             if (!ok) return;
             await api(`owner/members/${id}/role`, {method:'PATCH', body:JSON.stringify({isAdmin:!wasAdmin})});
             setMessage(wasAdmin ? 'Role Admin dicabut.' : 'Role Admin diberikan.', true);
+          } else if (action === 'delete') {
+            const targetName = button.dataset.username || `ID ${id}`;
+            const targetIsAdmin = button.dataset.admin === 'true';
+            if (targetIsAdmin && !isOwner(currentMember)) {
+              throw new Error('Hanya Owner yang dapat menghapus akun Admin.');
+            }
+            const confirmed = window.confirm(`HAPUS PERMANEN akun ${targetName}?\n\nTindakan ini tidak dapat dibatalkan. Sesi login akun tersebut juga akan dihapus.`);
+            if (!confirmed) return;
+            await api(`admin/members/${id}`, {method:'DELETE'});
+            setMessage(`Akun ${targetName} berhasil dihapus.`, true);
           }
           await loadMembers();
         } catch (error) { setMessage(error.message || 'Tindakan gagal.'); }
