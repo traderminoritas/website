@@ -1,13 +1,13 @@
 const WORKER_URL = 'https://tm-vip-video.bossrobot-id.workers.dev';
-const AUTH_URL = 'https://tm-vip-auth.bossrobot-id.workers.dev';
+const AUTH_URL = '/.netlify/functions/auth';
 
 // Validate the browser session against the shared D1-backed auth service.
 (async function validateVipSession() {
   try {
-    const response = await fetch(`${AUTH_URL}/me`, { credentials: 'include' });
+    const response = await fetch(`${AUTH_URL}?path=me`, { credentials: 'include' });
     const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.authenticated || !data.member || !data.member.isVip) {
-      await fetch(`${AUTH_URL}/logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
+      await fetch(`${AUTH_URL}?path=logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
       location.replace('index.html');
       return;
     }
@@ -83,7 +83,7 @@ const AUTH_URL = 'https://tm-vip-auth.bossrobot-id.workers.dev';
     if(currentPassword===newPassword){message.textContent='Gunakan password baru yang berbeda.';return;}
     submit.disabled=true;submit.textContent='Menyimpan…';
     try{
-      const response=await fetch(`${AUTH_URL}/change-password`,{
+      const response=await fetch(`${AUTH_URL}?path=change-password`,{
         method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({currentPassword,newPassword})
       });
@@ -102,7 +102,7 @@ const officialLogoStyles=document.createElement('style');officialLogoStyles.text
 const pages=document.querySelectorAll('.page'),side=document.getElementById('side'),crumb=document.getElementById('crumb');
 function openPage(id){pages.forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));crumb.textContent='DASHBOARD / '+id.toUpperCase().replace('LEARN','MODUL VIP').replace('JOURNAL','JOURNAL & BACKTEST');side.classList.remove('open');scrollTo({top:0,behavior:'smooth'})}
 document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>openPage(b.dataset.page));document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>openPage(b.dataset.jump));document.getElementById('menu').onclick=()=>side.classList.toggle('open');document.getElementById('logout').onclick=async()=>{
-  try { await fetch(`${AUTH_URL}/logout`, { method: 'POST', credentials: 'include' }); }
+  try { await fetch(`${AUTH_URL}?path=logout`, { method: 'POST', credentials: 'include' }); }
   catch (_) {}
   sessionStorage.removeItem('tmVipMemberName');
   sessionStorage.removeItem('tmVipToken');
@@ -329,7 +329,7 @@ function startVideoTimer(){clearInterval(videoTimer);videoTimer=setInterval(sync
 function stopVideoTimer(){clearInterval(videoTimer);videoTimer=null}
 async function getSignedVideoUrl(file){
   // Mint a short-lived token from the auth Worker using the HttpOnly session cookie.
-  const tokenResponse = await fetch(`${AUTH_URL}/video-token`, {
+  const tokenResponse = await fetch(`${AUTH_URL}?path=video-token`, {
     method: 'POST',
     credentials: 'include'
   });
