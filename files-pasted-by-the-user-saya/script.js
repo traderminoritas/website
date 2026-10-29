@@ -10,7 +10,7 @@ dialog.addEventListener('click', (event) => {
   if (event.target === dialog) dialog.close();
 });
 
-const TM_AUTH_WORKER = 'https://tm-vip-auth.bossrobot-id.workers.dev';
+const TM_AUTH_URL = '/.netlify/functions/auth';
 
 document.getElementById('loginForm').addEventListener('submit', async (event) => {
   event.preventDefault();
