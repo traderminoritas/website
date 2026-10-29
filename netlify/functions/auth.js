@@ -26,7 +26,7 @@ function isAllowedPath(path) {
 }
 
 
-  if (!allowedPaths.has(path)) {
+  if (!isAllowedPath(path)) {
     return Response.json(
       { error: "Endpoint tidak diizinkan." },
       { status: 404 }
