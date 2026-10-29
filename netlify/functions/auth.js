@@ -1,30 +1,29 @@
-
+```javascript
 const AUTH_ORIGIN = "https://tm-vip-auth.bossrobot-id.workers.dev";
 
 export default async (request) => {
   const incomingUrl = new URL(request.url);
   const path = incomingUrl.searchParams.get("path") || "";
 
-  
-const allowedPaths = new Set([
-  "login",
-  "logout",
-  "me",
-  "vip",
-  "video-token",
-  "change-password",
-  "admin/members",
-]);
+  const allowedPaths = new Set([
+    "login",
+    "logout",
+    "me",
+    "vip",
+    "video-token",
+    "change-password",
+    "admin/members",
+  ]);
 
-function isAllowedPath(path) {
-  return (
-    allowedPaths.has(path) ||
-    /^admin\/members\/\d+\/status$/.test(path) ||
-    /^admin\/members\/\d+\/reset-password$/.test(path) ||
-    /^owner\/members\/\d+\/role$/.test(path)
-  );
-}
-
+  function isAllowedPath(path) {
+    return (
+      allowedPaths.has(path) ||
+      /^admin\/members\/\d+$/.test(path) ||
+      /^admin\/members\/\d+\/status$/.test(path) ||
+      /^admin\/members\/\d+\/reset-password$/.test(path) ||
+      /^owner\/members\/\d+\/role$/.test(path)
+    );
+  }
 
   if (!isAllowedPath(path)) {
     return Response.json(
@@ -33,7 +32,7 @@ function isAllowedPath(path) {
     );
   }
 
-  if (!["GET", "POST", "PATCH", "OPTIONS"].includes(request.method)) {
+  if (!["GET", "POST", "PATCH", "DELETE", "OPTIONS"].includes(request.method)) {
     return Response.json(
       { error: "Method tidak diizinkan." },
       { status: 405 }
@@ -71,3 +70,4 @@ function isAllowedPath(path) {
     headers: responseHeaders,
   });
 };
+```
