@@ -1,13 +1,14 @@
 const WORKER_URL = 'https://tm-vip-video.bossrobot-id.workers.dev';
 const AUTH_URL = '/.netlify/functions/auth';
+const authEndpoint = path => `${AUTH_URL}?path=${encodeURIComponent(path)}`;
 
 // Validate the browser session against the shared D1-backed auth service.
 (async function validateVipSession() {
   try {
-    const response = await fetch(`${AUTH_URL}?path=me`, { credentials: 'include' });
+    const response = await fetch(authEndpoint('me'), { credentials: 'include' });
     const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.authenticated || !data.member || !data.member.isVip) {
-      await fetch(`${AUTH_URL}?path=logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
+      await fetch(authEndpoint('logout'), { method: 'POST', credentials: 'include' }).catch(() => {});
       location.replace('index.html');
       return;
     }
@@ -83,7 +84,7 @@ const AUTH_URL = '/.netlify/functions/auth';
     if(currentPassword===newPassword){message.textContent='Gunakan password baru yang berbeda.';return;}
     submit.disabled=true;submit.textContent='Menyimpan…';
     try{
-      const response=await fetch(`${AUTH_URL}?path=change-password`,{
+      const response=await fetch(authEndpoint('change-password'),{
         method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({currentPassword,newPassword})
       });
@@ -102,7 +103,7 @@ const officialLogoStyles=document.createElement('style');officialLogoStyles.text
 const pages=document.querySelectorAll('.page'),side=document.getElementById('side'),crumb=document.getElementById('crumb');
 function openPage(id){pages.forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));crumb.textContent='DASHBOARD / '+id.toUpperCase().replace('LEARN','MODUL VIP').replace('JOURNAL','JOURNAL & BACKTEST');side.classList.remove('open');scrollTo({top:0,behavior:'smooth'})}
 document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>openPage(b.dataset.page));document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>openPage(b.dataset.jump));document.getElementById('menu').onclick=()=>side.classList.toggle('open');document.getElementById('logout').onclick=async()=>{
-  try { await fetch(`${AUTH_URL}?path=logout`, { method: 'POST', credentials: 'include' }); }
+  try { await fetch(authEndpoint('logout'), { method: 'POST', credentials: 'include' }); }
   catch (_) {}
   sessionStorage.removeItem('tmVipMemberName');
   sessionStorage.removeItem('tmVipToken');
@@ -329,7 +330,7 @@ function startVideoTimer(){clearInterval(videoTimer);videoTimer=setInterval(sync
 function stopVideoTimer(){clearInterval(videoTimer);videoTimer=null}
 async function getSignedVideoUrl(file){
   // Mint a short-lived token from the auth Worker using the HttpOnly session cookie.
-  const tokenResponse = await fetch(`${AUTH_URL}?path=video-token`, {
+  const tokenResponse = await fetch(authEndpoint('video-token'), {
     method: 'POST',
     credentials: 'include'
   });
@@ -799,4 +800,145 @@ updateOverview();
   document.addEventListener('keydown',event=>{
     if(event.key==='Escape'&&!picker.hidden)closePicker();
   });
+})();
+
+
+/* =========================================================
+   MANAJEMEN MEMBER — Owner/Admin UI
+   Requires the role-gated endpoints in the auth Worker.
+   ========================================================= */
+(async function initMemberManagement(){
+  const nav = document.getElementById('tmManagementNav');
+  const page = document.getElementById('management');
+  const table = document.getElementById('tmMembersTable');
+  const form = document.getElementById('tmCreateMemberForm');
+  const message = document.getElementById('tmManagementMessage');
+  const refresh = document.getElementById('tmRefreshMembers');
+  if (!nav || !page || !table || !form || !message || !refresh) return;
+
+  let currentMember = null;
+  const isOwner = m => Boolean(m && m.isOwner);
+  const isAdmin = m => Boolean(m && m.isAdmin);
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const api = async (path, options = {}) => {
+    const response = await fetch(authEndpoint(path), {
+      credentials: 'include',
+      ...options,
+      headers: { ...(options.body ? {'Content-Type':'application/json'} : {}), ...(options.headers || {}) }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || `Permintaan gagal (${response.status}).`);
+    return data;
+  };
+  function setMessage(text, good=false){
+    message.textContent = text;
+    message.style.color = good ? '#9bd5a4' : '#d8b45e';
+  }
+  function setTableMessage(text){
+    table.innerHTML = `<tr><td colspan="7" style="padding:14px">${esc(text)}</td></tr>`;
+  }
+  function renderMembers(members){
+    if (!Array.isArray(members) || !members.length) {
+      setTableMessage('Belum ada akun yang dapat ditampilkan.');
+      return;
+    }
+    table.innerHTML = members.map(m => {
+      const owner = Boolean(m.isOwner);
+      const admin = Boolean(m.isAdmin ?? m.is_admin);
+      const vip = Boolean(m.isVip ?? m.is_vip);
+      const active = Boolean(m.isActive ?? m.is_active);
+      const role = owner ? 'Owner' : admin ? 'Admin' : 'Member';
+      const protectedAccount = owner;
+      const statusButton = protectedAccount ? '' : `<button type="button" data-action="status" data-id="${Number(m.id)}" data-vip="${vip}" data-active="${active}" class="ghost-action">Ubah VIP/status</button>`;
+      const resetButton = protectedAccount ? '' : `<button type="button" data-action="reset" data-id="${Number(m.id)}" class="ghost-action">Reset password</button>`;
+      const roleButton = isOwner(currentMember) && !protectedAccount ? `<button type="button" data-action="role" data-id="${Number(m.id)}" data-admin="${admin}" class="ghost-action">${admin ? 'Jadikan Member' : 'Jadikan Admin'}</button>` : '';
+      return `<tr>
+        <td style="padding:12px">${Number(m.id) || ''}</td>
+        <td style="padding:12px">${esc(m.username)}</td>
+        <td style="padding:12px">${esc(m.email)}</td>
+        <td style="padding:12px">${role}</td>
+        <td style="padding:12px">${vip ? 'Aktif' : 'Nonaktif'}</td>
+        <td style="padding:12px">${active ? 'Aktif' : 'Dinonaktifkan'}</td>
+        <td style="padding:12px;display:flex;flex-wrap:wrap;gap:6px">${statusButton}${resetButton}${roleButton}</td>
+      </tr>`;
+    }).join('');
+  }
+  async function loadMembers(){
+    setTableMessage('Memuat daftar akun…');
+    try {
+      const data = await api('admin/members');
+      renderMembers(data.members || []);
+    } catch (error) {
+      setTableMessage(error.message || 'Gagal memuat daftar akun.');
+    }
+  }
+
+  try {
+    const session = await api('me');
+    currentMember = session.member || null;
+    if (currentMember && (isOwner(currentMember) || isAdmin(currentMember))) {
+      nav.hidden = false;
+      nav.addEventListener('click', () => {
+        openPage('management');
+        loadMembers();
+      });
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        const submit = form.querySelector('button[type="submit"]');
+        const username = document.getElementById('tmNewUsername').value.trim();
+        const email = document.getElementById('tmNewEmail').value.trim();
+        const password = document.getElementById('tmNewPassword').value;
+        const isVip = document.getElementById('tmNewVip').checked;
+        if (password.length < 12) { setMessage('Password awal minimal 12 karakter.'); return; }
+        submit.disabled = true;
+        setMessage('Membuat akun…');
+        try {
+          const data = await api('admin/members', {method:'POST', body:JSON.stringify({username,email,password,isVip})});
+          form.reset();
+          document.getElementById('tmNewVip').checked = true;
+          setMessage(data.message || 'Akun berhasil dibuat.', true);
+          await loadMembers();
+        } catch (error) { setMessage(error.message || 'Gagal membuat akun.'); }
+        finally { submit.disabled = false; }
+      });
+      refresh.addEventListener('click', loadMembers);
+      table.addEventListener('click', async event => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const id = Number(button.dataset.id);
+        const action = button.dataset.action;
+        button.disabled = true;
+        try {
+          if (action === 'status') {
+            const wasVip = button.dataset.vip === 'true';
+            const wasActive = button.dataset.active === 'true';
+            const newVip = window.confirm(`Status VIP saat ini ${wasVip ? 'AKTIF' : 'NONAKTIF'}.\nOK = ${wasVip ? 'nonaktifkan' : 'aktifkan'} VIP; Cancel = jangan ubah VIP.`) ? !wasVip : wasVip;
+            const newActive = window.confirm(`Status akun saat ini ${wasActive ? 'AKTIF' : 'NONAKTIF'}.\nOK = ${wasActive ? 'nonaktifkan' : 'aktifkan'} akun; Cancel = jangan ubah status akun.`) ? !wasActive : wasActive;
+            await api(`admin/members/${id}/status`, {method:'PATCH', body:JSON.stringify({isVip:newVip,isActive:newActive})});
+            setMessage('Status akun diperbarui.', true);
+          } else if (action === 'reset') {
+            const password = window.prompt('Masukkan password awal/baru (minimal 12 karakter).');
+            if (password === null) return;
+            if (password.length < 12) throw new Error('Password minimal 12 karakter.');
+            await api(`admin/members/${id}/reset-password`, {method:'POST', body:JSON.stringify({password})});
+            setMessage('Password diperbarui dan sesi lama akun tersebut diakhiri.', true);
+          } else if (action === 'role') {
+            if (!isOwner(currentMember)) throw new Error('Hanya Owner yang dapat mengubah role Admin.');
+            const wasAdmin = button.dataset.admin === 'true';
+            const ok = window.confirm(`Yakin ${wasAdmin ? 'mencabut role Admin dan menjadikannya Member' : 'mengangkat Member menjadi Admin'}?`);
+            if (!ok) return;
+            await api(`owner/members/${id}/role`, {method:'PATCH', body:JSON.stringify({isAdmin:!wasAdmin})});
+            setMessage(wasAdmin ? 'Role Admin dicabut.' : 'Role Admin diberikan.', true);
+          }
+          await loadMembers();
+        } catch (error) { setMessage(error.message || 'Tindakan gagal.'); }
+        finally { button.disabled = false; }
+      });
+      loadMembers();
+    } else {
+      nav.hidden = true;
+    }
+  } catch (_) {
+    nav.hidden = true;
+  }
 })();
