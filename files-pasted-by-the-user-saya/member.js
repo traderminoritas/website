@@ -16,6 +16,88 @@ const AUTH_URL = 'https://tm-vip-auth.bossrobot-id.workers.dev';
     location.replace('index.html');
   }
 })();
+/* =========================================================
+   PENGATURAN AKUN — GANTI PASSWORD
+   ========================================================= */
+(function addChangePasswordUI(){
+  const logoutButton = document.getElementById('logout');
+  if (!logoutButton || document.getElementById('tmChangePasswordButton')) return;
+
+  const style = document.createElement('style');
+  style.textContent = `
+    #tmChangePasswordButton{width:100%;margin:8px 0;padding:11px 14px;border:1px solid rgba(216,180,94,.45);border-radius:10px;background:rgba(216,180,94,.08);color:inherit;font:inherit;cursor:pointer;text-align:left}
+    #tmPasswordOverlay{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.72);backdrop-filter:blur(5px)}
+    #tmPasswordOverlay.open{display:flex}
+    #tmPasswordPanel{width:min(100%,430px);padding:26px;border:1px solid rgba(216,180,94,.35);border-radius:18px;background:#111;color:#f7f4ed;box-shadow:0 24px 80px #0008}
+    #tmPasswordPanel h2{margin:0 0 7px;font-size:22px}#tmPasswordPanel p{margin:0 0 20px;color:#b8b5ad;font-size:13px;line-height:1.5}
+    #tmPasswordPanel label{display:block;margin:13px 0 6px;font-size:13px;color:#dedbd3}
+    #tmPasswordPanel input{box-sizing:border-box;width:100%;padding:12px;border:1px solid #45423a;border-radius:9px;background:#191919;color:#fff;font:inherit;outline:none}
+    #tmPasswordPanel input:focus{border-color:#d8b45e}#tmPasswordActions{display:flex;gap:10px;margin-top:20px}
+    #tmPasswordActions button{flex:1;padding:12px;border-radius:9px;font:inherit;cursor:pointer}
+    #tmPasswordCancel{border:1px solid #48443b;background:transparent;color:#eee}#tmPasswordSubmit{border:0;background:#d8b45e;color:#17130a;font-weight:700}
+    #tmPasswordMessage{min-height:18px;margin-top:12px;font-size:13px;color:#e8bd78}
+  `;
+  document.head.appendChild(style);
+
+  const button = document.createElement('button');
+  button.id = 'tmChangePasswordButton';
+  button.type = 'button';
+  button.textContent = '🔐  Ubah Password';
+  logoutButton.parentElement.insertBefore(button, logoutButton);
+
+  const overlay = document.createElement('div');
+  overlay.id = 'tmPasswordOverlay';
+  overlay.innerHTML = `
+    <section id="tmPasswordPanel" role="dialog" aria-modal="true" aria-labelledby="tmPasswordTitle">
+      <h2 id="tmPasswordTitle">Ubah Password</h2>
+      <p>Masukkan password saat ini, lalu buat password baru minimal 12 karakter.</p>
+      <form id="tmPasswordForm">
+        <label for="tmCurrentPassword">Password saat ini</label>
+        <input id="tmCurrentPassword" type="password" autocomplete="current-password" required maxlength="128">
+        <label for="tmNewPassword">Password baru</label>
+        <input id="tmNewPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="128">
+        <label for="tmConfirmPassword">Ulangi password baru</label>
+        <input id="tmConfirmPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="128">
+        <div id="tmPasswordMessage" aria-live="polite"></div>
+        <div id="tmPasswordActions"><button id="tmPasswordCancel" type="button">Batal</button><button id="tmPasswordSubmit" type="submit">Simpan Password</button></div>
+      </form>
+    </section>`;
+  document.body.appendChild(overlay);
+
+  const form = overlay.querySelector('#tmPasswordForm');
+  const message = overlay.querySelector('#tmPasswordMessage');
+  const submit = overlay.querySelector('#tmPasswordSubmit');
+  function close(){ overlay.classList.remove('open'); form.reset(); message.textContent=''; }
+  button.addEventListener('click',()=>{ overlay.classList.add('open'); overlay.querySelector('#tmCurrentPassword').focus(); });
+  overlay.querySelector('#tmPasswordCancel').addEventListener('click',close);
+  overlay.addEventListener('click',e=>{ if(e.target===overlay) close(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&overlay.classList.contains('open')) close(); });
+  form.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const currentPassword=overlay.querySelector('#tmCurrentPassword').value;
+    const newPassword=overlay.querySelector('#tmNewPassword').value;
+    const confirmPassword=overlay.querySelector('#tmConfirmPassword').value;
+    message.textContent='';
+    if(newPassword.length<12){message.textContent='Password baru minimal 12 karakter.';return;}
+    if(newPassword!==confirmPassword){message.textContent='Konfirmasi password baru tidak sama.';return;}
+    if(currentPassword===newPassword){message.textContent='Gunakan password baru yang berbeda.';return;}
+    submit.disabled=true;submit.textContent='Menyimpan…';
+    try{
+      const response=await fetch(`${AUTH_URL}/change-password`,{
+        method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({currentPassword,newPassword})
+      });
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok||!data.ok) throw new Error(data.error||'Password gagal diganti.');
+      message.textContent='Password berhasil diganti.';
+      message.style.color='#9bd5a4';
+      form.reset();
+      setTimeout(close,1200);
+    }catch(err){message.style.color='#f0a0a0';message.textContent=err.message||'Terjadi kesalahan. Coba lagi.';}
+    finally{submit.disabled=false;submit.textContent='Simpan Password';}
+  });
+})();
+
 const officialLogoStyles=document.createElement('style');officialLogoStyles.textContent="aside .brand>b{font-size:0!important;background:#111 url('https://raw.githubusercontent.com/traderminoritas/traderminoritas-assets/main/Trader%20MInoritas%20logo.png') center/90% auto no-repeat!important;border-color:rgba(216,180,94,.45)!important}";document.head.appendChild(officialLogoStyles);
 const pages=document.querySelectorAll('.page'),side=document.getElementById('side'),crumb=document.getElementById('crumb');
 function openPage(id){pages.forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));crumb.textContent='DASHBOARD / '+id.toUpperCase().replace('LEARN','MODUL VIP').replace('JOURNAL','JOURNAL & BACKTEST');side.classList.remove('open');scrollTo({top:0,behavior:'smooth'})}
