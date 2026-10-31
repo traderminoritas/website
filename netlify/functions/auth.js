@@ -12,6 +12,8 @@ export default async (request) => {
     "video-token",
     "change-password",
     "admin/members",
+    "admin/members/bulk-import",
+    "admin/members/bulk",
   ]);
 
   function isAllowedPath(value) {
