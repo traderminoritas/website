@@ -12,7 +12,6 @@ export default async (request) => {
     "video-token",
     "change-password",
     "admin/members",
-    "admin/members/bulk-import",
   ]);
 
   function isAllowedPath(value) {
@@ -26,11 +25,17 @@ export default async (request) => {
   }
 
   if (!isAllowedPath(path)) {
-    return Response.json({ error: "Endpoint tidak diizinkan." }, { status: 404 });
+    return Response.json(
+      { error: "Endpoint tidak diizinkan." },
+      { status: 404 }
+    );
   }
 
   if (!["GET", "POST", "PATCH", "DELETE", "OPTIONS"].includes(request.method)) {
-    return Response.json({ error: "Method tidak diizinkan." }, { status: 405 });
+    return Response.json(
+      { error: "Method tidak diizinkan." },
+      { status: 405 }
+    );
   }
 
   const headers = new Headers();
