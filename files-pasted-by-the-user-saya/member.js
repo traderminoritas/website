@@ -820,6 +820,8 @@ updateOverview();
   const form = document.getElementById('tmCreateMemberForm');
   const message = document.getElementById('tmManagementMessage');
   const refresh = document.getElementById('tmRefreshMembers');
+  const bulkForm = document.getElementById('tmBulkImportForm');
+  const bulkMessage = document.getElementById('tmBulkImportMessage');
   if (!nav || !page || !table || !form || !message || !refresh) return;
 
   let currentMember = null;
@@ -863,7 +865,6 @@ updateOverview();
       return `<tr>
         <td style="padding:12px">${Number(m.id) || ''}</td>
         <td style="padding:12px">${esc(m.username)}</td>
-        <td style="padding:12px">${esc(m.email)}</td>
         <td style="padding:12px"><span class="tm-role-pill">${role}</span></td>
         <td style="padding:12px">${vip ? 'Aktif' : 'Nonaktif'}</td>
         <td style="padding:12px">${active ? 'Aktif' : 'Dinonaktifkan'}</td>
@@ -894,14 +895,13 @@ updateOverview();
         event.preventDefault();
         const submit = form.querySelector('button[type="submit"]');
         const username = document.getElementById('tmNewUsername').value.trim();
-        const email = document.getElementById('tmNewEmail').value.trim();
         const password = document.getElementById('tmNewPassword').value;
         const isVip = document.getElementById('tmNewVip').checked;
         if (password.length < 12) { setMessage('Password awal minimal 12 karakter.'); return; }
         submit.disabled = true;
         setMessage('Membuat akun…');
         try {
-          const data = await api('admin/members', {method:'POST', body:JSON.stringify({username,email,password,isVip})});
+          const data = await api('admin/members', {method:'POST', body:JSON.stringify({username,password,isVip})});
           form.reset();
           document.getElementById('tmNewVip').checked = true;
           setMessage(data.message || 'Akun berhasil dibuat.', true);
@@ -910,6 +910,55 @@ updateOverview();
         finally { submit.disabled = false; }
       });
       refresh.addEventListener('click', loadMembers);
+      if (bulkForm && bulkMessage) {
+        bulkForm.addEventListener('submit', async event => {
+          event.preventDefault();
+          const submit = bulkForm.querySelector('button[type="submit"]');
+          const raw = document.getElementById('tmBulkUids').value;
+          const password = document.getElementById('tmBulkPassword').value;
+          const isVip = document.getElementById('tmBulkVip').checked;
+
+          const uids = [...new Set(
+            raw.split(/[\s,;]+/).map(v => v.trim()).filter(Boolean)
+          )];
+
+          if (!uids.length) {
+            bulkMessage.textContent = 'Masukkan minimal satu UID.';
+            bulkMessage.style.color = '#d8b45e';
+            return;
+          }
+          if (password.length < 12) {
+            bulkMessage.textContent = 'Password awal minimal 12 karakter.';
+            bulkMessage.style.color = '#d8b45e';
+            return;
+          }
+          if (!window.confirm(`Import ${uids.length} UID? UID yang sudah ada akan dilewati dan tidak diubah.`)) return;
+
+          submit.disabled = true;
+          bulkMessage.textContent = `Mengimport ${uids.length} UID…`;
+          bulkMessage.style.color = '#d8b45e';
+
+          try {
+            const data = await api('admin/members/bulk-import', {
+              method: 'POST',
+              body: JSON.stringify({ uids, password, isVip })
+            });
+            const invalidCount = Array.isArray(data.invalid) ? data.invalid.length : 0;
+            bulkMessage.textContent =
+              `Selesai: ${data.created || 0} dibuat, ${data.skipped || 0} sudah ada/dilewati` +
+              (invalidCount ? `, ${invalidCount} UID tidak valid` : '') + '.';
+            bulkMessage.style.color = '#9bd5a4';
+            document.getElementById('tmBulkUids').value = '';
+            document.getElementById('tmBulkPassword').value = '';
+            await loadMembers();
+          } catch (error) {
+            bulkMessage.textContent = error.message || 'Bulk import gagal.';
+            bulkMessage.style.color = '#d8b45e';
+          } finally {
+            submit.disabled = false;
+          }
+        });
+      }
       table.addEventListener('click', async event => {
         const button = event.target.closest('button[data-action]');
         if (!button) return;
