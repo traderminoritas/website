@@ -12,7 +12,7 @@ const authEndpoint = path => `${AUTH_URL}?path=${encodeURIComponent(path)}`;
       location.replace('index.html');
       return;
     }
-    sessionStorage.setItem('tmVipMemberName', data.member.username || data.member.email || 'Member VIP');
+    sessionStorage.setItem('tmVipMemberName', data.member.username || 'Member VIP');
   } catch (_) {
     location.replace('index.html');
   }
@@ -820,8 +820,6 @@ updateOverview();
   const form = document.getElementById('tmCreateMemberForm');
   const message = document.getElementById('tmManagementMessage');
   const refresh = document.getElementById('tmRefreshMembers');
-  const bulkForm = document.getElementById('tmBulkImportForm');
-  const bulkMessage = document.getElementById('tmBulkImportMessage');
   if (!nav || !page || !table || !form || !message || !refresh) return;
 
   let currentMember = null;
@@ -861,7 +859,7 @@ updateOverview();
       const resetButton = protectedAccount ? '' : `<button type="button" data-action="reset" data-id="${Number(m.id)}" class="ghost-action">Reset password</button>`;
       const roleButton = isOwner(currentMember) && !protectedAccount ? `<button type="button" data-action="role" data-id="${Number(m.id)}" data-admin="${admin}" class="ghost-action">${admin ? 'Jadikan Member' : 'Jadikan Admin'}</button>` : '';
       const canDelete = !protectedAccount && (isOwner(currentMember) || !admin);
-      const deleteButton = canDelete ? `<button type="button" data-action="delete" data-id="${Number(m.id)}" data-username="${esc(m.username)}" data-email="${esc(m.email)}" data-admin="${admin}" class="ghost-action tm-danger-action">Hapus akun</button>` : '';
+      const deleteButton = canDelete ? `<button type="button" data-action="delete" data-id="${Number(m.id)}" data-username="${esc(m.username)}" data-admin="${admin}" class="ghost-action tm-danger-action">Hapus akun</button>` : '';
       return `<tr>
         <td style="padding:12px">${Number(m.id) || ''}</td>
         <td style="padding:12px">${esc(m.username)}</td>
@@ -894,7 +892,7 @@ updateOverview();
       form.addEventListener('submit', async event => {
         event.preventDefault();
         const submit = form.querySelector('button[type="submit"]');
-        const username = document.getElementById('tmNewUsername').value.trim();
+        const username = document.getElementById('tmNewUID').value.trim();
         const password = document.getElementById('tmNewPassword').value;
         const isVip = document.getElementById('tmNewVip').checked;
         if (password.length < 12) { setMessage('Password awal minimal 12 karakter.'); return; }
@@ -910,55 +908,6 @@ updateOverview();
         finally { submit.disabled = false; }
       });
       refresh.addEventListener('click', loadMembers);
-      if (bulkForm && bulkMessage) {
-        bulkForm.addEventListener('submit', async event => {
-          event.preventDefault();
-          const submit = bulkForm.querySelector('button[type="submit"]');
-          const raw = document.getElementById('tmBulkUids').value;
-          const password = document.getElementById('tmBulkPassword').value;
-          const isVip = document.getElementById('tmBulkVip').checked;
-
-          const uids = [...new Set(
-            raw.split(/[\s,;]+/).map(v => v.trim()).filter(Boolean)
-          )];
-
-          if (!uids.length) {
-            bulkMessage.textContent = 'Masukkan minimal satu UID.';
-            bulkMessage.style.color = '#d8b45e';
-            return;
-          }
-          if (password.length < 12) {
-            bulkMessage.textContent = 'Password awal minimal 12 karakter.';
-            bulkMessage.style.color = '#d8b45e';
-            return;
-          }
-          if (!window.confirm(`Import ${uids.length} UID? UID yang sudah ada akan dilewati dan tidak diubah.`)) return;
-
-          submit.disabled = true;
-          bulkMessage.textContent = `Mengimport ${uids.length} UID…`;
-          bulkMessage.style.color = '#d8b45e';
-
-          try {
-            const data = await api('admin/members/bulk-import', {
-              method: 'POST',
-              body: JSON.stringify({ uids, password, isVip })
-            });
-            const invalidCount = Array.isArray(data.invalid) ? data.invalid.length : 0;
-            bulkMessage.textContent =
-              `Selesai: ${data.created || 0} dibuat, ${data.skipped || 0} sudah ada/dilewati` +
-              (invalidCount ? `, ${invalidCount} UID tidak valid` : '') + '.';
-            bulkMessage.style.color = '#9bd5a4';
-            document.getElementById('tmBulkUids').value = '';
-            document.getElementById('tmBulkPassword').value = '';
-            await loadMembers();
-          } catch (error) {
-            bulkMessage.textContent = error.message || 'Bulk import gagal.';
-            bulkMessage.style.color = '#d8b45e';
-          } finally {
-            submit.disabled = false;
-          }
-        });
-      }
       table.addEventListener('click', async event => {
         const button = event.target.closest('button[data-action]');
         if (!button) return;
