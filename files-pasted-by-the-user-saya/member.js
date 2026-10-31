@@ -12,7 +12,7 @@ const authEndpoint = path => `${AUTH_URL}?path=${encodeURIComponent(path)}`;
       location.replace('index.html');
       return;
     }
-    sessionStorage.setItem('tmVipMemberName', data.member.username || 'Member VIP');
+    sessionStorage.setItem('tmVipMemberName', data.member.username || data.member.email || 'Member VIP');
   } catch (_) {
     location.replace('index.html');
   }
@@ -859,10 +859,11 @@ updateOverview();
       const resetButton = protectedAccount ? '' : `<button type="button" data-action="reset" data-id="${Number(m.id)}" class="ghost-action">Reset password</button>`;
       const roleButton = isOwner(currentMember) && !protectedAccount ? `<button type="button" data-action="role" data-id="${Number(m.id)}" data-admin="${admin}" class="ghost-action">${admin ? 'Jadikan Member' : 'Jadikan Admin'}</button>` : '';
       const canDelete = !protectedAccount && (isOwner(currentMember) || !admin);
-      const deleteButton = canDelete ? `<button type="button" data-action="delete" data-id="${Number(m.id)}" data-username="${esc(m.username)}" data-admin="${admin}" class="ghost-action tm-danger-action">Hapus akun</button>` : '';
+      const deleteButton = canDelete ? `<button type="button" data-action="delete" data-id="${Number(m.id)}" data-username="${esc(m.username)}" data-email="${esc(m.email)}" data-admin="${admin}" class="ghost-action tm-danger-action">Hapus akun</button>` : '';
       return `<tr>
         <td style="padding:12px">${Number(m.id) || ''}</td>
         <td style="padding:12px">${esc(m.username)}</td>
+        <td style="padding:12px">${esc(m.email)}</td>
         <td style="padding:12px"><span class="tm-role-pill">${role}</span></td>
         <td style="padding:12px">${vip ? 'Aktif' : 'Nonaktif'}</td>
         <td style="padding:12px">${active ? 'Aktif' : 'Dinonaktifkan'}</td>
@@ -892,14 +893,15 @@ updateOverview();
       form.addEventListener('submit', async event => {
         event.preventDefault();
         const submit = form.querySelector('button[type="submit"]');
-        const username = document.getElementById('tmNewUID').value.trim();
+        const username = document.getElementById('tmNewUsername').value.trim();
+        const email = document.getElementById('tmNewEmail').value.trim();
         const password = document.getElementById('tmNewPassword').value;
         const isVip = document.getElementById('tmNewVip').checked;
         if (password.length < 12) { setMessage('Password awal minimal 12 karakter.'); return; }
         submit.disabled = true;
         setMessage('Membuat akun…');
         try {
-          const data = await api('admin/members', {method:'POST', body:JSON.stringify({username,password,isVip})});
+          const data = await api('admin/members', {method:'POST', body:JSON.stringify({username,email,password,isVip})});
           form.reset();
           document.getElementById('tmNewVip').checked = true;
           setMessage(data.message || 'Akun berhasil dibuat.', true);

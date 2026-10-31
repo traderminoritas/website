@@ -14,7 +14,7 @@ const TM_AUTH_URL = '/.netlify/functions/auth';
 
 document.getElementById('loginForm').addEventListener('submit', async (event) => {
   event.preventDefault();
-  const username = document.getElementById('loginUid').value.trim();
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
   const password = document.getElementById('loginPassword').value;
   const error = document.getElementById('loginError');
   const submit = document.querySelector('#loginForm button[type=submit]');
@@ -30,11 +30,11 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username: email, password })
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.ok || !data.member) {
-      throw new Error(data.error || 'UID atau password tidak sesuai.');
+      throw new Error(data.error || 'Email atau password tidak sesuai.');
     }
     if (!data.member.isVip) {
       await fetch(`${TM_AUTH_URL}?path=logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
@@ -51,7 +51,7 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
       throw new Error(vipData.error || 'Akses VIP belum aktif.');
     }
 
-    sessionStorage.setItem('tmVipMemberName', data.member.username || username);
+    sessionStorage.setItem('tmVipMemberName', data.member.username || data.member.email || email);
     window.location.href = 'member.html';
   } catch (err) {
     error.textContent = err.message || 'Login gagal. Silakan coba lagi.';
