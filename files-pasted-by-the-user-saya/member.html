@@ -41,6 +41,16 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Chrono Heatmap Version Selector */
+.chrono-version-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
+.chrono-tab{appearance:none;border:1px solid rgba(20,20,20,.14);background:#fff;color:#151515;border-radius:12px;padding:12px 16px;font:inherit;font-size:13px;font-weight:800;letter-spacing:.02em;cursor:pointer;transition:.2s ease;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.chrono-tab span{font-weight:500;opacity:.65;margin-left:5px}
+.chrono-tab b{font-size:10px;margin-left:7px;padding:3px 6px;border-radius:999px;background:#151515;color:#fff;letter-spacing:.08em}
+.chrono-tab.active{background:#151515;color:#fff;border-color:#151515}
+.chrono-tab.active span{opacity:.8}
+@media(max-width:600px){.chrono-version-tabs{display:grid;grid-template-columns:1fr}.chrono-tab{text-align:left;width:100%}.chrono-tab span{display:block;margin:4px 0 0}}
+
 </style>
 <style id="tm-edge-layout-override">
 /* Force TM EDGE LAB table and stats to stack vertically on desktop too. */
@@ -650,7 +660,22 @@ main > header .header-status i{color:#d8b45e;font-style:normal}
 
 <section id="tools" class="page"><div class="intro"><p class="kicker">TRADING TOOLS</p><h1>Hitung dulu.<br><em>Eksekusi kemudian.</em></h1><p>Alat praktis untuk membantu Anda patuh pada rencana.</p></div><div class="toolcards"><article class="selected"><span>↗</span><p class="kicker">POSITION SIZING</p><h2>Lot Size Calculator</h2><p>Pastikan risiko setiap trade selaras dengan ukuran akun Anda.</p><button data-tool="lot">Buka tool →</button></article><article><span>◫</span><p class="kicker">RISK ANALYSIS</p><h2>Risk / Reward</h2><p>Ukur potensi hasil dan risiko sebelum menekan tombol order.</p><button data-tool="rr">Buka tool →</button></article><article><span>⌁</span><p class="kicker">GROWTH PLAN</p><h2>Compounding</h2><p>Visualisasikan pertumbuhan modal dengan target realistis.</p><button data-tool="comp">Buka tool →</button></article></div><div class="panel calculator"><div><p class="kicker" id="calcType">POSITION SIZING</p><h2 id="calcTitle">Lot Size Calculator</h2></div><p id="calcDesc">Tentukan posisi berdasarkan batas risiko Anda.</p><div id="calcForm"></div></div></section>
 
-<section id="chrono" class="page"><div class="intro"><p class="kicker">TRADING TOOL</p><h1>TM <em>Chrono Heatmap.</em></h1><p>See the market's historical tendency, minute by minute.</p></div><div class="panel chrono-workspace" style="padding:0;overflow:hidden;"><iframe src="TM_Chrono_Heatmap.html" title="TM Chrono Heatmap" style="display:block;width:100%;height:900px;border:0;background:#f6f7f9;" loading="lazy"></iframe></div></section><section id="event" class="page"><div class="intro"><p class="kicker">EVENT & WEBINAR</p><h1>Belajar bersama,<br><em>bertumbuh bersama.</em></h1><p>Sesi live untuk memperdalam proses dan bertukar perspektif.</p></div><div class="events"><article class="feature-event"><b>18<small>SEP<br>2026</small></b><p class="kicker">WEBINAR MEMBER</p><h2>Membaca Market Structure Tanpa Overthinking</h2><p>Dengan Raka Pratama · Jumat, 19:30 WIB</p><button class="primary">Daftar webinar →</button></article><article><p class="kicker">COMMUNITY SESSION</p><h2>Monthly Trade Review</h2><p>Bedah jurnal dan pelajaran terbaik dari bulan ini.</p><footer>27 SEP · 10:00 WIB <button>Detail →</button></footer></article><article><p class="kicker">ARCHIVE</p><h2>Psikologi Saat Drawdown</h2><p>Rekaman webinar bersama mentor TM sudah tersedia.</p><footer>REKAMAN · 72 MENIT <button>▶ Tonton</button></footer></article></div></section>
+<section id="chrono" class="page">
+  <div class="intro">
+    <p class="kicker">TRADING TOOL</p>
+    <h1>TM <em>Chrono Heatmap.</em></h1>
+    <p>See the market's historical tendency, minute by minute.</p>
+  </div>
+
+  <div class="chrono-version-tabs" role="tablist" aria-label="Pilih versi Chrono Heatmap">
+    <button type="button" class="chrono-tab active" data-chrono="chronoversion1.html">VERSION 1 <span>• Pip Range</span></button>
+    <button type="button" class="chrono-tab" data-chrono="chronoversion2.html">VERSION 2 <span>• ±50 Pip by Period</span><b>NEW</b></button>
+  </div>
+
+  <div class="panel chrono-workspace" style="padding:0;overflow:hidden;">
+    <iframe id="chronoFrame" src="chronoversion1.html" title="TM Chrono Heatmap Version 1" style="display:block;width:100%;height:900px;border:0;background:#f6f7f9;" loading="lazy"></iframe>
+  </div>
+</section><section id="event" class="page"><div class="intro"><p class="kicker">EVENT & WEBINAR</p><h1>Belajar bersama,<br><em>bertumbuh bersama.</em></h1><p>Sesi live untuk memperdalam proses dan bertukar perspektif.</p></div><div class="events"><article class="feature-event"><b>18<small>SEP<br>2026</small></b><p class="kicker">WEBINAR MEMBER</p><h2>Membaca Market Structure Tanpa Overthinking</h2><p>Dengan Raka Pratama · Jumat, 19:30 WIB</p><button class="primary">Daftar webinar →</button></article><article><p class="kicker">COMMUNITY SESSION</p><h2>Monthly Trade Review</h2><p>Bedah jurnal dan pelajaran terbaik dari bulan ini.</p><footer>27 SEP · 10:00 WIB <button>Detail →</button></footer></article><article><p class="kicker">ARCHIVE</p><h2>Psikologi Saat Drawdown</h2><p>Rekaman webinar bersama mentor TM sudah tersedia.</p><footer>REKAMAN · 72 MENIT <button>▶ Tonton</button></footer></article></div></section>
 
 <section id="profile" class="page"><div class="intro"><p class="kicker">PENGATURAN AKUN</p><h1>Profile <em>saya.</em></h1><p>Kelola informasi dan preferensi workspace Anda.</p></div><div class="profile"><article class="panel user-card"><b>AM</b><h2>Andi Mahendra</h2><p>VIP Member · Bergabung Oktober 2024</p><hr><small>MEMBERSHIP AKTIF HINGGA</small><strong>04 Oktober 2027</strong></article><form class="panel profile-form" id="profileForm"><label>Nama lengkap<input value="Andi Mahendra"></label><label>Email<input value="member@tradminoritas.id" type="email"></label><label>Bio singkat<textarea placeholder="Ceritakan fokus trading Anda..."></textarea></label><button class="primary">Simpan perubahan</button></form></div></section><section id="management" class="page"><div class="intro"><p class="kicker">ADMINISTRATION</p><h1>Manajemen <em>Member.</em></h1><p>Kelola akun, akses VIP, dan role berdasarkan hak akses Anda.</p></div><div class="panel tm-management-card"><div class="section-head"><div><p class="kicker">BUAT AKUN</p><h2>Tambah Member baru</h2></div></div><form id="tmCreateMemberForm"><label>Username<input id="tmNewUsername" class="blue-input" required minlength="3" autocomplete="off"></label><label>Email<input id="tmNewEmail" class="blue-input" type="email" required autocomplete="off"></label><label>Password awal<input id="tmNewPassword" class="blue-input" type="password" required minlength="12" autocomplete="new-password"><small>Minimal 12 karakter.</small></label><label style="display:flex;gap:8px;align-items:center"><input id="tmNewVip" type="checkbox" checked> Aktifkan VIP</label><button class="primary" type="submit">Buat akun →</button></form><p id="tmManagementMessage" role="status" style="margin-top:14px;color:#d8b45e"></p></div><div class="panel tm-management-card"><div class="section-head"><div><p class="kicker">ACCOUNT DIRECTORY</p><h2>Daftar akun</h2></div><button class="ghost-action" id="tmRefreshMembers" type="button">Muat ulang</button></div><div class="tm-management-table-wrap"><table style="width:100%;border-collapse:collapse;min-width:920px"><thead><tr><th style="text-align:left;padding:12px">ID</th><th style="text-align:left;padding:12px">Username</th><th style="text-align:left;padding:12px">Email</th><th style="text-align:left;padding:12px">Role</th><th style="text-align:left;padding:12px">VIP</th><th style="text-align:left;padding:12px">Status</th><th style="text-align:left;padding:12px;min-width:240px">Aksi</th></tr></thead><tbody id="tmMembersTable"><tr><td colspan="7" style="padding:14px">Memuat daftar akun…</td></tr></tbody></table></div></div></section>
 <section id="comp" class="page"><div id="compoundingPage" class="compound-scope"><header class="header">
@@ -908,4 +933,24 @@ document.querySelectorAll('[data-page="comp"]').forEach(button => {
   });
 });
 </script>
+
+<script>
+(function(){
+  const tabs = document.querySelectorAll('.chrono-tab');
+  const frame = document.getElementById('chronoFrame');
+  if(!tabs.length || !frame) return;
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function(){
+      const src = this.dataset.chrono;
+      if(!src) return;
+      frame.src = src;
+      frame.title = 'TM Chrono Heatmap ' + (src.includes('version2') ? 'Version 2' : 'Version 1');
+      tabs.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+})();
+</script>
+
 </body></html>
