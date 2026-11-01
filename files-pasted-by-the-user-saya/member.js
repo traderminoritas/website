@@ -26,7 +26,7 @@ const authEndpoint = path => `${AUTH_URL}?path=${encodeURIComponent(path)}`;
 
   const style = document.createElement('style');
   style.textContent = `
-    #tmChangePasswordButton{width:100%;margin:8px 0;padding:11px 14px;border:1px solid rgba(216,180,94,.45);border-radius:10px;background:rgba(216,180,94,.08);color:inherit;font:inherit;cursor:pointer;text-align:left}
+    #tmChangePasswordButton{display:none!important;width:100%;margin:8px 0;padding:11px 14px;border:1px solid rgba(216,180,94,.45);border-radius:10px;background:rgba(216,180,94,.08);color:inherit;font:inherit;cursor:pointer;text-align:left}
     #tmPasswordOverlay{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.72);backdrop-filter:blur(5px)}
     #tmPasswordOverlay.open{display:flex}
     #tmPasswordPanel{width:min(100%,430px);padding:26px;border:1px solid rgba(216,180,94,.35);border-radius:18px;background:#111;color:#f7f4ed;box-shadow:0 24px 80px #0008}
